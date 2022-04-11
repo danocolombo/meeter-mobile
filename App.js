@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
 import WelcomeScreen from './screens/WelcomeScreen';
-import { Colors } from './constants/styles';
+import { Colors } from './constants/colors';
 import AuthContextProvider from './store/auth-context';
 import { AuthContext } from './store/auth-context';
 import IconButton from './components/ui/IconButton';
@@ -18,7 +18,7 @@ function AuthStack() {
     return (
         <Stack.Navigator
             screenOptions={{
-                headerStyle: { backgroundColor: Colors.primary500 },
+                headerStyle: { backgroundColor: Colors.primary800 },
                 headerTintColor: 'white',
                 contentStyle: { backgroundColor: Colors.primary100 },
             }}
@@ -34,13 +34,13 @@ function AuthenticatedStack() {
     return (
         <Stack.Navigator
             screenOptions={{
-                headerStyle: { backgroundColor: Colors.primary500 },
+                headerStyle: { backgroundColor: Colors.primary800 },
                 headerTintColor: 'white',
                 contentStyle: { backgroundColor: Colors.primary100 },
             }}
         >
             <Stack.Screen
-                name='Welcome'
+                name='Meeter'
                 component={WelcomeScreen}
                 options={{
                     headerRight: ({ tintColor }) => (
