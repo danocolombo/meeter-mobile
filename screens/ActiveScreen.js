@@ -1,13 +1,17 @@
 import axios from 'axios';
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../store/auth-context';
+import { MeetingsContext } from '../store/meeting-context';
+import MeetingsOutput from '../components/Meeting/MeetingsOutput';
 import { StyleSheet, Text, View } from 'react-native';
 import MeetingCard from '../components/Meeting/MeetingCard';
 
 function ActiveScreen() {
     const [fetchedMessage, setFetchedMessage] = useState();
     const authCtx = useContext(AuthContext);
+    const meetingsCtx = useContext(MeetingsContext);
     const token = authCtx.token;
+    meetingsCtx.loadMeetings();
     useEffect(() => {
         axios
             .get(
@@ -22,8 +26,9 @@ function ActiveScreen() {
         <View style={styles.rootContainer}>
             <MeetingCard />
             <Text style={styles.title}>Welcome!</Text>
-            <Text>You authenticated successfully!</Text>
-            <Text>{fetchedMessage}</Text>
+            <MeetingsOutput meetings={meetingsCtx.meetings} />
+            {/* <Text>You authenticated successfully!</Text>
+            <Text>{fetchedMessage}</Text> */}
         </View>
     );
 }

@@ -2,8 +2,8 @@ import axios from 'axios';
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../store/auth-context';
 import { StyleSheet, Text, View } from 'react-native';
-import MeetingCard from '../components/Meeting/MeetingCard';
-
+import ProfileForm from '../components/profile/ProfileForm';
+// import PROFILE_DATA =
 function ProfileSceen() {
     const [fetchedMessage, setFetchedMessage] = useState();
     const authCtx = useContext(AuthContext);
@@ -20,10 +20,7 @@ function ProfileSceen() {
     }, [token]);
     return (
         <View style={styles.rootContainer}>
-            <MeetingCard />
-            <Text style={styles.title}>Welcome!</Text>
-            <Text>You authenticated successfully!</Text>
-            <Text>{fetchedMessage}</Text>
+            <ProfileForm />
         </View>
     );
 }

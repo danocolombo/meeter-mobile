@@ -16,6 +16,7 @@ import { Colors } from './constants/colors';
 import AuthContextProvider from './store/auth-context';
 import { AuthContext } from './store/auth-context';
 import IconButton from './components/ui/IconButton';
+import MeetingsContextProvider from './store/meeting-context';
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -162,7 +163,9 @@ export default function App() {
         <>
             <StatusBar style='light' />
             <AuthContextProvider>
-                <Navigation />
+                <MeetingsContextProvider>
+                    <Navigation />
+                </MeetingsContextProvider>
             </AuthContextProvider>
         </>
     );
