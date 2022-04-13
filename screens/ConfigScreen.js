@@ -4,7 +4,7 @@ import { AuthContext } from '../store/auth-context';
 import { StyleSheet, Text, View } from 'react-native';
 import MeetingCard from '../components/Meeting/MeetingCard';
 
-function WelcomeScreen() {
+function ConfigScreen() {
     const [fetchedMessage, setFetchedMessage] = useState();
     const authCtx = useContext(AuthContext);
     const token = authCtx.token;
@@ -28,7 +28,7 @@ function WelcomeScreen() {
     );
 }
 
-export default WelcomeScreen;
+export default ConfigScreen;
 
 const styles = StyleSheet.create({
     rootContainer: {
