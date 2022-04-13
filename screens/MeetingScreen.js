@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 function MeetingScreen() {
-    return;
-    <View>
-        <Text style={styles.title}>MEETING SCREEN</Text>
-    </View>;
+    return (
+        <View>
+            <Text style={styles.title}>MEETING SCREEN</Text>
+        </View>
+    );
 }
 export default MeetingScreen;
 const styles = StyleSheet.create({
