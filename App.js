@@ -91,7 +91,16 @@ function AuthenticatedStack() {
                 component={AuthenticatedDrawer}
                 options={{ headerShown: false }}
             />
-            <Stack.Screen name='Meeting' component={MeetingScreen} />
+            <Stack.Screen
+                name='Meeting'
+                component={MeetingScreen}
+                options={{
+                    headerStyle: {
+                        backgroundColor: Colors.primary800,
+                    },
+                    headerTintColor: 'white',
+                }}
+            />
         </Stack.Navigator>
     );
 }

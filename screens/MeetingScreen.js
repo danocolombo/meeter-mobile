@@ -10,7 +10,7 @@ function MeetingScreen() {
 export default MeetingScreen;
 const styles = StyleSheet.create({
     title: {
-        color: 'white',
+        color: 'black',
         fontSize: 24,
     },
 });
