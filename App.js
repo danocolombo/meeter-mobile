@@ -39,13 +39,7 @@ function AuthStack() {
         </Stack.Navigator>
     );
 }
-// function MeetingStack() {
-//     return (
-//         <Stack.Navigator>
-//             <Stack.Screen name='ManageMeeting' component={MeetingScreen} />
-//         </Stack.Navigator>
-//     );
-// }
+
 function AuthenticatedDrawer() {
     return (
         <Drawer.Navigator
@@ -58,22 +52,31 @@ function AuthenticatedDrawer() {
                     backgroundColor: Colors.primary800,
                 },
                 tabBarActiveTintColor: 'white',
-                headerRight: ({ tintColor }) => (
-                    <IconButton
-                        icon='add'
-                        size={24}
-                        color={tintColor}
-                        onPress={() => {
-                            navigation.navigate('Meeting');
-                        }}
-                    />
-                ),
             })}
         >
             <Drawer.Screen
                 name='Meetings'
                 component={Landing}
-                options={{ headerShown: true }}
+                options={({ navigation }) => ({
+                    headerStyle: {
+                        backgroundColor: Colors.primary800,
+                    },
+                    headerTintColor: 'white',
+                    tabBarStyle: {
+                        backgroundColor: Colors.primary800,
+                    },
+                    tabBarActiveTintColor: 'white',
+                    headerRight: ({ tintColor }) => (
+                        <IconButton
+                            icon='add'
+                            size={24}
+                            color={tintColor}
+                            onPress={() => {
+                                navigation.navigate('Meeting');
+                            }}
+                        />
+                    ),
+                })}
             />
             <Stack.Screen name='Profile' component={ProfileScreen} />
             <Stack.Screen name='Config' component={ConfigScreen} />
@@ -92,58 +95,13 @@ function AuthenticatedStack() {
         </Stack.Navigator>
     );
 }
-function AuthenticatedStack1() {
-    return (
-        <Stack.Navigator>
-            <Stack.Screen
-                name='Landing'
-                component={Landing}
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen name='Profile' component={ProfileScreen} />
-            <Stack.Screen name='Config' component={ConfigScreen} />
-            <Stack.Screen name='Meeting' component={MeetingScreen} />
-        </Stack.Navigator>
-    );
-}
+
 function Landing() {
     return (
         <BottomTabs.Navigator
             initialRouteName='ActiveMeetings'
             screenOptions={{ headerShown: false }}
-            // screenOptions={({ navigation }) => ({
-            //     headerStyle: {
-            //         backgroundColor: Colors.primary800,
-            //     },
-            //     headerTintColor: 'white',
-            //     tabBarStyle: {
-            //         backgroundColor: Colors.primary800,
-            //     },
-            //     tabBarActiveTintColor: 'white',
-            //     headerRight: ({ tintColor }) => (
-            //         <IconButton
-            //             icon='add'
-            //             size={24}
-            //             color={tintColor}
-            //             onPress={() => {
-            //                 navigation.navigate('Meeting');
-            //             }}
-            //         />
-            //     ),
-            // })}
         >
-            {/* <BottomTabs.Screen
-                name='Profile'
-                component={ProfileSceen}
-                options={{
-                    title: 'Profile',
-                    tabBarLabel: 'Profile',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name='person' size={size} color={color} />
-                    ),
-                }}
-            /> */}
-
             <BottomTabs.Screen
                 name='HistoricMeetings'
                 component={HistoricScreen}
@@ -174,51 +132,9 @@ function Landing() {
                     ),
                 }}
             />
-            {/* <BottomTabs.Screen
-                name='Configs'
-                component={ConfigScreen}
-                options={{
-                    title: 'Configurations',
-                    tabBarLabel: 'Configs',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons
-                            name='settings-sharp'
-                            size={size}
-                            color={color}
-                        />
-                    ),
-                }}
-            /> */}
         </BottomTabs.Navigator>
     );
 }
-// function AuthenticatedStack2() {
-//     const authCtx = useContext(AuthContext);
-//     return (
-//         <Stack.Navigator
-//             screenOptions={{
-//                 headerStyle: { backgroundColor: Colors.primary800 },
-//                 headerTintColor: 'white',
-//                 contentStyle: { backgroundColor: Colors.primary100 },
-//             }}
-//         >
-//             <Stack.Screen
-//                 name='Meeter'
-//                 component={WelcomeScreen}
-//                 options={{
-//                     headerRight: ({ tintColor }) => (
-//                         <IconButton
-//                             icon='exit'
-//                             color={tintColor}
-//                             size={24}
-//                             onPress={authCtx.logout}
-//                         />
-//                     ),
-//                 }}
-//             />
-//         </Stack.Navigator>
-//     );
-// }
 
 function Navigation() {
     const authCtx = useContext(AuthContext);
