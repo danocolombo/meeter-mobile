@@ -12,11 +12,13 @@ import ActiveScreen from './screens/ActiveScreen';
 import HistoricScreen from './screens/HistoricScreen';
 import ProfileSceen from './screens/ProfileScreen';
 import ConfigScreen from './screens/ConfigScreen';
+import MeetingScreen from './screens/MeetingScreen';
 import { Colors } from './constants/colors';
 import AuthContextProvider from './store/auth-context';
 import { AuthContext } from './store/auth-context';
 import IconButton from './components/ui/IconButton';
 import MeetingsContextProvider from './store/meeting-context';
+import HistoricContextProvider from './store/historic-context';
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -35,6 +37,13 @@ function AuthStack() {
         </Stack.Navigator>
     );
 }
+function MeetingStack() {
+    return (
+        <Stack.Navigator>
+            <Stack.Screen name='ManageMeeting' component={MeetingScreen} />
+        </Stack.Navigator>
+    );
+}
 function AuthenticatedStack() {
     return (
         <BottomTabs.Navigator
@@ -48,13 +57,13 @@ function AuthenticatedStack() {
                     backgroundColor: Colors.primary800,
                 },
                 tabBarActiveTintColor: 'white',
-                headerRight: ({ tintColor }) => (
+                headerRight: ({ tintColor }, navigation) => (
                     <IconButton
                         icon='add'
                         size={24}
                         color={tintColor}
-                        onPress={() => {
-                            navigation.navigate('ManageMeeting');
+                        onPress={({ navigation }) => {
+                            ('ManageMeeting');
                         }}
                     />
                 ),
@@ -164,7 +173,9 @@ export default function App() {
             <StatusBar style='light' />
             <AuthContextProvider>
                 <MeetingsContextProvider>
-                    <Navigation />
+                    <HistoricContextProvider>
+                        <Navigation />
+                    </HistoricContextProvider>
                 </MeetingsContextProvider>
             </AuthContextProvider>
         </>

@@ -11,7 +11,7 @@ function ActiveScreen() {
     const authCtx = useContext(AuthContext);
     const meetingsCtx = useContext(MeetingsContext);
     const token = authCtx.token;
-    meetingsCtx.loadMeetings();
+    // meetingsCtx.loadMeetings();
     useEffect(() => {
         axios
             .get(

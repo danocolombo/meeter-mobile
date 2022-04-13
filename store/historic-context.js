@@ -17,7 +17,7 @@ const INITIAL_STATE = [
     },
 ];
 
-export const MeetingsContext = createContext({
+export const HistoricContext = createContext({
     meetings: [],
     historic: [],
     addMeeting: ({
@@ -49,7 +49,7 @@ export const MeetingsContext = createContext({
 function meetingReducer(state, action) {
     switch (action.type) {
         case 'LOAD':
-            return ACTIVE_MEETINGS;
+            return HISTORICAL_MEETINGS;
         case 'LOAD_HISTORIC':
             return HISTORICAL_MEETINGS;
         case 'ADD':
@@ -80,7 +80,7 @@ function meetingReducer(state, action) {
             return state;
     }
 }
-function MeetingsContextProvider({ children }) {
+function HistoricContextProvider({ children }) {
     //logic here
     const [meetingsState, dispatch] = useReducer(meetingReducer, INITIAL_STATE);
 
@@ -112,9 +112,9 @@ function MeetingsContextProvider({ children }) {
         loadHistoric: loadHistoric,
     };
     return (
-        <MeetingsContext.Provider value={value}>
+        <HistoricContext.Provider value={value}>
             {children}
-        </MeetingsContext.Provider>
+        </HistoricContext.Provider>
     );
 }
-export default MeetingsContextProvider;
+export default HistoricContextProvider;
