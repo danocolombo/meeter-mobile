@@ -1,77 +1,49 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-
+import { StyleSheet, View, Text } from 'react-native';
 import Button from '../ui/Button';
-import Input from './Input';
+import { Colors } from '../../constants/colors';
+import Input from '../ui/Input';
 
-function MeetingForm({ isLogin, onSubmit, credentialsInvalid }) {
-    const [meetingDate, setMeetingDate] = useState('');
-    const [enteredEmail, setEnteredEmail] = useState('');
-    const [enteredConfirmEmail, setEnteredConfirmEmail] = useState('');
-    const [enteredPassword, setEnteredPassword] = useState('');
-    const [enteredConfirmPassword, setEnteredConfirmPassword] = useState('');
+function onDateChange() {}
+function MeetingForm() {
+    const [mDate, setMDate] = useState();
+    const [mType, setMType] = useState();
+    const [mSpotlight, setMSpotlight] = useState();
+    const [mAttendane, setMAttendance] = useState();
 
-    const {
-        date: dateIsValid,
-        email: emailIsInvalid,
-        confirmEmail: emailsDontMatch,
-        password: passwordIsInvalid,
-        confirmPassword: passwordsDontMatch,
-    } = credentialsInvalid;
-
-    function updateInputValueHandler(inputType, enteredValue) {
-        switch (inputType) {
-            case 'date':
-                setMeetingDate(enteredValue);
-                break;
-            case 'email':
-                setEnteredEmail(enteredValue);
-                break;
-            case 'confirmEmail':
-                setEnteredConfirmEmail(enteredValue);
-                break;
-            case 'password':
-                setEnteredPassword(enteredValue);
-                break;
-            case 'confirmPassword':
-                setEnteredConfirmPassword(enteredValue);
-                break;
-        }
+    function changeDate(val) {
+        setMDate(val);
     }
-
-    function submitHandler() {
-        onSubmit({
-            date: meetingDate,
-            email: enteredEmail,
-            confirmEmail: enteredConfirmEmail,
-            password: enteredPassword,
-            confirmPassword: enteredConfirmPassword,
-        });
+    function changeType(val) {
+        setMType(val);
     }
-
+    function changeSpotlight(val) {
+        setMSpotlight(val);
+    }
+    function changeAttendance(val) {
+        setMAttendance(val);
+    }
     return (
-        <View style={styles.form}>
+        <View style={styles.rootContainer}>
+            <Input
+                label='Meeting Date'
+                value={mDate}
+                onUpdateValue={changeDate}
+            />
+            <Input label='Type' value={mType} onUpdateValue={changeType} />
+            <Input
+                label='Spotlight'
+                value={mSpotlight}
+                onUpdateValue={changeSpotlight}
+            />
+            <Input
+                label='Attendance'
+                keyboardType='decimal-pad'
+                value={mAttendane}
+                onUpdateValue={changeAttendance}
+            />
             <View>
-                <Input
-                    label='Email Address'
-                    onUpdateValue={updateInputValueHandler.bind(this, 'email')}
-                    value={enteredEmail}
-                    keyboardType='email-address'
-                    isInvalid={emailIsInvalid}
-                />
-                <Input
-                    label='Email Address'
-                    onUpdateValue={updateInputValueHandler.bind(this, 'email')}
-                    value={enteredEmail}
-                    keyboardType='email-address'
-                    isInvalid={emailIsInvalid}
-                />
-
-                <View style={styles.buttons}>
-                    <Button onPress={submitHandler}>
-                        {isLogin ? 'Log In' : 'Sign Up'}
-                    </Button>
-                </View>
+                <Button>SAVE</Button>
             </View>
         </View>
     );
@@ -80,6 +52,22 @@ function MeetingForm({ isLogin, onSubmit, credentialsInvalid }) {
 export default MeetingForm;
 
 const styles = StyleSheet.create({
+    rootContainer: {
+        // flex: 1,
+        flexDirection: 'column',
+        width: '95%',
+        marginTop: 10,
+        borderWidth: 1,
+        borderRadius: 5,
+        padding: 5,
+        borderColor: Colors.primary800,
+        justifyContent: 'center',
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: 'black',
+    },
     buttons: {
         marginTop: 12,
     },
