@@ -2,10 +2,12 @@ import { useState, useContext } from 'react';
 import { StyleSheet, View, Text, Alert } from 'react-native';
 import { MeetingsContext } from '../../store/meeting-context';
 import { HistoricContext } from '../../store/historic-context';
+import * as Crypto from 'expo-crypto';
 import Button from '../ui/Button';
 import { Colors } from '../../constants/colors';
 import Input from '../ui/Input';
 import InputNumber from '../ui/InputNumber';
+import { dateIsBeforeToday, getUniqueId } from '../../util/helpers';
 
 function onDateChange() {}
 function MeetingForm({ meetingId }) {
@@ -44,14 +46,45 @@ function MeetingForm({ meetingId }) {
     function changeAttendance(val) {
         setMAttendance(val);
     }
-    function saveMeetingHandler() {
-        // check if mDate is a date
-
-        // mType,, mSpotlight can't be null
-
-        // mAttendance has to be number 0-150
-        Alert;
-        Alert.alert('SAVE attempt');
+    function confirmMeetingHandler() {
+        //check each value
+        //-------------------------
+        // date
+        //-------------------------
+        if (
+            isNaN(Date.parse(mDate)) ||
+            mType.length < 3 ||
+            mSpotlight.length < 3 ||
+            parseInt(mAttendane) < 0 ||
+            parseInt(mAttendane) > 300
+        ) {
+            Alert.alert('Validation Error', 'Check your values', [
+                { text: 'OK', style: 'destruction' },
+            ]);
+            return;
+        }
+        if (dateIsBeforeToday(mDate)) {
+            console.log('HISTORIC');
+        } else {
+            console.log('Active');
+        }
+        if (meetingId === '0') {
+            async function getUni() {
+                const digest = await Crypto.digestStringAsync(
+                    Crypto.CryptoDigestAlgorithm.SHA256,
+                    new Date().toString() + Math.random().toString()
+                );
+                return digest;
+            }
+            let uni = getUni()
+                .then((result) => {
+                    console.log('uniuni:', result);
+                    Alert.alert('SAVE attempt');
+                })
+                .catch(() => console.log('error'));
+        } else {
+            Alert.alert('UPDATE attempt');
+        }
     }
     return (
         <View style={styles.rootContainer}>
@@ -73,7 +106,7 @@ function MeetingForm({ meetingId }) {
                 onUpdateValue={changeAttendance}
             />
             <View>
-                <Button onPress={saveMeetingHandler}>SAVE</Button>
+                <Button onPress={confirmMeetingHandler}>SAVE</Button>
             </View>
         </View>
     );

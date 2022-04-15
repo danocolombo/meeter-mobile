@@ -1,15 +1,19 @@
+import * as Crypto from 'expo-crypto';
 export function dateIsBeforeToday(testDate) {
     // let testDate = '2022-01-15';
+
     let target = testDate.split('-');
-    tYear = parseInt(target[0]);
-    tMonth = parseInt(target[1]);
-    tDay = parseInt(target[2]);
+
+    let tYear = parseInt(target[0]);
+    // return true;
+    let tMonth = parseInt(target[1]);
+    let tDay = parseInt(target[2]);
 
     var todayDate = new Date().toISOString().slice(0, 10);
     let standard = todayDate.toString().split('-');
-    sYear = parseInt(standard[0]);
-    sMonth = parseInt(standard[1]);
-    sDay = parseInt(standard[2]);
+    let sYear = parseInt(standard[0]);
+    let sMonth = parseInt(standard[1]);
+    let sDay = parseInt(standard[2]);
     let results = null;
     let spot = 0;
     if (tYear < sYear) {
@@ -25,6 +29,19 @@ export function dateIsBeforeToday(testDate) {
         spot = 4;
         results = false;
     }
-    console.log('spot:' + spot);
-    console.log('target is before standard:' + results);
+    return results;
+}
+export async function getUniqueId() {
+    let uniqueValue = null;
+    await Crypto.digestStringAsync(
+        Crypto.CryptoDigestAlgorithm.SHA256,
+        new Date().toString() + Math.random().toString()
+    )
+        .then((result) => {
+            console.log('result:' + result);
+            return result;
+        })
+        .catch(() => {
+            console.log('failure');
+        });
 }
