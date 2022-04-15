@@ -1,15 +1,36 @@
-import { useState } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { useState, useContext } from 'react';
+import { StyleSheet, View, Text, Alert } from 'react-native';
+import { MeetingsContext } from '../../store/meeting-context';
+import { HistoricContext } from '../../store/historic-context';
 import Button from '../ui/Button';
 import { Colors } from '../../constants/colors';
 import Input from '../ui/Input';
+import InputNumber from '../ui/InputNumber';
 
 function onDateChange() {}
-function MeetingForm() {
-    const [mDate, setMDate] = useState();
-    const [mType, setMType] = useState();
-    const [mSpotlight, setMSpotlight] = useState();
-    const [mAttendane, setMAttendance] = useState();
+function MeetingForm({ meetingId }) {
+    const activeCtx = useContext(MeetingsContext);
+    const historicCtx = useContext(HistoricContext);
+    const meetings = activeCtx.meetings;
+    const historics = historicCtx.meetings;
+    let theMeeting = {
+        meetingDate: new Date().toISOString().slice(0, 10),
+        meetingType: '',
+        title: '',
+        attendanceCount: 0,
+    };
+    if (meetingId !== '0') {
+        theMeeting = meetings.find((mtg) => mtg.meetingId === meetingId);
+        if (!theMeeting) {
+            theMeeting = historics.find((mtg) => mtg.meetingId === meetingId);
+        }
+    }
+    const [mDate, setMDate] = useState(theMeeting.meetingDate);
+    const [mType, setMType] = useState(theMeeting.meetingType);
+    const [mSpotlight, setMSpotlight] = useState(theMeeting.title);
+    const [mAttendane, setMAttendance] = useState(
+        theMeeting.attendanceCount.toString()
+    );
 
     function changeDate(val) {
         setMDate(val);
@@ -22,6 +43,15 @@ function MeetingForm() {
     }
     function changeAttendance(val) {
         setMAttendance(val);
+    }
+    function saveMeetingHandler() {
+        // check if mDate is a date
+
+        // mType,, mSpotlight can't be null
+
+        // mAttendance has to be number 0-150
+        Alert;
+        Alert.alert('SAVE attempt');
     }
     return (
         <View style={styles.rootContainer}>
@@ -36,14 +66,14 @@ function MeetingForm() {
                 value={mSpotlight}
                 onUpdateValue={changeSpotlight}
             />
-            <Input
+            <InputNumber
                 label='Attendance'
                 keyboardType='decimal-pad'
                 value={mAttendane}
                 onUpdateValue={changeAttendance}
             />
             <View>
-                <Button>SAVE</Button>
+                <Button onPress={saveMeetingHandler}>SAVE</Button>
             </View>
         </View>
     );
