@@ -46,7 +46,7 @@ export const MeetingsContext = createContext({
     loadMeetings: () => {},
     loadHistoric: () => {},
 });
-function meetingReducer(state, action) {
+function meetingReducer(state, action, navigation) {
     switch (action.type) {
         case 'LOAD':
             return ACTIVE_MEETINGS;
@@ -74,7 +74,7 @@ function meetingReducer(state, action) {
                 ...action.payload.data,
             };
             const updatedMeetings = [...state];
-            updatedMeetings = [updatableIndex] = updatedMeeting;
+            updatedMeetings[updatableIndex] = updatedMeeting;
             return updatedMeetings;
         default:
             return state;
