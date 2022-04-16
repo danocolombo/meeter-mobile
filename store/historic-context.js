@@ -74,7 +74,7 @@ function meetingReducer(state, action) {
                 ...action.payload.data,
             };
             const updatedMeetings = [...state];
-            updatedMeetings = [updatableIndex] = updatedMeeting;
+            updatedMeetings[updatableIndex] = updatedMeeting;
             return updatedMeetings;
         default:
             return state;

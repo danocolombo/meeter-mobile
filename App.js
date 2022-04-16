@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
+import IconButton from './components/ui/IconButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import LoginScreen from './screens/LoginScreen';
@@ -17,7 +18,6 @@ import MeetingScreen from './screens/MeetingScreen';
 import { Colors } from './constants/colors';
 import AuthContextProvider from './store/auth-context';
 import { AuthContext } from './store/auth-context';
-import IconButton from './components/ui/IconButton';
 import MeetingsContextProvider from './store/meeting-context';
 import HistoricContextProvider from './store/historic-context';
 
@@ -41,6 +41,7 @@ function AuthStack() {
 }
 
 function AuthenticatedDrawer() {
+    const authCtx = useContext(AuthContext);
     return (
         <Drawer.Navigator
             screenOptions={({ navigation }) => ({
@@ -72,7 +73,9 @@ function AuthenticatedDrawer() {
                             size={24}
                             color={tintColor}
                             onPress={() => {
-                                navigation.navigate('Meeting');
+                                navigation.navigate('Meeting', {
+                                    meetingId: '0',
+                                });
                             }}
                         />
                     ),

@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 // import { GlobalStyles } from '../../constants/styles';
@@ -9,9 +9,11 @@ function MeetingItem({ meetingId, meetingDate, meetingType, title }) {
     const navigation = useNavigation();
 
     function meetingPressHandler() {
-        // navigation.navigate('ManageMeeting', {
-        //     meetingId: meetingId,
-        // });
+        navigation.navigate('Meeting', {
+            meetingId: meetingId,
+        });
+        // const msg = 'meetiingId: ' + meetingId;
+        // Alert.alert('GOING', msg);
     }
 
     return (

@@ -1,12 +1,16 @@
+import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import MeetingForm from '../components/Meeting/MeetingForm';
-import { Colors } from '../constants/colors';
 
-function MeetingScreen() {
+function MeetingScreen({ route }) {
+    const meetingId = route.params.meetingId;
+    useEffect(() => {}, []);
     return (
-        <View style={styles.rootContainer}>
-            <MeetingForm />
-        </View>
+        <>
+            <View style={styles.rootContainer}>
+                <MeetingForm meetingId={meetingId} />
+            </View>
+        </>
     );
 }
 export default MeetingScreen;
@@ -15,6 +19,5 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-start',
         alignItems: 'center',
-        // backgroundColor: Colors.primary100,
     },
 });
