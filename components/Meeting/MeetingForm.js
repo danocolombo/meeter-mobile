@@ -1,13 +1,11 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, View, Text, Alert } from 'react-native';
-// import { Picker } from '@react-native-picker/picker';
 
 import { MeetingsContext } from '../../store/meeting-context';
 import { HistoricContext } from '../../store/historic-context';
 import * as Crypto from 'expo-crypto';
 import Button from '../ui/Button';
-import DropDown from '../ui/DropDown';
-import DropDownButton from '../ui/DropDownButton';
+
 import { Colors } from '../../constants/colors';
 import Input from '../ui/Input';
 import InputNumber from '../ui/InputNumber';
@@ -47,35 +45,7 @@ function MeetingForm({ meetingId, route, navigation }) {
         theMeeting.mealCount.toString()
     );
     const [mMeal, setMMeal] = useState(theMeeting.meal);
-    const [show, setShow] = useState();
-    const [position, setPosition] = useState();
-    // handle showing the dropdown
-    const showDropDown = () => {
-        if (this.button) {
-            // use the uimanager to measure the button's position in the window
-            UIManager.measure(
-                findNodeHandle(Button),
-                (x, y, width, height, pageX, pageY) => {
-                    const position = {
-                        left: pageX,
-                        top: pageY,
-                        width: width,
-                        height: height,
-                    };
-                    // setState, which updates the props that are passed to the DropDown component
-                    setShow(true);
-                    setPosition({
-                        x: pageX + width / 2,
-                        y: pageY + (2 * height) / 3,
-                    });
-                }
-            );
-        }
-    };
-    const hideDropDown = (item) => {
-        alert(item);
-        this.setState({ show: false, position: {} });
-    };
+
     function changeDate(val) {
         setMDate(val);
     }
@@ -101,11 +71,6 @@ function MeetingForm({ meetingId, route, navigation }) {
         setMMealCount(itemValue);
     }
     function confirmMeetingHandler(navigation) {
-        //check each value
-        //-------------------------
-        // date
-        //-------------------------
-
         if (
             isNaN(Date.parse(mDate)) ||
             mType.length < 3 ||
@@ -170,25 +135,6 @@ function MeetingForm({ meetingId, route, navigation }) {
                 value={mDate}
                 onUpdateValue={changeDate}
             />
-            {/* <DropDownButton
-                ref={(ref) => {
-                    this.button = ref;
-                }}
-                onPress={showDropDown}
-                title={'Menu'}
-            /> */}
-            {/* <Picker
-                selectedValue={mType}
-                style={{ height: 100 }}
-                onValueChange={(itemValue, itemIndex) =>
-                    onTypeSelection(itemValue)
-                }
-            >
-                <Picker.Item label='Testimony' value='testimony' />
-                <Picker.Item label='Lesson' value='lesson' />
-                <Picker.Item label='Special' value='special' />
-                <Picker.Item label='Training' value='training' />
-            </Picker> */}
             <Input label='Type' value={mType} onUpdateValue={changeType} />
             <Input
                 label={
