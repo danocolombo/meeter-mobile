@@ -1,6 +1,6 @@
 import { createContext, useReducer } from 'react';
-import { ACTIVE_MEETINGS } from '../constants/data/active';
-import { HISTORICAL_MEETINGS } from '../constants/data/historical';
+import { MEETINGS } from '../constants/data/meetings';
+// import { HISTORICAL_MEETINGS } from '../constants/data/historical';
 //   ---------------------------------
 //todo -- can we make this blank [] ?
 //   ---------------------------------
@@ -19,7 +19,6 @@ const INITIAL_STATE = [
 
 export const MeetingsContext = createContext({
     meetings: [],
-    historic: [],
     addMeeting: ({
         meetingId,
         meetingDate,
@@ -49,9 +48,7 @@ export const MeetingsContext = createContext({
 function meetingReducer(state, action, navigation) {
     switch (action.type) {
         case 'LOAD':
-            return ACTIVE_MEETINGS;
-        case 'LOAD_HISTORIC':
-            return HISTORICAL_MEETINGS;
+            return MEETINGS;
         case 'ADD':
             //create the unique id
             //   =========================================
@@ -99,9 +96,7 @@ function MeetingsContextProvider({ children }) {
     function loadMeetings() {
         dispatch({ type: 'LOAD' });
     }
-    function loadHistoric() {
-        dispatchHistoric({ type: 'LOAD_HISTORIC' });
-    }
+
     // need this to expose these contents to anyone using context
     const value = {
         meetings: meetingsState,
@@ -109,7 +104,6 @@ function MeetingsContextProvider({ children }) {
         deleteMeeting: deleteMeeting,
         updateMeeting: updateMeeting,
         loadMeetings: loadMeetings,
-        loadHistoric: loadHistoric,
     };
     return (
         <MeetingsContext.Provider value={value}>

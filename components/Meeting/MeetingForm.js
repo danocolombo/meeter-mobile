@@ -1,13 +1,10 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, View, Text, Alert } from 'react-native';
-// import { Picker } from '@react-native-picker/picker';
 
 import { MeetingsContext } from '../../store/meeting-context';
-import { HistoricContext } from '../../store/historic-context';
 import * as Crypto from 'expo-crypto';
 import Button from '../ui/Button';
-import DropDown from '../ui/DropDown';
-import DropDownButton from '../ui/DropDownButton';
+
 import { Colors } from '../../constants/colors';
 import Input from '../ui/Input';
 import InputNumber from '../ui/InputNumber';
@@ -15,11 +12,14 @@ import { dateIsBeforeToday, getUniqueId } from '../../util/helpers';
 
 function onDateChange() {}
 function MeetingForm({ meetingId, route, navigation }) {
-    const activeCtx = useContext(MeetingsContext);
-    const historicCtx = useContext(HistoricContext);
-    const meetings = activeCtx.meetings;
-    const historics = historicCtx.meetings;
+    const meetingCtx = useContext(MeetingsContext);
+    // const historicCtx = useContext(HistoricContext);
+    const meetings = meetingCtx.meetings;
+    // const historics = historicCtx.meetings;
 
+    //-------------------------------
+    // The default meeting definition
+    //-------------------------------
     let theMeeting = {
         meetingDate: new Date().toISOString().slice(0, 10),
         meetingType: '',
@@ -29,10 +29,13 @@ function MeetingForm({ meetingId, route, navigation }) {
         mealCount: 0,
     };
     if (meetingId !== '0') {
+        //===================================
+        // need to get the next meeting
+        //===================================
         theMeeting = meetings.find((mtg) => mtg.meetingId === meetingId);
-        if (!theMeeting) {
-            theMeeting = historics.find((mtg) => mtg.meetingId === meetingId);
-        }
+        // if (!theMeeting) {
+        //     theMeeting = historics.find((mtg) => mtg.meetingId === meetingId);
+        // }
     }
     const [mDate, setMDate] = useState(theMeeting.meetingDate);
     const [mType, setMType] = useState(theMeeting.meetingType);
@@ -47,35 +50,7 @@ function MeetingForm({ meetingId, route, navigation }) {
         theMeeting.mealCount.toString()
     );
     const [mMeal, setMMeal] = useState(theMeeting.meal);
-    const [show, setShow] = useState();
-    const [position, setPosition] = useState();
-    // handle showing the dropdown
-    const showDropDown = () => {
-        if (this.button) {
-            // use the uimanager to measure the button's position in the window
-            UIManager.measure(
-                findNodeHandle(Button),
-                (x, y, width, height, pageX, pageY) => {
-                    const position = {
-                        left: pageX,
-                        top: pageY,
-                        width: width,
-                        height: height,
-                    };
-                    // setState, which updates the props that are passed to the DropDown component
-                    setShow(true);
-                    setPosition({
-                        x: pageX + width / 2,
-                        y: pageY + (2 * height) / 3,
-                    });
-                }
-            );
-        }
-    };
-    const hideDropDown = (item) => {
-        alert(item);
-        this.setState({ show: false, position: {} });
-    };
+
     function changeDate(val) {
         setMDate(val);
     }
@@ -102,9 +77,6 @@ function MeetingForm({ meetingId, route, navigation }) {
     }
     function confirmMeetingHandler(navigation) {
         //check each value
-        //-------------------------
-        // date
-        //-------------------------
 
         if (
             isNaN(Date.parse(mDate)) ||
@@ -138,28 +110,16 @@ function MeetingForm({ meetingId, route, navigation }) {
                 })
                 .catch(() => console.log('error'));
         } else {
-            //determine if it is active or historical
-            if (dateIsBeforeToday(mDate)) {
-                historicCtx.updateMeeting(meetingId, {
-                    meetingDate: mDate,
-                    meetingType: mType,
-                    title: mSpotlight,
-                    attendanceCount: mAttendance,
-                    meal: mMeal,
-                    mealCount: mMealCount,
-                });
-                console.log('update historical meeting');
-            } else {
-                activeCtx.updateMeeting(meetingId, {
-                    meetingDate: mDate,
-                    meetingType: mType,
-                    title: mSpotlight,
-                    attendanceCount: mAttendance,
-                    meal: mMeal,
-                    mealCount: mMealCount,
-                });
-                console.log('update active meeting');
-            }
+            activeCtx.updateMeeting(meetingId, {
+                meetingDate: mDate,
+                meetingType: mType,
+                title: mSpotlight,
+                attendanceCount: mAttendance,
+                meal: mMeal,
+                mealCount: mMealCount,
+            });
+            console.log('update active meeting');
+
             Alert.alert('UPDATE attempt');
         }
     }
@@ -170,25 +130,7 @@ function MeetingForm({ meetingId, route, navigation }) {
                 value={mDate}
                 onUpdateValue={changeDate}
             />
-            {/* <DropDownButton
-                ref={(ref) => {
-                    this.button = ref;
-                }}
-                onPress={showDropDown}
-                title={'Menu'}
-            /> */}
-            {/* <Picker
-                selectedValue={mType}
-                style={{ height: 100 }}
-                onValueChange={(itemValue, itemIndex) =>
-                    onTypeSelection(itemValue)
-                }
-            >
-                <Picker.Item label='Testimony' value='testimony' />
-                <Picker.Item label='Lesson' value='lesson' />
-                <Picker.Item label='Special' value='special' />
-                <Picker.Item label='Training' value='training' />
-            </Picker> */}
+
             <Input label='Type' value={mType} onUpdateValue={changeType} />
             <Input
                 label={
