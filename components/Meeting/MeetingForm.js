@@ -1,6 +1,8 @@
 import { useState, useContext } from 'react';
 import { StyleSheet, View, Text, Alert } from 'react-native';
-
+//import SelectDropdown from 'react-native-select-dropdown';
+import SelectDropdown from '../ui/DropDown/SelectDropdown';
+//import DropDownPicker from 'react-native-dropdown-picker';
 import { MeetingsContext } from '../../store/meeting-context';
 import { HistoricContext } from '../../store/historic-context';
 import * as Crypto from 'expo-crypto';
@@ -38,6 +40,7 @@ function MeetingForm({ meetingId, route, navigation }) {
     const [mSupportContact, setMSupportContact] = useState(
         theMeeting.supportContact
     );
+
     const [mAttendance, setMAttendance] = useState(
         theMeeting.attendanceCount.toString()
     );
@@ -45,7 +48,9 @@ function MeetingForm({ meetingId, route, navigation }) {
         theMeeting.mealCount.toString()
     );
     const [mMeal, setMMeal] = useState(theMeeting.meal);
-
+    const meetingTypes = ['Lesson', 'Testimony', 'Special', 'Training'];
+    //   --------METHODS  ------------
+    //   =============================
     function changeDate(val) {
         setMDate(val);
     }
@@ -135,7 +140,31 @@ function MeetingForm({ meetingId, route, navigation }) {
                 value={mDate}
                 onUpdateValue={changeDate}
             />
-            <Input label='Type' value={mType} onUpdateValue={changeType} />
+            <Text style={styles.label}>Meeting Type</Text>
+            <SelectDropdown
+                data={meetingTypes}
+                onSelect={(selectedItem, index) => {
+                    // console.log(selectedItem, index);
+                    setMType(selectedItem);
+                }}
+                defaultValue={mType}
+                buttonStyle={{
+                    borderColor: Colors.accent500,
+                    borderWidth: 1,
+                    borderRadius: 2,
+                }}
+                buttonTextAfterSelection={(selectedItem, index) => {
+                    // text represented after item is selected
+                    // if data array is an array of objects then return selectedItem.property to render after item is selected
+                    return selectedItem;
+                }}
+                rowTextForSelection={(item, index) => {
+                    // text represented for each item in dropdown
+                    // if data array is an array of objects then return item.property to represent item in dropdown
+                    return item;
+                }}
+            />
+            {/* <Input label='Type' value={mType} onUpdateValue={changeType} /> */}
             <Input
                 label={
                     mType === 'Lesson'
@@ -197,5 +226,9 @@ const styles = StyleSheet.create({
     },
     buttons: {
         marginTop: 12,
+    },
+    label: {
+        fontSize: 20,
+        marginBottom: 5,
     },
 });
