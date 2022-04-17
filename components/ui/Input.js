@@ -32,22 +32,25 @@ export default Input;
 
 const styles = StyleSheet.create({
     inputContainer: {
-        marginVertical: 8,
+        marginVertical: 0,
     },
     label: {
         color: 'black',
         fontSize: 20,
         marginBottom: 4,
+        marginTop: 2,
     },
     labelInvalid: {
         color: Colors.error500,
     },
     input: {
-        paddingVertical: 8,
+        paddingVertical: 2,
         paddingHorizontal: 6,
         backgroundColor: Colors.primary100,
         borderRadius: 4,
         fontSize: 16,
+        minHeight: 30,
+        minWidth: '75%',
     },
     inputInvalid: {
         backgroundColor: Colors.error100,

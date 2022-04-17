@@ -135,69 +135,95 @@ function MeetingForm({ meetingId, route, navigation }) {
     }
     return (
         <View style={styles.rootContainer}>
-            <Input
-                label='Meeting Date'
-                value={mDate}
-                onUpdateValue={changeDate}
-            />
-            <Text style={styles.label}>Meeting Type</Text>
-            <SelectDropdown
-                data={meetingTypes}
-                onSelect={(selectedItem, index) => {
-                    // console.log(selectedItem, index);
-                    setMType(selectedItem);
-                }}
-                defaultValue={mType}
-                buttonStyle={{
-                    borderColor: Colors.accent500,
-                    borderWidth: 1,
-                    borderRadius: 2,
-                }}
-                buttonTextAfterSelection={(selectedItem, index) => {
-                    // text represented after item is selected
-                    // if data array is an array of objects then return selectedItem.property to render after item is selected
-                    return selectedItem;
-                }}
-                rowTextForSelection={(item, index) => {
-                    // text represented for each item in dropdown
-                    // if data array is an array of objects then return item.property to represent item in dropdown
-                    return item;
-                }}
-            />
-            {/* <Input label='Type' value={mType} onUpdateValue={changeType} /> */}
-            <Input
-                label={
-                    mType === 'Lesson'
-                        ? 'Lesson'
-                        : mType === 'Testimony'
-                        ? 'Guest'
-                        : 'Title'
-                }
-                value={mSpotlight}
-                onUpdateValue={changeSpotlight}
-            />
-            {mType === 'Lesson' ? (
+            <View style={styles.flexRow}>
                 <Input
-                    label='Instructor'
-                    value={mSupportContact}
-                    onUpdateValue={changeSupport}
+                    label='Meeting Date'
+                    value={mDate}
+                    onUpdateValue={changeDate}
                 />
-            ) : null}
-            <InputNumber
-                label='Attendance'
-                keyboardType='decimal-pad'
-                value={mAttendance}
-                onUpdateValue={changeAttendance}
-            />
-            <Input label='Meal' value={mMeal} onUpdateValue={changeMeal} />
-            <InputNumber
-                label='Meal Count'
-                keyboardType='decimal-pad'
-                value={mMealCount}
-                onUpdateValue={changeMealCount}
-            />
-            <View>
-                <Button onPress={confirmMeetingHandler}>SAVE</Button>
+            </View>
+            <View style={styles.flexRow}>
+                <Text style={styles.label}>Meeting Type</Text>
+            </View>
+            <View style={styles.flexRow}>
+                <SelectDropdown
+                    data={meetingTypes}
+                    onSelect={(selectedItem, index) => {
+                        // console.log(selectedItem, index);
+                        setMType(selectedItem);
+                    }}
+                    defaultValue={mType}
+                    buttonStyle={{
+                        borderColor: Colors.accent500,
+                        borderWidth: 1,
+                        borderRadius: 2,
+                    }}
+                    buttonTextAfterSelection={(selectedItem, index) => {
+                        // text represented after item is selected
+                        // if data array is an array of objects then return selectedItem.property to render after item is selected
+                        return selectedItem;
+                    }}
+                    rowTextForSelection={(item, index) => {
+                        // text represented for each item in dropdown
+                        // if data array is an array of objects then return item.property to represent item in dropdown
+                        return item;
+                    }}
+                />
+            </View>
+            <View style={styles.flexRow}>
+                <Input
+                    label={
+                        mType === 'Lesson'
+                            ? 'Lesson'
+                            : mType === 'Testimony'
+                            ? 'Guest'
+                            : 'Title'
+                    }
+                    value={mSpotlight}
+                    onUpdateValue={changeSpotlight}
+                    style={styles.input}
+                />
+            </View>
+            <View style={styles.flexRow}>
+                {mType === 'Lesson' ? (
+                    <Input
+                        label='Instructor'
+                        value={mSupportContact}
+                        onUpdateValue={changeSupport}
+                        style={styles.input}
+                    />
+                ) : null}
+            </View>
+            <View style={styles.flexRow}>
+                <InputNumber
+                    label='Attendance'
+                    keyboardType='decimal-pad'
+                    value={mAttendance}
+                    onUpdateValue={changeAttendance}
+                />
+            </View>
+            <View style={styles.flexRow}>
+                <View style={styles.mealMenu}>
+                    <Input
+                        label='Meal'
+                        value={mMeal}
+                        onUpdateValue={changeMeal}
+                        // style={styles.input}
+                    />
+                </View>
+                <View style={styles.mealCount}>
+                    <InputNumber
+                        label='Meal Count'
+                        keyboardType='decimal-pad'
+                        value={mMealCount}
+                        onUpdateValue={changeMealCount}
+                    />
+                </View>
+            </View>
+            <View style={styles.flexRow}>
+                <View style={styles.buttonContainer}>
+                    <Button onPress={confirmMeetingHandler}>SAVE</Button>
+                </View>
             </View>
         </View>
     );
@@ -207,8 +233,11 @@ export default MeetingForm;
 
 const styles = StyleSheet.create({
     rootContainer: {
-        // flex: 1,
+        // display: flex,
         flexDirection: 'column',
+        flexWrap: 'wrap',
+        width: '95%',
+        borderColor: Colors.primary800,
         width: '95%',
         marginTop: 5,
         borderWidth: 1,
@@ -218,6 +247,16 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         borderColor: Colors.primary800,
         justifyContent: 'center',
+    },
+    flexRow: {
+        flexGrow: 1,
+        flexDirection: 'row',
+        display: 'flex',
+        width: '80%',
+    },
+    input: {
+        // height: '100%',
+        minWidth: '60%',
     },
     title: {
         fontSize: 24,
@@ -229,6 +268,26 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 20,
-        marginBottom: 5,
+        marginBottom: 2,
+    },
+    spotlight: {
+        width: '90%',
+    },
+    mealMenu: {
+        flexGrow: 3,
+        minWidth: '70%',
+        marginRight: 5,
+        height: '100%',
+    },
+    mealCount: {
+        minWidth: '30%',
+    },
+    buttonContainer: {
+        // flexDirection: 'row',
+        // flexGrow: 1,
+        width: '100%',
+        marginTop: 10,
+        justifyContent: 'center',
+        // alignItems: 'center',
     },
 });

@@ -32,7 +32,7 @@ export default InputNumber;
 
 const styles = StyleSheet.create({
     inputContainer: {
-        marginVertical: 8,
+        marginVertical: 0,
     },
     label: {
         color: 'black',
@@ -43,11 +43,12 @@ const styles = StyleSheet.create({
         color: Colors.error500,
     },
     input: {
-        paddingVertical: 8,
+        paddingVertical: 2,
         paddingHorizontal: 6,
         backgroundColor: Colors.primary100,
         borderRadius: 4,
         fontSize: 16,
+        height: 30,
     },
     inputInvalid: {
         backgroundColor: Colors.error100,
