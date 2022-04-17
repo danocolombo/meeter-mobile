@@ -7,18 +7,22 @@ import { MeetingsContext } from '../../store/meeting-context';
 import { HistoricContext } from '../../store/historic-context';
 import * as Crypto from 'expo-crypto';
 import Button from '../ui/Button';
+import GroupCard from '../Group/GroupCard';
 
 import { Colors } from '../../constants/colors';
 import Input from '../ui/Input';
 import InputNumber from '../ui/InputNumber';
 import { dateIsBeforeToday, getUniqueId } from '../../util/helpers';
+import { GroupsContext } from '../../store/groups-context';
 
 function onDateChange() {}
 function MeetingForm({ meetingId, route, navigation }) {
     const activeCtx = useContext(MeetingsContext);
     const historicCtx = useContext(HistoricContext);
+    const groupsCtx = useContext(GroupsContext);
     const meetings = activeCtx.meetings;
     const historics = historicCtx.meetings;
+    const groups = groupsCtx.groups;
 
     let theMeeting = {
         meetingDate: new Date().toISOString().slice(0, 10),
@@ -34,6 +38,13 @@ function MeetingForm({ meetingId, route, navigation }) {
             theMeeting = historics.find((mtg) => mtg.meetingId === meetingId);
         }
     }
+    let groupsFound = groups.filter((grp) => {
+        if (grp.meetingId === meetingId) {
+            return grp;
+        }
+    });
+
+    const [meetingGroups, setMeetingGroups] = useState(groupsFound);
     const [mDate, setMDate] = useState(theMeeting.meetingDate);
     const [mType, setMType] = useState(theMeeting.meetingType);
     const [mSpotlight, setMSpotlight] = useState(theMeeting.title);
@@ -221,8 +232,31 @@ function MeetingForm({ meetingId, route, navigation }) {
                 </View>
             </View>
             <View style={styles.flexRow}>
-                <View style={styles.buttonContainer}>
+                <View
+                    style={[
+                        styles.buttonContainer,
+                        {
+                            borderColor: 'black',
+                            borderWidth: 2,
+                            borderRadius: 10,
+                        },
+                    ]}
+                >
                     <Button onPress={confirmMeetingHandler}>SAVE</Button>
+                </View>
+            </View>
+            <View style={styles.groupDivider}>
+                <Text style={styles.groupHeader}>Groups</Text>
+                <Text style={styles.groupAddIcon}>+</Text>
+            </View>
+
+            <View>
+                <View style={styles.groupContainer}>
+                    {groupsFound.length > 0
+                        ? groupsFound.map((grp) => (
+                              <GroupCard key={grp.groupId} group={grp} />
+                          ))
+                        : null}
                 </View>
             </View>
         </View>
@@ -281,6 +315,30 @@ const styles = StyleSheet.create({
     },
     mealCount: {
         minWidth: '30%',
+    },
+    groupDivider: {
+        flexDirection: 'row',
+        flexGrow: 1,
+        backgroundColor: Colors.gray20,
+        marginTop: 5,
+        width: '100%',
+        justifyContent: 'center',
+        alignContent: 'center',
+        padding: 2,
+    },
+    groupHeader: {
+        width: '90%',
+        alignItems: 'center',
+        fontSize: 18,
+    },
+    groupAddIcon: {
+        width: '10%',
+        fontSize: 18,
+    },
+    groupContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
     },
     buttonContainer: {
         // flexDirection: 'row',

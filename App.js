@@ -20,6 +20,7 @@ import AuthContextProvider from './store/auth-context';
 import { AuthContext } from './store/auth-context';
 import MeetingsContextProvider from './store/meeting-context';
 import HistoricContextProvider from './store/historic-context';
+import GroupsContextProvider from './store/groups-context';
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -164,9 +165,11 @@ export default function App() {
             <StatusBar style='light' />
             <AuthContextProvider>
                 <MeetingsContextProvider>
-                    <HistoricContextProvider>
-                        <Navigation />
-                    </HistoricContextProvider>
+                    <GroupsContextProvider>
+                        <HistoricContextProvider>
+                            <Navigation />
+                        </HistoricContextProvider>
+                    </GroupsContextProvider>
                 </MeetingsContextProvider>
             </AuthContextProvider>
         </>
