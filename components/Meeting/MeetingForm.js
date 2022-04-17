@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { StyleSheet, View, Text, Alert } from 'react-native';
+import { StyleSheet, View, Text, Alert, ScrollView } from 'react-native';
 //import SelectDropdown from 'react-native-select-dropdown';
 import SelectDropdown from '../ui/DropDown/SelectDropdown';
 //import DropDownPicker from 'react-native-dropdown-picker';
@@ -145,119 +145,141 @@ function MeetingForm({ meetingId, route, navigation }) {
         }
     }
     return (
-        <View style={styles.rootContainer}>
-            <View style={styles.flexRow}>
-                <Input
-                    label='Meeting Date'
-                    value={mDate}
-                    onUpdateValue={changeDate}
-                />
-            </View>
-            <View style={styles.flexRow}>
-                <Text style={styles.label}>Meeting Type</Text>
-            </View>
-            <View style={styles.flexRow}>
-                <SelectDropdown
-                    data={meetingTypes}
-                    onSelect={(selectedItem, index) => {
-                        // console.log(selectedItem, index);
-                        setMType(selectedItem);
-                    }}
-                    defaultValue={mType}
-                    buttonStyle={{
-                        borderColor: Colors.accent500,
-                        borderWidth: 1,
-                        borderRadius: 2,
-                    }}
-                    buttonTextAfterSelection={(selectedItem, index) => {
-                        // text represented after item is selected
-                        // if data array is an array of objects then return selectedItem.property to render after item is selected
-                        return selectedItem;
-                    }}
-                    rowTextForSelection={(item, index) => {
-                        // text represented for each item in dropdown
-                        // if data array is an array of objects then return item.property to represent item in dropdown
-                        return item;
-                    }}
-                />
-            </View>
-            <View style={styles.flexRow}>
-                <Input
-                    label={
-                        mType === 'Lesson'
-                            ? 'Lesson'
-                            : mType === 'Testimony'
-                            ? 'Guest'
-                            : 'Title'
-                    }
-                    value={mSpotlight}
-                    onUpdateValue={changeSpotlight}
-                    style={styles.input}
-                />
-            </View>
-            <View style={styles.flexRow}>
-                {mType === 'Lesson' ? (
+        <View>
+            <View style={styles.meetingFrame}>
+                <View style={styles.meetingCanvasCenter}>
+                    <Text>meetingCanvasCenter</Text>
+                </View>
+                <View style={styles.meetingCanvasLeft}>
+                    <View>
+                        <Text>meetingCanvasLeft Sample</Text>
+                    </View>
+                </View>
+                <View style={styles.meetingCanvasLeft}>
                     <Input
-                        label='Instructor'
-                        value={mSupportContact}
-                        onUpdateValue={changeSupport}
+                        label='Meeting Date'
+                        value={mDate}
+                        onUpdateValue={changeDate}
+                    />
+                </View>
+                <View style={styles.meetingCanvasLeft}>
+                    <Text style={styles.label}>Meeting Type</Text>
+                </View>
+                <View style={styles.meetingCanvasLeft}>
+                    <SelectDropdown
+                        data={meetingTypes}
+                        onSelect={(selectedItem, index) => {
+                            // console.log(selectedItem, index);
+                            setMType(selectedItem);
+                        }}
+                        defaultValue={mType}
+                        buttonStyle={{
+                            borderColor: Colors.accent500,
+                            borderWidth: 1,
+                            borderRadius: 2,
+                        }}
+                        buttonTextAfterSelection={(selectedItem, index) => {
+                            // text represented after item is selected
+                            // if data array is an array of objects then return selectedItem.property to render after item is selected
+                            return selectedItem;
+                        }}
+                        rowTextForSelection={(item, index) => {
+                            // text represented for each item in dropdown
+                            // if data array is an array of objects then return item.property to represent item in dropdown
+                            return item;
+                        }}
+                    />
+                </View>
+                <View style={styles.meetingCanvasLeft}>
+                    <Input
+                        label={
+                            mType === 'Lesson'
+                                ? 'Lesson'
+                                : mType === 'Testimony'
+                                ? 'Guest'
+                                : 'Title'
+                        }
+                        value={mSpotlight}
+                        onUpdateValue={changeSpotlight}
                         style={styles.input}
                     />
-                ) : null}
-            </View>
-            <View style={styles.flexRow}>
-                <InputNumber
-                    label='Attendance'
-                    keyboardType='decimal-pad'
-                    value={mAttendance}
-                    onUpdateValue={changeAttendance}
-                />
-            </View>
-            <View style={styles.flexRow}>
-                <View style={styles.mealMenu}>
-                    <Input
-                        label='Meal'
-                        value={mMeal}
-                        onUpdateValue={changeMeal}
-                        // style={styles.input}
-                    />
                 </View>
-                <View style={styles.mealCount}>
+                <View style={styles.meetingCanvasLeft}>
+                    {mType === 'Lesson' ? (
+                        <Input
+                            label='Instructor'
+                            value={mSupportContact}
+                            onUpdateValue={changeSupport}
+                            style={styles.input}
+                        />
+                    ) : null}
+                </View>
+                <View style={styles.meetingCanvasLeft}>
                     <InputNumber
-                        label='Meal Count'
+                        label='Attendance'
                         keyboardType='decimal-pad'
-                        value={mMealCount}
-                        onUpdateValue={changeMealCount}
+                        value={mAttendance}
+                        onUpdateValue={changeAttendance}
                     />
                 </View>
-            </View>
-            <View style={styles.flexRow}>
+                <View style={styles.comboRow}>
+                    <View style={styles.mealMenu}>
+                        <Input
+                            label='Meal'
+                            value={mMeal}
+                            onUpdateValue={changeMeal}
+                            // style={styles.input}
+                        />
+                    </View>
+                    <View style={styles.mealCount}>
+                        <InputNumber
+                            label='Meal Count'
+                            keyboardType='decimal-pad'
+                            value={mMealCount}
+                            onUpdateValue={changeMealCount}
+                        />
+                    </View>
+                </View>
                 <View
                     style={[
-                        styles.buttonContainer,
-                        {
-                            borderColor: 'black',
-                            borderWidth: 2,
-                            borderRadius: 10,
-                        },
+                        styles.meetingCanvasCenter,
+                        { marginHorizontal: 10 },
                     ]}
                 >
-                    <Button onPress={confirmMeetingHandler}>SAVE</Button>
+                    <View
+                        style={[
+                            styles.buttonContainer,
+                            {
+                                borderColor: 'black',
+                                borderWidth: 2,
+                                borderRadius: 10,
+                            },
+                        ]}
+                    >
+                        <Button onPress={confirmMeetingHandler}>SAVE</Button>
+                    </View>
                 </View>
-            </View>
-            <View style={styles.groupDivider}>
-                <Text style={styles.groupHeader}>Groups</Text>
-                <Text style={styles.groupAddIcon}>+</Text>
-            </View>
 
-            <View>
-                <View style={styles.groupContainer}>
-                    {groupsFound.length > 0
-                        ? groupsFound.map((grp) => (
-                              <GroupCard key={grp.groupId} group={grp} />
-                          ))
-                        : null}
+                <View style={styles.meetingCanvasCenter}>
+                    <View style={styles.groupDividerRow}>
+                        <Text style={styles.groupHeader}>Groups</Text>
+                        <Text style={styles.groupAddIcon}>+</Text>
+                    </View>
                 </View>
+                <ScrollView>
+                    <View style={styles.groupContainer}>
+                        {groupsFound.length > 0
+                            ? groupsFound.map((grp) => (
+                                  <GroupCard key={grp.groupId} group={grp} />
+                              ))
+                            : null}
+                        {groupsFound.length > 0
+                            ? groupsFound.map((grp) => (
+                                  <GroupCard key={grp.groupId} group={grp} />
+                              ))
+                            : null}
+                    </View>
+                </ScrollView>
             </View>
         </View>
     );
@@ -266,27 +288,37 @@ function MeetingForm({ meetingId, route, navigation }) {
 export default MeetingForm;
 
 const styles = StyleSheet.create({
-    rootContainer: {
+    meetingFrame: {
         // display: flex,
         flexDirection: 'column',
         flexWrap: 'wrap',
         width: '95%',
         borderColor: Colors.primary800,
-        width: '95%',
         marginTop: 5,
         borderWidth: 1,
         borderRadius: 5,
-        paddingLeft: 15,
-        paddingRight: 25,
-        paddingBottom: 10,
+        // paddingLeft: 15,
+        // paddingRight: 25,
+        // paddingBottom: 10,
         borderColor: Colors.primary800,
         justifyContent: 'center',
     },
-    flexRow: {
+    meetingCanvasCenter: {
+        backgroundColor: Colors.gray10,
+        alignItems: 'center',
+    },
+    meetingCanvasLeft: {
+        backgroundColor: Colors.gray10,
+    },
+    rowLeft: {
+        alignContent: 'flex-start',
+    },
+    comboRow: {
         flexGrow: 1,
         flexDirection: 'row',
         display: 'flex',
         width: '80%',
+        backgroundColor: Colors.gray10,
     },
     input: {
         // height: '100%',
@@ -316,11 +348,20 @@ const styles = StyleSheet.create({
     mealCount: {
         minWidth: '30%',
     },
+    groupDividerRow: {
+        backgroundColor: Colors.gray20,
+        flexDirection: 'row',
+        borderTopWidth: 3,
+        borderTopColor: 'black',
+        borderBottomColor: 'black',
+        borderBottomWidth: 3,
+        marginVertical: 5,
+    },
     groupDivider: {
         flexDirection: 'row',
         flexGrow: 1,
         backgroundColor: Colors.gray20,
-        marginTop: 5,
+        marginVertical: 15,
         width: '100%',
         justifyContent: 'center',
         alignContent: 'center',
@@ -330,10 +371,14 @@ const styles = StyleSheet.create({
         width: '90%',
         alignItems: 'center',
         fontSize: 18,
+        fontWeight: 'bold',
+        paddingLeft: 10,
     },
     groupAddIcon: {
         width: '10%',
+        textAlign: 'right',
         fontSize: 18,
+        paddingRight: 20,
     },
     groupContainer: {
         flexDirection: 'row',
@@ -344,8 +389,9 @@ const styles = StyleSheet.create({
         // flexDirection: 'row',
         // flexGrow: 1,
         width: '100%',
-        marginTop: 10,
+        marginVertical: 10,
         justifyContent: 'center',
+        backgroundColor: Colors.gray10,
         // alignItems: 'center',
     },
 });
