@@ -17,7 +17,7 @@ export default MeetingScreen;
 const styles = StyleSheet.create({
     rootContainer: {
         flex: 1,
-        justifyContent: 'flex-start',
+        // justifyContent: 'flex-start',
         alignItems: 'center',
     },
 });
