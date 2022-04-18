@@ -4,6 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import { Colors } from '../../constants/styles';
 
 function GroupListItem({
+    groupId,
+    meetingId,
     gender,
     attendance,
     title,
@@ -14,6 +16,8 @@ function GroupListItem({
 }) {
     const navigation = useNavigation();
     const group = {
+        groupId: groupId,
+        meetingId: meetingId,
         gender: gender,
         attendance: attendance,
         title: title,
