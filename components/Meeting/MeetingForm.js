@@ -1,13 +1,22 @@
 import { useState, useContext } from 'react';
-import { StyleSheet, View, Text, Alert, ScrollView } from 'react-native';
+import {
+    StyleSheet,
+    View,
+    Text,
+    Alert,
+    FlatList,
+    Pressable,
+} from 'react-native';
 //import SelectDropdown from 'react-native-select-dropdown';
 import SelectDropdown from '../ui/DropDown/SelectDropdown';
 //import DropDownPicker from 'react-native-dropdown-picker';
+import { useNavigation } from '@react-navigation/native';
 import { MeetingsContext } from '../../store/meeting-context';
 import { HistoricContext } from '../../store/historic-context';
 import * as Crypto from 'expo-crypto';
 import Button from '../ui/Button';
 import GroupCard from '../Group/GroupCard';
+import GroupListItem from '../Group/GroupListItem';
 
 import { Colors } from '../../constants/colors';
 import Input from '../ui/Input';
@@ -16,7 +25,8 @@ import { dateIsBeforeToday, getUniqueId } from '../../util/helpers';
 import { GroupsContext } from '../../store/groups-context';
 
 function onDateChange() {}
-function MeetingForm({ meetingId, route, navigation }) {
+function MeetingForm({ meetingId }) {
+    const navigation = useNavigation();
     const activeCtx = useContext(MeetingsContext);
     const historicCtx = useContext(HistoricContext);
     const groupsCtx = useContext(GroupsContext);
@@ -144,6 +154,15 @@ function MeetingForm({ meetingId, route, navigation }) {
             Alert.alert('UPDATE attempt');
         }
     }
+    function addGroupHandler() {
+        navigation.navigate('Group', {
+            group: { groupId: '0' },
+            meetingId: meetingId,
+        });
+    }
+    function renderGroupItem(itemData) {
+        return <GroupListItem {...itemData.item} />;
+    }
     return (
         <View>
             <View style={styles.meetingFrame}>
@@ -240,46 +259,41 @@ function MeetingForm({ meetingId, route, navigation }) {
                         />
                     </View>
                 </View>
+
                 <View
                     style={[
                         styles.meetingCanvasCenter,
                         { marginHorizontal: 10 },
                     ]}
                 >
-                    <View
-                        style={[
-                            styles.buttonContainer,
-                            {
-                                borderColor: 'black',
-                                borderWidth: 2,
-                                borderRadius: 10,
-                            },
-                        ]}
-                    >
-                        <Button onPress={confirmMeetingHandler}>SAVE</Button>
+                    <View style={styles.buttonContainer}>
+                        <Button
+                            onPress={confirmMeetingHandler}
+                            customStyle={{ backgroundColor: 'green' }}
+                        >
+                            SAVE
+                        </Button>
                     </View>
                 </View>
-
                 <View style={styles.meetingCanvasCenter}>
                     <View style={styles.groupDividerRow}>
                         <Text style={styles.groupHeader}>Groups</Text>
-                        <Text style={styles.groupAddIcon}>+</Text>
+                        <Pressable
+                            onPress={addGroupHandler}
+                            style={({ pressed }) => pressed && styles.pressed}
+                        >
+                            <Text style={styles.groupAddIcon}>+</Text>
+                        </Pressable>
                     </View>
                 </View>
-                <ScrollView>
-                    <View style={styles.groupContainer}>
-                        {groupsFound.length > 0
-                            ? groupsFound.map((grp) => (
-                                  <GroupCard key={grp.groupId} group={grp} />
-                              ))
-                            : null}
-                        {groupsFound.length > 0
-                            ? groupsFound.map((grp) => (
-                                  <GroupCard key={grp.groupId} group={grp} />
-                              ))
-                            : null}
-                    </View>
-                </ScrollView>
+
+                <View style={styles.groupContainer}>
+                    <FlatList
+                        data={groupsFound}
+                        renderItem={renderGroupItem}
+                        keyExtractor={(group) => group.groupId}
+                    />
+                </View>
             </View>
         </View>
     );
@@ -391,7 +405,10 @@ const styles = StyleSheet.create({
         width: '100%',
         marginVertical: 10,
         justifyContent: 'center',
-        backgroundColor: Colors.gray10,
+        backgroundColor: 'green',
         // alignItems: 'center',
+        borderColor: 'black',
+        borderWidth: 2,
+        borderRadius: 10,
     },
 });

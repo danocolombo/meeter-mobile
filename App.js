@@ -15,6 +15,7 @@ import HistoricScreen from './screens/HistoricScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import ConfigScreen from './screens/ConfigScreen';
 import MeetingScreen from './screens/MeetingScreen';
+import GroupScreen from './screens/GroupScreen';
 import { Colors } from './constants/colors';
 import AuthContextProvider from './store/auth-context';
 import { AuthContext } from './store/auth-context';
@@ -98,12 +99,22 @@ function AuthenticatedStack() {
             <Stack.Screen
                 name='Meeting'
                 component={MeetingScreen}
-                options={{
+                options={({ navigation }) => ({
                     headerStyle: {
                         backgroundColor: Colors.primary800,
                     },
                     headerTintColor: 'white',
-                }}
+                })}
+            />
+            <Stack.Screen
+                name='Group'
+                component={GroupScreen}
+                options={({ navigation }) => ({
+                    headerStyle: {
+                        backgroundColor: Colors.primary800,
+                    },
+                    headerTintColor: 'white',
+                })}
             />
         </Stack.Navigator>
     );
