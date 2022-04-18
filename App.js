@@ -15,11 +15,13 @@ import HistoricScreen from './screens/HistoricScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import ConfigScreen from './screens/ConfigScreen';
 import MeetingScreen from './screens/MeetingScreen';
+import GroupScreen from './screens/GroupScreen';
 import { Colors } from './constants/colors';
 import AuthContextProvider from './store/auth-context';
 import { AuthContext } from './store/auth-context';
 import MeetingsContextProvider from './store/meeting-context';
 import HistoricContextProvider from './store/historic-context';
+import GroupsContextProvider from './store/groups-context';
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -97,12 +99,22 @@ function AuthenticatedStack() {
             <Stack.Screen
                 name='Meeting'
                 component={MeetingScreen}
-                options={{
+                options={({ navigation }) => ({
                     headerStyle: {
                         backgroundColor: Colors.primary800,
                     },
                     headerTintColor: 'white',
-                }}
+                })}
+            />
+            <Stack.Screen
+                name='Group'
+                component={GroupScreen}
+                options={({ navigation }) => ({
+                    headerStyle: {
+                        backgroundColor: Colors.primary800,
+                    },
+                    headerTintColor: 'white',
+                })}
             />
         </Stack.Navigator>
     );
@@ -164,9 +176,11 @@ export default function App() {
             <StatusBar style='light' />
             <AuthContextProvider>
                 <MeetingsContextProvider>
-                    <HistoricContextProvider>
-                        <Navigation />
-                    </HistoricContextProvider>
+                    <GroupsContextProvider>
+                        <HistoricContextProvider>
+                            <Navigation />
+                        </HistoricContextProvider>
+                    </GroupsContextProvider>
                 </MeetingsContextProvider>
             </AuthContextProvider>
         </>

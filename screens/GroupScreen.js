@@ -1,19 +1,20 @@
 import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import MeetingForm from '../components/Meeting/MeetingForm';
+import GroupForm from '../components/Group/GroupForm';
 
-function MeetingScreen({ route, navigation }) {
+function GroupScreen({ route }) {
+    const group = route.params.group;
     const meetingId = route.params.meetingId;
     useEffect(() => {}, []);
     return (
         <>
             <View style={styles.rootContainer}>
-                <MeetingForm meetingId={meetingId} navigation />
+                <GroupForm group={group} meetingId={meetingId} />
             </View>
         </>
     );
 }
-export default MeetingScreen;
+export default GroupScreen;
 const styles = StyleSheet.create({
     rootContainer: {
         flex: 1,

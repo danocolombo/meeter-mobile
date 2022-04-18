@@ -1,24 +1,38 @@
 import { useState, useContext } from 'react';
-import { StyleSheet, View, Text, Alert } from 'react-native';
+import {
+    StyleSheet,
+    View,
+    Text,
+    Alert,
+    FlatList,
+    Pressable,
+} from 'react-native';
 //import SelectDropdown from 'react-native-select-dropdown';
 import SelectDropdown from '../ui/DropDown/SelectDropdown';
 //import DropDownPicker from 'react-native-dropdown-picker';
+import { useNavigation } from '@react-navigation/native';
 import { MeetingsContext } from '../../store/meeting-context';
 import { HistoricContext } from '../../store/historic-context';
 import * as Crypto from 'expo-crypto';
 import Button from '../ui/Button';
+import GroupCard from '../Group/GroupCard';
+import GroupListItem from '../Group/GroupListItem';
 
 import { Colors } from '../../constants/colors';
 import Input from '../ui/Input';
 import InputNumber from '../ui/InputNumber';
 import { dateIsBeforeToday, getUniqueId } from '../../util/helpers';
+import { GroupsContext } from '../../store/groups-context';
 
 function onDateChange() {}
-function MeetingForm({ meetingId, route, navigation }) {
+function MeetingForm({ meetingId }) {
+    const navigation = useNavigation();
     const activeCtx = useContext(MeetingsContext);
     const historicCtx = useContext(HistoricContext);
+    const groupsCtx = useContext(GroupsContext);
     const meetings = activeCtx.meetings;
     const historics = historicCtx.meetings;
+    const groups = groupsCtx.groups;
 
     let theMeeting = {
         meetingDate: new Date().toISOString().slice(0, 10),
@@ -34,6 +48,13 @@ function MeetingForm({ meetingId, route, navigation }) {
             theMeeting = historics.find((mtg) => mtg.meetingId === meetingId);
         }
     }
+    let groupsFound = groups.filter((grp) => {
+        if (grp.meetingId === meetingId) {
+            return grp;
+        }
+    });
+
+    const [meetingGroups, setMeetingGroups] = useState(groupsFound);
     const [mDate, setMDate] = useState(theMeeting.meetingDate);
     const [mType, setMType] = useState(theMeeting.meetingType);
     const [mSpotlight, setMSpotlight] = useState(theMeeting.title);
@@ -133,96 +154,145 @@ function MeetingForm({ meetingId, route, navigation }) {
             Alert.alert('UPDATE attempt');
         }
     }
+    function addGroupHandler() {
+        navigation.navigate('Group', {
+            group: { groupId: '0' },
+            meetingId: meetingId,
+        });
+    }
+    function renderGroupItem(itemData) {
+        return <GroupListItem {...itemData.item} />;
+    }
     return (
-        <View style={styles.rootContainer}>
-            <View style={styles.flexRow}>
-                <Input
-                    label='Meeting Date'
-                    value={mDate}
-                    onUpdateValue={changeDate}
-                />
-            </View>
-            <View style={styles.flexRow}>
-                <Text style={styles.label}>Meeting Type</Text>
-            </View>
-            <View style={styles.flexRow}>
-                <SelectDropdown
-                    data={meetingTypes}
-                    onSelect={(selectedItem, index) => {
-                        // console.log(selectedItem, index);
-                        setMType(selectedItem);
-                    }}
-                    defaultValue={mType}
-                    buttonStyle={{
-                        borderColor: Colors.accent500,
-                        borderWidth: 1,
-                        borderRadius: 2,
-                    }}
-                    buttonTextAfterSelection={(selectedItem, index) => {
-                        // text represented after item is selected
-                        // if data array is an array of objects then return selectedItem.property to render after item is selected
-                        return selectedItem;
-                    }}
-                    rowTextForSelection={(item, index) => {
-                        // text represented for each item in dropdown
-                        // if data array is an array of objects then return item.property to represent item in dropdown
-                        return item;
-                    }}
-                />
-            </View>
-            <View style={styles.flexRow}>
-                <Input
-                    label={
-                        mType === 'Lesson'
-                            ? 'Lesson'
-                            : mType === 'Testimony'
-                            ? 'Guest'
-                            : 'Title'
-                    }
-                    value={mSpotlight}
-                    onUpdateValue={changeSpotlight}
-                    style={styles.input}
-                />
-            </View>
-            <View style={styles.flexRow}>
-                {mType === 'Lesson' ? (
+        <View>
+            <View style={styles.meetingFrame}>
+                <View style={styles.meetingCanvasCenter}>
+                    <Text>meetingCanvasCenter</Text>
+                </View>
+                <View style={styles.meetingCanvasLeft}>
+                    <View>
+                        <Text>meetingCanvasLeft Sample</Text>
+                    </View>
+                </View>
+                <View style={styles.meetingCanvasLeft}>
                     <Input
-                        label='Instructor'
-                        value={mSupportContact}
-                        onUpdateValue={changeSupport}
+                        label='Meeting Date'
+                        value={mDate}
+                        onUpdateValue={changeDate}
+                    />
+                </View>
+                <View style={styles.meetingCanvasLeft}>
+                    <Text style={styles.label}>Meeting Type</Text>
+                </View>
+                <View style={styles.meetingCanvasLeft}>
+                    <SelectDropdown
+                        data={meetingTypes}
+                        onSelect={(selectedItem, index) => {
+                            // console.log(selectedItem, index);
+                            setMType(selectedItem);
+                        }}
+                        defaultValue={mType}
+                        buttonStyle={{
+                            borderColor: Colors.accent500,
+                            borderWidth: 1,
+                            borderRadius: 2,
+                        }}
+                        buttonTextAfterSelection={(selectedItem, index) => {
+                            // text represented after item is selected
+                            // if data array is an array of objects then return selectedItem.property to render after item is selected
+                            return selectedItem;
+                        }}
+                        rowTextForSelection={(item, index) => {
+                            // text represented for each item in dropdown
+                            // if data array is an array of objects then return item.property to represent item in dropdown
+                            return item;
+                        }}
+                    />
+                </View>
+                <View style={styles.meetingCanvasLeft}>
+                    <Input
+                        label={
+                            mType === 'Lesson'
+                                ? 'Lesson'
+                                : mType === 'Testimony'
+                                ? 'Guest'
+                                : 'Title'
+                        }
+                        value={mSpotlight}
+                        onUpdateValue={changeSpotlight}
                         style={styles.input}
                     />
-                ) : null}
-            </View>
-            <View style={styles.flexRow}>
-                <InputNumber
-                    label='Attendance'
-                    keyboardType='decimal-pad'
-                    value={mAttendance}
-                    onUpdateValue={changeAttendance}
-                />
-            </View>
-            <View style={styles.flexRow}>
-                <View style={styles.mealMenu}>
-                    <Input
-                        label='Meal'
-                        value={mMeal}
-                        onUpdateValue={changeMeal}
-                        // style={styles.input}
-                    />
                 </View>
-                <View style={styles.mealCount}>
+                <View style={styles.meetingCanvasLeft}>
+                    {mType === 'Lesson' ? (
+                        <Input
+                            label='Instructor'
+                            value={mSupportContact}
+                            onUpdateValue={changeSupport}
+                            style={styles.input}
+                        />
+                    ) : null}
+                </View>
+                <View style={styles.meetingCanvasLeft}>
                     <InputNumber
-                        label='Meal Count'
+                        label='Attendance'
                         keyboardType='decimal-pad'
-                        value={mMealCount}
-                        onUpdateValue={changeMealCount}
+                        value={mAttendance}
+                        onUpdateValue={changeAttendance}
                     />
                 </View>
-            </View>
-            <View style={styles.flexRow}>
-                <View style={styles.buttonContainer}>
-                    <Button onPress={confirmMeetingHandler}>SAVE</Button>
+                <View style={styles.comboRow}>
+                    <View style={styles.mealMenu}>
+                        <Input
+                            label='Meal'
+                            value={mMeal}
+                            onUpdateValue={changeMeal}
+                            // style={styles.input}
+                        />
+                    </View>
+                    <View style={styles.mealCount}>
+                        <InputNumber
+                            label='Meal Count'
+                            keyboardType='decimal-pad'
+                            value={mMealCount}
+                            onUpdateValue={changeMealCount}
+                        />
+                    </View>
+                </View>
+
+                <View
+                    style={[
+                        styles.meetingCanvasCenter,
+                        { marginHorizontal: 10 },
+                    ]}
+                >
+                    <View style={styles.buttonContainer}>
+                        <Button
+                            onPress={confirmMeetingHandler}
+                            customStyle={{ backgroundColor: 'green' }}
+                        >
+                            SAVE
+                        </Button>
+                    </View>
+                </View>
+                <View style={styles.meetingCanvasCenter}>
+                    <View style={styles.groupDividerRow}>
+                        <Text style={styles.groupHeader}>Groups</Text>
+                        <Pressable
+                            onPress={addGroupHandler}
+                            style={({ pressed }) => pressed && styles.pressed}
+                        >
+                            <Text style={styles.groupAddIcon}>+</Text>
+                        </Pressable>
+                    </View>
+                </View>
+
+                <View style={styles.groupContainer}>
+                    <FlatList
+                        data={groupsFound}
+                        renderItem={renderGroupItem}
+                        keyExtractor={(group) => group.groupId}
+                    />
                 </View>
             </View>
         </View>
@@ -232,27 +302,37 @@ function MeetingForm({ meetingId, route, navigation }) {
 export default MeetingForm;
 
 const styles = StyleSheet.create({
-    rootContainer: {
+    meetingFrame: {
         // display: flex,
         flexDirection: 'column',
         flexWrap: 'wrap',
         width: '95%',
         borderColor: Colors.primary800,
-        width: '95%',
         marginTop: 5,
         borderWidth: 1,
         borderRadius: 5,
-        paddingLeft: 15,
-        paddingRight: 25,
-        paddingBottom: 10,
+        // paddingLeft: 15,
+        // paddingRight: 25,
+        // paddingBottom: 10,
         borderColor: Colors.primary800,
         justifyContent: 'center',
     },
-    flexRow: {
+    meetingCanvasCenter: {
+        backgroundColor: Colors.gray10,
+        alignItems: 'center',
+    },
+    meetingCanvasLeft: {
+        backgroundColor: Colors.gray10,
+    },
+    rowLeft: {
+        alignContent: 'flex-start',
+    },
+    comboRow: {
         flexGrow: 1,
         flexDirection: 'row',
         display: 'flex',
         width: '80%',
+        backgroundColor: Colors.gray10,
     },
     input: {
         // height: '100%',
@@ -282,12 +362,53 @@ const styles = StyleSheet.create({
     mealCount: {
         minWidth: '30%',
     },
+    groupDividerRow: {
+        backgroundColor: Colors.gray20,
+        flexDirection: 'row',
+        borderTopWidth: 3,
+        borderTopColor: 'black',
+        borderBottomColor: 'black',
+        borderBottomWidth: 3,
+        marginVertical: 5,
+    },
+    groupDivider: {
+        flexDirection: 'row',
+        flexGrow: 1,
+        backgroundColor: Colors.gray20,
+        marginVertical: 15,
+        width: '100%',
+        justifyContent: 'center',
+        alignContent: 'center',
+        padding: 2,
+    },
+    groupHeader: {
+        width: '90%',
+        alignItems: 'center',
+        fontSize: 18,
+        fontWeight: 'bold',
+        paddingLeft: 10,
+    },
+    groupAddIcon: {
+        width: '10%',
+        textAlign: 'right',
+        fontSize: 18,
+        paddingRight: 20,
+    },
+    groupContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+    },
     buttonContainer: {
         // flexDirection: 'row',
         // flexGrow: 1,
         width: '100%',
-        marginTop: 10,
+        marginVertical: 10,
         justifyContent: 'center',
+        backgroundColor: 'green',
         // alignItems: 'center',
+        borderColor: 'black',
+        borderWidth: 2,
+        borderRadius: 10,
     },
 });
