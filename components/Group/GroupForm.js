@@ -24,12 +24,14 @@ import { dateIsBeforeToday, getUniqueId } from '../../util/helpers';
 import { GroupsContext } from '../../store/groups-context';
 
 function onDateChange() {}
-function GroupForm({ group, meetingId }) {
+function GroupForm({ group, meetingId, navigation, route }) {
+    const groupsCtx = useContext(GroupsContext);
+    // const navigation = useNavigation();
     //we should always have meetingId. group.groupId might
     //be "0", if new group.
-
     if (group.groupId === '0') {
         //set default values
+        group.groupId = group.groupId;
         group.meetingId = meetingId;
         group.gender = 'x';
         (group.attendance = '0'), (group.title = ''), (group.location = '');
@@ -51,17 +53,18 @@ function GroupForm({ group, meetingId }) {
         default:
             break;
     }
-    const navigation = useNavigation();
+    // const navigation = useNavigation();
     // const activeCtx = useContext(MeetingsContext);
     // const historicCtx = useContext(HistoricContext);
-    const groupsCtx = useContext(GroupsContext);
+    // const groupsCtx = useContext(GroupsContext);
     // const meetings = activeCtx.meetings;
     // const historics = historicCtx.meetings;
-    //const groups = groupsCtx.groups;
+    // const groups = groupsCtx.groups;
 
-    const [gMeetingId, setGMeetingId] = useState(meetingId);
+    const [gMeetingId, setGMeetingId] = useState(group.meetingId);
+    const [gGroupId, setGGroupId] = useState(group.groupId);
     const [gGender, setGGender] = useState(group.gender);
-    const [gattendance, setGAttendance] = useState(group.attendance);
+    const [gAttendance, setGAttendance] = useState(group.attendance);
     const [gTitle, setGTitle] = useState(group.title);
     const [gLocation, setGLocation] = useState(group.location);
     const [gFacilitator, setGFacilitator] = useState(group.facilitator);
@@ -92,11 +95,14 @@ function GroupForm({ group, meetingId }) {
     function changeNotes(val) {
         setGNotes(val);
     }
+    function goBack() {
+        navigation.goBack();
+    }
     //   --------------------------
     //   save the group info
     //   --------------------------
-    function confirmGroupHandler(navigation) {
-        if (parseInt(gattendance) < 0 || gTitle.length < 3) {
+    function confirmGroupHandler() {
+        if (parseInt(gAttendance) < 0 || gTitle.length < 3) {
             Alert.alert('Validation Error', 'Check your values', [
                 { text: 'OK', style: 'destruction' },
             ]);
@@ -105,12 +111,13 @@ function GroupForm({ group, meetingId }) {
         // convert the gender to database values
         switch (gGender) {
             case 'Women':
-                gGender = 'f';
+                setGGender('f');
                 break;
             case 'Men':
-                gGender = 'm';
+                setGGender('m');
                 break;
             case 'Mixed':
+                setGGender('x');
                 break;
             default:
                 break;
@@ -125,13 +132,45 @@ function GroupForm({ group, meetingId }) {
             }
             let uni = getUni()
                 .then((result) => {
-                    console.log('uniuni:', result);
-                    Alert.alert('SAVE attempt');
+                    // build group back up to save.
+                    const newGroup = {
+                        groupId: result,
+                        meetingId: gMeetingId,
+                        gender: gGender,
+                        attendance: gAttendance,
+                        title: gTitle,
+                        location: gLocation,
+                        facilitator: gFacilitator,
+                        cofacilitator: gCofacilitator,
+                        notes: gNotes,
+                    };
+                    groupsCtx.addGroup(newGroup);
+                    Alert.alert('UPDATE attempt');
+                    // navigation.goBack();
+                    // async function saveTheGroup() {
+                    //     groupsCtx.addGroup(newGroup);
+                    // }
+                    // saveTheGroup()
+                    //     .then(() => navigation.goBack())
+                    //     .catch(() => {
+                    //         console.error('Can not save group');
+                    //     });
                 })
-                .catch(() => console.log('error'));
+                .catch(() => console.log('error generating new groupId'));
         } else {
             //determine if it is active or historical
-
+            const updatedGroup = {
+                groupId: gGroupId,
+                meetingId: gMeetingId,
+                gender: gGender,
+                attendance: gAttendance,
+                title: gTitle,
+                location: gLocation,
+                facilitator: gFacilitator,
+                cofacilitator: gCofacilitator,
+                notes: gNotes,
+            };
+            groupsCtx.updateGroup(gGroupId, updatedGroup);
             Alert.alert('UPDATE attempt');
         }
     }
@@ -178,7 +217,7 @@ function GroupForm({ group, meetingId }) {
                         <InputNumber
                             label='Attendance'
                             keyboardType='decimal-pad'
-                            value={gattendance}
+                            value={gAttendance}
                             onUpdateValue={changeAttendance}
                         />
                     </View>
