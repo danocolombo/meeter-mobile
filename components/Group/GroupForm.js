@@ -176,13 +176,10 @@ function GroupForm({ group, meetingId, navigation, route }) {
     }
 
     return (
-        <View>
-            <View style={styles.meetingFrame}>
-                <View style={styles.meetingCanvasCenter}>
-                    <Text style={styles.label}>meetingCanvasCenter</Text>
-                </View>
+        <ScrollView>
+            <View style={styles.groupFrame}>
                 <View style={styles.comboRow}>
-                    <View style={styles.mealMenu}>
+                    <View style={styles.type}>
                         <View style={styles.meetingCanvasLeft}>
                             <Text style={styles.label}>Group Type</Text>
                             <SelectDropdown
@@ -213,7 +210,7 @@ function GroupForm({ group, meetingId, navigation, route }) {
                             />
                         </View>
                     </View>
-                    <View style={styles.mealCount}>
+                    <View style={styles.count}>
                         <InputNumber
                             label='Attendance'
                             keyboardType='decimal-pad'
@@ -276,18 +273,18 @@ function GroupForm({ group, meetingId, navigation, route }) {
                     </View>
                 </View>
             </View>
-        </View>
+        </ScrollView>
     );
 }
 
 export default GroupForm;
 
 const styles = StyleSheet.create({
-    meetingFrame: {
+    groupFrame: {
         // display: flex,
         flexDirection: 'column',
         flexWrap: 'wrap',
-        width: '95%',
+        width: '100%',
         borderColor: Colors.primary800,
         marginTop: 5,
         marginBottom: 3,
@@ -298,9 +295,11 @@ const styles = StyleSheet.create({
         // paddingBottom: 10,
         borderColor: Colors.primary800,
         justifyContent: 'center',
+        padding: 2,
     },
     meetingCanvasCenter: {
         backgroundColor: Colors.gray10,
+        width: '100%',
         alignItems: 'center',
     },
     meetingCanvasLeft: {
@@ -315,6 +314,16 @@ const styles = StyleSheet.create({
         display: 'flex',
         width: '80%',
         backgroundColor: Colors.gray10,
+    },
+    type: {
+        flexGrow: 2,
+        minWidth: '60%',
+        marginRight: 5,
+        height: '100%',
+    },
+    count: {
+        minWidth: '10%',
+        paddingRight: 5,
     },
     input: {
         // height: '100%',
@@ -335,15 +344,7 @@ const styles = StyleSheet.create({
     spotlight: {
         width: '90%',
     },
-    mealMenu: {
-        flexGrow: 3,
-        minWidth: '70%',
-        marginRight: 5,
-        height: '100%',
-    },
-    mealCount: {
-        minWidth: '30%',
-    },
+
     groupDividerRow: {
         backgroundColor: Colors.gray20,
         flexDirection: 'row',
