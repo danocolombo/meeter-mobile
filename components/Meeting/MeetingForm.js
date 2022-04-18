@@ -6,6 +6,7 @@ import {
     Alert,
     FlatList,
     Pressable,
+    ScrollView,
 } from 'react-native';
 //import SelectDropdown from 'react-native-select-dropdown';
 import SelectDropdown from '../ui/DropDown/SelectDropdown';
@@ -164,138 +165,152 @@ function MeetingForm({ meetingId }) {
         return <GroupListItem {...itemData.item} />;
     }
     return (
-        <View>
-            <View style={styles.meetingFrame}>
-                <View style={styles.meetingCanvasCenter}>
-                    <Text>meetingCanvasCenter</Text>
-                </View>
-                <View style={styles.meetingCanvasLeft}>
-                    <View>
-                        <Text>meetingCanvasLeft Sample</Text>
+        <ScrollView>
+            <View>
+                <View style={styles.meetingFrame}>
+                    <View style={styles.meetingCanvasCenter}>
+                        <Text>meetingCanvasCenter</Text>
                     </View>
-                </View>
-                <View style={styles.meetingCanvasLeft}>
-                    <Input
-                        label='Meeting Date'
-                        value={mDate}
-                        onUpdateValue={changeDate}
-                    />
-                </View>
-                <View style={styles.meetingCanvasLeft}>
-                    <Text style={styles.label}>Meeting Type</Text>
-                </View>
-                <View style={styles.meetingCanvasLeft}>
-                    <SelectDropdown
-                        data={meetingTypes}
-                        onSelect={(selectedItem, index) => {
-                            // console.log(selectedItem, index);
-                            setMType(selectedItem);
-                        }}
-                        defaultValue={mType}
-                        buttonStyle={{
-                            borderColor: Colors.accent500,
-                            borderWidth: 1,
-                            borderRadius: 2,
-                        }}
-                        buttonTextAfterSelection={(selectedItem, index) => {
-                            // text represented after item is selected
-                            // if data array is an array of objects then return selectedItem.property to render after item is selected
-                            return selectedItem;
-                        }}
-                        rowTextForSelection={(item, index) => {
-                            // text represented for each item in dropdown
-                            // if data array is an array of objects then return item.property to represent item in dropdown
-                            return item;
-                        }}
-                    />
-                </View>
-                <View style={styles.meetingCanvasLeft}>
-                    <Input
-                        label={
-                            mType === 'Lesson'
-                                ? 'Lesson'
-                                : mType === 'Testimony'
-                                ? 'Guest'
-                                : 'Title'
-                        }
-                        value={mSpotlight}
-                        onUpdateValue={changeSpotlight}
-                        style={styles.input}
-                    />
-                </View>
-                <View style={styles.meetingCanvasLeft}>
-                    {mType === 'Lesson' ? (
+                    <View style={styles.meetingCanvasLeft}>
+                        <View>
+                            <Text>meetingCanvasLeft Sample</Text>
+                        </View>
+                    </View>
+                    <View style={styles.meetingCanvasLeft}>
                         <Input
-                            label='Instructor'
-                            value={mSupportContact}
-                            onUpdateValue={changeSupport}
+                            label='Meeting Date'
+                            value={mDate}
+                            onUpdateValue={changeDate}
+                        />
+                    </View>
+                    <View style={styles.meetingCanvasLeft}>
+                        <Text style={styles.label}>Meeting Type</Text>
+                    </View>
+                    <View style={styles.meetingCanvasLeft}>
+                        <SelectDropdown
+                            data={meetingTypes}
+                            onSelect={(selectedItem, index) => {
+                                // console.log(selectedItem, index);
+                                setMType(selectedItem);
+                            }}
+                            defaultValue={mType}
+                            buttonStyle={{
+                                borderColor: Colors.accent500,
+                                borderWidth: 1,
+                                borderRadius: 2,
+                            }}
+                            buttonTextAfterSelection={(selectedItem, index) => {
+                                // text represented after item is selected
+                                // if data array is an array of objects then return selectedItem.property to render after item is selected
+                                return selectedItem;
+                            }}
+                            rowTextForSelection={(item, index) => {
+                                // text represented for each item in dropdown
+                                // if data array is an array of objects then return item.property to represent item in dropdown
+                                return item;
+                            }}
+                        />
+                    </View>
+                    <View style={styles.meetingCanvasLeft}>
+                        <Input
+                            label={
+                                mType === 'Lesson'
+                                    ? 'Lesson'
+                                    : mType === 'Testimony'
+                                    ? 'Guest'
+                                    : 'Title'
+                            }
+                            value={mSpotlight}
+                            onUpdateValue={changeSpotlight}
                             style={styles.input}
                         />
-                    ) : null}
-                </View>
-                <View style={styles.meetingCanvasLeft}>
-                    <InputNumber
-                        label='Attendance'
-                        keyboardType='decimal-pad'
-                        value={mAttendance}
-                        onUpdateValue={changeAttendance}
-                    />
-                </View>
-                <View style={styles.comboRow}>
-                    <View style={styles.mealMenu}>
-                        <Input
-                            label='Meal'
-                            value={mMeal}
-                            onUpdateValue={changeMeal}
-                            // style={styles.input}
-                        />
                     </View>
-                    <View style={styles.mealCount}>
+                    <View style={styles.meetingCanvasLeft}>
+                        {mType === 'Lesson' ? (
+                            <Input
+                                label='Instructor'
+                                value={mSupportContact}
+                                onUpdateValue={changeSupport}
+                                style={styles.input}
+                            />
+                        ) : null}
+                    </View>
+
+                    <View style={styles.meetingCanvasLeft}>
                         <InputNumber
-                            label='Meal Count'
+                            label='Attendance'
                             keyboardType='decimal-pad'
-                            value={mMealCount}
-                            onUpdateValue={changeMealCount}
+                            value={mAttendance}
+                            onUpdateValue={changeAttendance}
                         />
                     </View>
-                </View>
-
-                <View
-                    style={[
-                        styles.meetingCanvasCenter,
-                        { marginHorizontal: 10 },
-                    ]}
-                >
-                    <View style={styles.buttonContainer}>
-                        <Button
-                            onPress={confirmMeetingHandler}
-                            customStyle={{ backgroundColor: 'green' }}
-                        >
-                            SAVE
-                        </Button>
+                    <View style={styles.comboRow}>
+                        <View style={styles.mealMenu}>
+                            <Input
+                                label='Meal'
+                                value={mMeal}
+                                onUpdateValue={changeMeal}
+                                // style={styles.input}
+                            />
+                        </View>
+                        <View style={styles.mealCount}>
+                            <InputNumber
+                                label='Meal Count'
+                                keyboardType='decimal-pad'
+                                value={mMealCount}
+                                onUpdateValue={changeMealCount}
+                            />
+                        </View>
                     </View>
-                </View>
-                <View style={styles.meetingCanvasCenter}>
-                    <View style={styles.groupDividerRow}>
-                        <Text style={styles.groupHeader}>Groups</Text>
-                        <Pressable
-                            onPress={addGroupHandler}
-                            style={({ pressed }) => pressed && styles.pressed}
-                        >
-                            <Text style={styles.groupAddIcon}>+</Text>
-                        </Pressable>
-                    </View>
-                </View>
 
-                <View style={styles.groupContainer}>
-                    <FlatList
-                        data={groupsFound}
-                        renderItem={renderGroupItem}
-                        keyExtractor={(group) => group.groupId}
-                    />
+                    <View
+                        style={[
+                            styles.meetingCanvasCenter,
+                            { marginHorizontal: 10 },
+                        ]}
+                    >
+                        <View style={styles.buttonContainer}>
+                            <Button
+                                onPress={confirmMeetingHandler}
+                                customStyle={{ backgroundColor: 'green' }}
+                            >
+                                SAVE
+                            </Button>
+                        </View>
+                    </View>
+                    <View style={styles.meetingCanvasCenter}>
+                        <View style={styles.groupDividerRow}>
+                            <Text style={styles.groupHeader}>Groups</Text>
+                            <Pressable
+                                onPress={addGroupHandler}
+                                style={({ pressed }) => [
+                                    {
+                                        backgroundColor: pressed
+                                            ? 'rgb(210, 230, 255)'
+                                            : Colors.gray20,
+                                    },
+                                    styles.wrapperCustom,
+                                ]}
+                            >
+                                {({ pressed }) => (
+                                    <Text style={styles.text}>
+                                        {pressed ? '+' : '+'}
+                                    </Text>
+                                )}
+                            </Pressable>
+                        </View>
+                    </View>
+
+                    <View style={styles.groupContainer}>
+                        <FlatList
+                            data={groupsFound}
+                            renderItem={renderGroupItem}
+                            keyExtractor={(group) => group.groupId}
+                        />
+                    </View>
                 </View>
             </View>
-        </View>
+        </ScrollView>
     );
 }
 
@@ -410,5 +425,9 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         borderWidth: 2,
         borderRadius: 10,
+    },
+    wrapperCustom: {
+        borderRadius: 8,
+        padding: 6,
     },
 });
