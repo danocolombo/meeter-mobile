@@ -177,104 +177,99 @@ function GroupForm({ group, meetingId, navigation, route }) {
 
     return (
         <ScrollView>
-            <View>
-                <View style={styles.meetingFrame}>
-                    <View style={styles.meetingCanvasCenter}>
-                        <Text style={styles.label}>meetingCanvasCenter</Text>
-                    </View>
-                    <View style={styles.comboRow}>
-                        <View style={styles.mealMenu}>
-                            <View style={styles.meetingCanvasLeft}>
-                                <Text style={styles.label}>Group Type</Text>
-                                <SelectDropdown
-                                    data={genderTypes}
-                                    onSelect={(selectedItem, index) => {
-                                        // console.log(selectedItem, index);
-                                        setGGender(selectedItem);
-                                    }}
-                                    defaultValue={gGender}
-                                    buttonStyle={{
-                                        borderColor: Colors.accent500,
-                                        borderWidth: 1,
-                                        borderRadius: 2,
-                                    }}
-                                    buttonTextAfterSelection={(
-                                        selectedItem,
-                                        index
-                                    ) => {
-                                        // text represented after item is selected
-                                        // if data array is an array of objects then return selectedItem.property to render after item is selected
-                                        return selectedItem;
-                                    }}
-                                    rowTextForSelection={(item, index) => {
-                                        // text represented for each item in dropdown
-                                        // if data array is an array of objects then return item.property to represent item in dropdown
-                                        return item;
-                                    }}
-                                />
-                            </View>
-                        </View>
-                        <View style={styles.mealCount}>
-                            <InputNumber
-                                label='Attendance'
-                                keyboardType='decimal-pad'
-                                value={gAttendance}
-                                onUpdateValue={changeAttendance}
+            <View style={styles.groupFrame}>
+                <View style={styles.comboRow}>
+                    <View style={styles.type}>
+                        <View style={styles.meetingCanvasLeft}>
+                            <Text style={styles.label}>Group Type</Text>
+                            <SelectDropdown
+                                data={genderTypes}
+                                onSelect={(selectedItem, index) => {
+                                    // console.log(selectedItem, index);
+                                    setGGender(selectedItem);
+                                }}
+                                defaultValue={gGender}
+                                buttonStyle={{
+                                    borderColor: Colors.accent500,
+                                    borderWidth: 1,
+                                    borderRadius: 2,
+                                }}
+                                buttonTextAfterSelection={(
+                                    selectedItem,
+                                    index
+                                ) => {
+                                    // text represented after item is selected
+                                    // if data array is an array of objects then return selectedItem.property to render after item is selected
+                                    return selectedItem;
+                                }}
+                                rowTextForSelection={(item, index) => {
+                                    // text represented for each item in dropdown
+                                    // if data array is an array of objects then return item.property to represent item in dropdown
+                                    return item;
+                                }}
                             />
                         </View>
                     </View>
+                    <View style={styles.count}>
+                        <InputNumber
+                            label='Attendance'
+                            keyboardType='decimal-pad'
+                            value={gAttendance}
+                            onUpdateValue={changeAttendance}
+                        />
+                    </View>
+                </View>
 
-                    <View style={styles.meetingCanvasLeft}>
-                        <Input
-                            label='Title'
-                            value={gTitle}
-                            onUpdateValue={changeTitle}
-                            style={styles.input}
-                        />
-                    </View>
-                    <View style={styles.meetingCanvasLeft}>
-                        <Input
-                            label='Location'
-                            value={gLocation}
-                            onUpdateValue={changeLocation}
-                            style={styles.input}
-                        />
-                    </View>
-                    <View style={styles.meetingCanvasLeft}>
-                        <Input
-                            label='Facilitator'
-                            value={gFacilitator}
-                            onUpdateValue={changeFacilitator}
-                            style={styles.input}
-                        />
-                    </View>
-                    <View style={styles.meetingCanvasLeft}>
-                        <Input
-                            label='Cofacilitator'
-                            value={gCofacilitator}
-                            onUpdateValue={changeCofacilitator}
-                            style={styles.input}
-                        />
-                    </View>
+                <View style={styles.meetingCanvasLeft}>
+                    <Input
+                        label='Title'
+                        value={gTitle}
+                        onUpdateValue={changeTitle}
+                        style={styles.input}
+                    />
+                </View>
+                <View style={styles.meetingCanvasLeft}>
+                    <Input
+                        label='Location'
+                        value={gLocation}
+                        onUpdateValue={changeLocation}
+                        style={styles.input}
+                    />
+                </View>
+                <View style={styles.meetingCanvasLeft}>
+                    <Input
+                        label='Facilitator'
+                        value={gFacilitator}
+                        onUpdateValue={changeFacilitator}
+                        style={styles.input}
+                    />
+                </View>
+                <View style={styles.meetingCanvasLeft}>
+                    <Input
+                        label='Cofacilitator'
+                        value={gCofacilitator}
+                        onUpdateValue={changeCofacilitator}
+                        style={styles.input}
+                    />
+                </View>
 
-                    <View style={styles.meetingCanvasLeft}>
-                        <Input
-                            label='Notes'
-                            value={gNotes}
-                            onUpdateValue={changeNotes}
-                            style={styles.input}
-                        />
-                    </View>
+                <View style={styles.meetingCanvasLeft}>
+                    <Input
+                        label='Notes'
+                        value={gNotes}
+                        onUpdateValue={changeNotes}
+                        style={styles.input}
+                    />
+                </View>
 
-                    <View style={styles.meetingCanvasCenter}>
-                        <View style={styles.buttonContainer}>
-                            <Button
-                                onPress={confirmGroupHandler}
-                                customStyle={{ backgroundColor: 'green' }}
-                            >
-                                SAVE
-                            </Button>
-                        </View>
+                <View style={styles.meetingCanvasCenter}>
+                    <View style={styles.buttonContainer}>
+                        <Button
+                            onPress={confirmGroupHandler}
+                            customStyle={{ backgroundColor: 'green' }}
+                        >
+                            SAVE
+                        </Button>
                     </View>
                 </View>
             </View>
@@ -285,11 +280,11 @@ function GroupForm({ group, meetingId, navigation, route }) {
 export default GroupForm;
 
 const styles = StyleSheet.create({
-    meetingFrame: {
+    groupFrame: {
         // display: flex,
         flexDirection: 'column',
         flexWrap: 'wrap',
-        width: '95%',
+        width: '100%',
         borderColor: Colors.primary800,
         marginTop: 5,
         marginBottom: 3,
@@ -300,9 +295,11 @@ const styles = StyleSheet.create({
         // paddingBottom: 10,
         borderColor: Colors.primary800,
         justifyContent: 'center',
+        padding: 2,
     },
     meetingCanvasCenter: {
         backgroundColor: Colors.gray10,
+        width: '100%',
         alignItems: 'center',
     },
     meetingCanvasLeft: {
@@ -317,6 +314,16 @@ const styles = StyleSheet.create({
         display: 'flex',
         width: '80%',
         backgroundColor: Colors.gray10,
+    },
+    type: {
+        flexGrow: 2,
+        minWidth: '60%',
+        marginRight: 5,
+        height: '100%',
+    },
+    count: {
+        minWidth: '10%',
+        paddingRight: 5,
     },
     input: {
         // height: '100%',
@@ -337,15 +344,7 @@ const styles = StyleSheet.create({
     spotlight: {
         width: '90%',
     },
-    mealMenu: {
-        flexGrow: 3,
-        minWidth: '70%',
-        marginRight: 5,
-        height: '100%',
-    },
-    mealCount: {
-        minWidth: '30%',
-    },
+
     groupDividerRow: {
         backgroundColor: Colors.gray20,
         flexDirection: 'row',

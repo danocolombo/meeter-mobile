@@ -7,6 +7,7 @@ import {
     FlatList,
     Pressable,
     ScrollView,
+    KeyboardAvoidingView,
 } from 'react-native';
 //import SelectDropdown from 'react-native-select-dropdown';
 import SelectDropdown from '../ui/DropDown/SelectDropdown';
@@ -165,17 +166,9 @@ function MeetingForm({ meetingId }) {
         return <GroupListItem {...itemData.item} />;
     }
     return (
-        <ScrollView>
+        <KeyboardAvoidingView>
             <View>
                 <View style={styles.meetingFrame}>
-                    <View style={styles.meetingCanvasCenter}>
-                        <Text>meetingCanvasCenter</Text>
-                    </View>
-                    <View style={styles.meetingCanvasLeft}>
-                        <View>
-                            <Text>meetingCanvasLeft Sample</Text>
-                        </View>
-                    </View>
                     <View style={styles.meetingCanvasLeft}>
                         <Input
                             label='Meeting Date'
@@ -310,7 +303,7 @@ function MeetingForm({ meetingId }) {
                     </View>
                 </View>
             </View>
-        </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
@@ -331,6 +324,7 @@ const styles = StyleSheet.create({
         // paddingBottom: 10,
         borderColor: Colors.primary800,
         justifyContent: 'center',
+        padding: 5,
     },
     meetingCanvasCenter: {
         backgroundColor: Colors.gray10,
@@ -370,7 +364,7 @@ const styles = StyleSheet.create({
     },
     mealMenu: {
         flexGrow: 3,
-        minWidth: '70%',
+        minWidth: '60%',
         marginRight: 5,
         height: '100%',
     },
