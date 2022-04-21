@@ -7,17 +7,9 @@ function MeetingScreen({ route, navigation }) {
     useEffect(() => {}, []);
     return (
         <>
-            <View style={styles.rootContainer}>
-                <MeetingForm meetingId={meetingId} navigation />
-            </View>
+            <MeetingForm meetingId={meetingId} navigation />
         </>
     );
 }
 export default MeetingScreen;
-const styles = StyleSheet.create({
-    rootContainer: {
-        flex: 1,
-        // justifyContent: 'flex-start',
-        alignItems: 'center',
-    },
-});
+const styles = StyleSheet.create({});
