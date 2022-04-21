@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { TextInput, RadioButton } from 'react-native-paper';
 import MeetingTypeButtons from './MeetingTypeButtons';
+import NumberInput from '../ui/NumberInput/NumberInput';
 //import SelectDropdown from 'react-native-select-dropdown';
 import SelectDropdown from '../ui/DropDown/SelectDropdown';
 //import DropDownPicker from 'react-native-dropdown-picker';
@@ -67,12 +68,8 @@ function MeetingForm({ meetingId }) {
         theMeeting.supportContact
     );
 
-    const [mAttendance, setMAttendance] = useState(
-        theMeeting.attendanceCount.toString()
-    );
-    const [mMealCount, setMMealCount] = useState(
-        theMeeting.mealCount.toString()
-    );
+    const [mAttendance, setMAttendance] = useState(theMeeting.attendanceCount);
+    const [mMealCount, setMMealCount] = useState(theMeeting.mealCount);
     const [mMeal, setMMeal] = useState(theMeeting.meal);
     // const meetingTypes = ['Lesson', 'Testimony', 'Special', 'Training'];
     //   --------METHODS  ------------
@@ -214,34 +211,56 @@ function MeetingForm({ meetingId }) {
                                 />
                             ) : null}
                         </View>
-
-                        <View>
-                            <InputNumber
-                                label='Attendance'
-                                keyboardType='decimal-pad'
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                marginVertical: 10,
+                            }}
+                        >
+                            <View
+                                style={{
+                                    justifyContent: 'center',
+                                    marginRight: 10,
+                                }}
+                            >
+                                <Text style={{ fontSize: 16 }}>Attendance</Text>
+                            </View>
+                            <NumberInput
                                 value={mAttendance}
-                                onUpdateValue={changeAttendance}
+                                onAction={setMAttendance}
                             />
                         </View>
-                        <View style={styles.comboRow}>
-                            <View style={styles.mealMenu}>
-                                <TextInput
-                                    mode='outlined'
-                                    label='Meal'
-                                    value={mMeal}
-                                    onChangeText={changeMeal}
-                                />
-                            </View>
-                            <View style={styles.mealCount}>
-                                <InputNumber
-                                    label='Meal Count'
-                                    keyboardType='decimal-pad'
-                                    value={mMealCount}
-                                    onUpdateValue={changeMealCount}
-                                />
-                            </View>
+                        <View>
+                            <TextInput
+                                mode='outlined'
+                                label='Meal'
+                                value={mMeal}
+                                onChangeText={changeMeal}
+                            />
                         </View>
-
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                marginVertical: 10,
+                            }}
+                        >
+                            <View
+                                style={{
+                                    justifyContent: 'center',
+                                    marginRight: 10,
+                                }}
+                            >
+                                <Text style={{ fontSize: 16 }}>
+                                    Meals Served
+                                </Text>
+                            </View>
+                            <NumberInput
+                                value={mMealCount}
+                                onAction={setMMealCount}
+                            />
+                        </View>
                         <View style={{ marginHorizontal: 10 }}>
                             <View style={styles.buttonContainer}>
                                 <Button
@@ -252,27 +271,26 @@ function MeetingForm({ meetingId }) {
                                 </Button>
                             </View>
                         </View>
-                        <View>
-                            <View style={styles.groupDividerRow}>
-                                <Text style={styles.groupHeader}>Groups</Text>
-                                <Pressable
-                                    onPress={addGroupHandler}
-                                    style={({ pressed }) => [
-                                        {
-                                            backgroundColor: pressed
-                                                ? 'rgb(210, 230, 255)'
-                                                : Colors.gray20,
-                                        },
-                                        styles.wrapperCustom,
-                                    ]}
-                                >
-                                    {({ pressed }) => (
-                                        <Text style={styles.text}>
-                                            {pressed ? '+' : '+'}
-                                        </Text>
-                                    )}
-                                </Pressable>
-                            </View>
+
+                        <View style={styles.groupDividerRow}>
+                            <Text style={styles.groupHeader}>Groups</Text>
+                            <Pressable
+                                onPress={addGroupHandler}
+                                style={({ pressed }) => [
+                                    {
+                                        backgroundColor: pressed
+                                            ? 'rgb(210, 230, 255)'
+                                            : Colors.gray20,
+                                    },
+                                    styles.wrapperCustom,
+                                ]}
+                            >
+                                {({ pressed }) => (
+                                    <Text style={styles.text}>
+                                        {pressed ? '+' : '+'}
+                                    </Text>
+                                )}
+                            </Pressable>
                         </View>
 
                         <View style={styles.groupContainer}>
