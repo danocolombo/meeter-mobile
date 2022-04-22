@@ -9,23 +9,17 @@ import {
     ScrollView,
     KeyboardAvoidingView,
 } from 'react-native';
-import { TextInput, RadioButton } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 import MeetingTypeButtons from './MeetingTypeButtons';
 import NumberInput from '../ui/NumberInput/NumberInput';
-//import SelectDropdown from 'react-native-select-dropdown';
-import SelectDropdown from '../ui/DropDown/SelectDropdown';
-//import DropDownPicker from 'react-native-dropdown-picker';
 import { useNavigation } from '@react-navigation/native';
 import { MeetingsContext } from '../../store/meeting-context';
 import { HistoricContext } from '../../store/historic-context';
 import * as Crypto from 'expo-crypto';
 import Button from '../ui/Button';
-import GroupCard from '../Group/GroupCard';
 import GroupListItem from '../Group/GroupListItem';
 
 import { Colors } from '../../constants/colors';
-import Input from '../ui/Input';
-import InputNumber from '../ui/InputNumber';
 import { dateIsBeforeToday, getUniqueId } from '../../util/helpers';
 import { GroupsContext } from '../../store/groups-context';
 
@@ -58,9 +52,6 @@ function MeetingForm({ meetingId }) {
             return grp;
         }
     });
-    const [checked, setChecked] = React.useState('first');
-    const [meetingGroups, setMeetingGroups] = useState(groupsFound);
-    const [meetingType, setMeetingType] = useState(theMeeting.meetingDate);
     const [mDate, setMDate] = useState(theMeeting.meetingDate);
     const [mType, setMType] = useState(theMeeting.meetingType);
     const [mSpotlight, setMSpotlight] = useState(theMeeting.title);
@@ -71,7 +62,7 @@ function MeetingForm({ meetingId }) {
     const [mAttendance, setMAttendance] = useState(theMeeting.attendanceCount);
     const [mMealCount, setMMealCount] = useState(theMeeting.mealCount);
     const [mMeal, setMMeal] = useState(theMeeting.meal);
-    // const meetingTypes = ['Lesson', 'Testimony', 'Special', 'Training'];
+
     //   --------METHODS  ------------
     //   =============================
     function changeDate(val) {
@@ -324,25 +315,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 5,
     },
-    // meetingFrame2: {
-    //     // display: flex,
-    //     flexDirection: 'column',
-    //     flexWrap: 'wrap',
-    //     width: '100%',
-    //     borderColor: Colors.primary800,
-    //     marginTop: 5,
-    //     borderWidth: 1,
-    //     borderRadius: 5,
-    //     // paddingLeft: 15,
-    //     // paddingRight: 25,
-    //     // paddingBottom: 10,
-    //     borderColor: Colors.primary800,
-    //     justifyContent: 'center',
-    //     padding: 5,
-    // },
-
     comboRow: {
-        // flex: 1,
         flexDirection: 'column',
         marginBottom: 30,
     },
@@ -354,7 +327,6 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.gray10,
     },
     input: {
-        // height: '100%',
         minWidth: '60%',
     },
     title: {
@@ -381,9 +353,7 @@ const styles = StyleSheet.create({
         marginRight: 5,
         height: '100%',
     },
-    mealCount: {
-        // flex: 0.4,
-    },
+
     mealCount2: {
         minWidth: '30%',
     },
@@ -425,13 +395,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     buttonContainer: {
-        // flexDirection: 'row',
-        // flexGrow: 1,
         width: '100%',
         marginVertical: 10,
         justifyContent: 'center',
         backgroundColor: 'green',
-        // alignItems: 'center',
         borderColor: 'black',
         borderWidth: 2,
         borderRadius: 10,

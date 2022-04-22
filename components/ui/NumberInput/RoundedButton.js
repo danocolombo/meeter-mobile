@@ -27,7 +27,6 @@ const styles = (size) => ({
         justifyContent: 'center',
         borderColor: 'black',
         borderWidth: 2,
-        color: 'black',
     },
     text: { color: 'black', fontSize: size / 3 },
 });

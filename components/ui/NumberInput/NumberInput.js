@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-
+import { Colors } from '../../../constants/colors';
 import { RoundedButton } from './RoundedButton';
 
 function NumberInput({ value, onAction }) {
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginLeft: 10,
         marginRight: 10,
-        backgroundColor: 'yellow',
+        backgroundColor: Colors.gray10,
         alignItems: 'center',
         justifyContent: 'center',
     },
