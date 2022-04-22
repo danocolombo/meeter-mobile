@@ -11,7 +11,7 @@ function MeetingTypeButtons({ currentType, onChange }) {
                 style={{ flex: 0.3, margin: 5 }}
                 icon=''
                 mode='contained'
-                dark={currentType === 'Lesson'}
+                dark={currentType === 'Lesson' || currentType === 'lesson'}
                 onPress={() => onChange('Lesson')}
             >
                 <Text style={{ fontWeight: 'bold', fontSize: 10 }}>Lesson</Text>
@@ -20,7 +20,9 @@ function MeetingTypeButtons({ currentType, onChange }) {
                 style={{ flex: 0.3, margin: 5 }}
                 icon=''
                 mode='contained'
-                dark={currentType === 'Testimony'}
+                dark={
+                    currentType === 'Testimony' || currentType === 'testimony'
+                }
                 onPress={() => onChange('Testimony')}
             >
                 <Text style={{ fontWeight: 'bold', fontSize: 10 }}>
@@ -31,7 +33,7 @@ function MeetingTypeButtons({ currentType, onChange }) {
                 style={{ flex: 0.3, margin: 5 }}
                 icon=''
                 mode='contained'
-                dark={currentType === 'Special'}
+                dark={currentType === 'Special' || currentType === 'special'}
                 onPress={() => onChange('Special')}
             >
                 <Text style={{ fontWeight: 'bold', fontSize: 10 }}>

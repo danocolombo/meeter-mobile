@@ -52,6 +52,7 @@ function MeetingForm({ meetingId }) {
             return grp;
         }
     });
+    const [mMeetingId, setMMeetingId] = useState(meetingId);
     const [mDate, setMDate] = useState(theMeeting.meetingDate);
     const [mType, setMType] = useState(theMeeting.meetingType);
     const [mSpotlight, setMSpotlight] = useState(theMeeting.title);
@@ -102,12 +103,8 @@ function MeetingForm({ meetingId }) {
             ]);
             return;
         }
-        if (dateIsBeforeToday(mDate)) {
-            console.log('HISTORIC');
-        } else {
-            console.log('Active');
-        }
-        if (meetingId === '0') {
+
+        if (mMeetingId === '0') {
             async function getUni() {
                 const digest = await Crypto.digestStringAsync(
                     Crypto.CryptoDigestAlgorithm.SHA256,
@@ -117,8 +114,29 @@ function MeetingForm({ meetingId }) {
             }
             let uni = getUni()
                 .then((result) => {
-                    console.log('uniuni:', result);
                     Alert.alert('SAVE attempt');
+                    setMMeetingId(uni);
+                    if (dateIsBeforeToday(mDate)) {
+                        historicCtx.addMeeting({
+                            meetingId: mMeetingId,
+                            meetingDate: mDate,
+                            meetingType: mType,
+                            title: mSpotlight,
+                            attendanceCount: mAttendance,
+                            meal: mMeal,
+                            mealCount: mMealCount,
+                        });
+                    } else {
+                        activeCtx.addMeeting({
+                            meetingId: mMeetingId,
+                            meetingDate: mDate,
+                            meetingType: mType,
+                            title: mSpotlight,
+                            attendanceCount: mAttendance,
+                            meal: mMeal,
+                            mealCount: mMealCount,
+                        });
+                    }
                 })
                 .catch(() => console.log('error'));
         } else {
@@ -132,7 +150,6 @@ function MeetingForm({ meetingId }) {
                     meal: mMeal,
                     mealCount: mMealCount,
                 });
-                console.log('update historical meeting');
             } else {
                 activeCtx.updateMeeting(meetingId, {
                     meetingDate: mDate,
@@ -142,7 +159,6 @@ function MeetingForm({ meetingId }) {
                     meal: mMeal,
                     mealCount: mMealCount,
                 });
-                console.log('update active meeting');
             }
             Alert.alert('UPDATE attempt');
         }
