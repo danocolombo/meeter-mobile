@@ -61,7 +61,7 @@ function meetingReducer(state, action, navigation) {
             return [{ ...action.payload, meetingId: id }, ...state];
         case 'DELETE':
             return state.filter(
-                (meeting) => meeting.meetingId === action.payload
+                (meeting) => meeting.meetingId !== action.payload
             );
         case 'UPDATE':
             //find meeting to update
