@@ -29,10 +29,10 @@ function GroupListItem({
     // translate gender value to display
     switch (group.gender) {
         case 'm':
-            group.gender = "Men's";
+            group.gender = 'Men';
             break;
         case 'f':
-            group.gender = "Women's";
+            group.gender = 'Women';
             break;
         case 'x':
             group.gender = '';
@@ -54,7 +54,11 @@ function GroupListItem({
             <View style={styles.groupItem}>
                 <View>
                     <Text style={[styles.textBase, styles.description]}>
-                        {group.gender} {group.title} - {group.location}
+                        {group.gender}
+                        {group.gender === 'Men' || group.gender === 'Women'
+                            ? "'s"
+                            : null}{' '}
+                        {group.title} - {group.location}
                     </Text>
                     <Text style={[styles.textBase, styles.description]}>
                         {group.facilitator}
