@@ -1,6 +1,7 @@
 import { createContext, useReducer } from 'react';
 import { ACTIVE_MEETINGS } from '../constants/data/active';
 import { HISTORICAL_MEETINGS } from '../constants/data/historical';
+import { MEETINGS } from '../constants/data/meetings';
 //   ---------------------------------
 //todo -- can we make this blank [] ?
 //   ---------------------------------
@@ -42,14 +43,30 @@ export const MeetingsContext = createContext({
             meal,
         }
     ) => {},
+    getActiveMeetings: () => {},
     deleteMeeting: (meetingId) => {},
     loadMeetings: () => {},
     loadHistoric: () => {},
 });
 function meetingReducer(state, action, navigation) {
     switch (action.type) {
-        case 'LOAD':
+        case 'ACTIVES':
             return ACTIVE_MEETINGS;
+        case 'LOAD':
+            //get the data and sort it.
+            let newArray = [];
+            MEETINGS.forEach((item) => {
+                newArray.push(item);
+            });
+
+            function custom_sort(a, b) {
+                return (
+                    new Date(a.meetingDate).getTime() -
+                    new Date(b.meetingDate).getTime()
+                );
+            }
+            let newSort = newArray.sort(custom_sort);
+            return newSort;
         case 'LOAD_HISTORIC':
             return HISTORICAL_MEETINGS;
         case 'ADD':
@@ -58,7 +75,18 @@ function meetingReducer(state, action, navigation) {
             //todo ===>>>> done here? or passed to API??
             //   =========================================
             const id = new Date().toString() + Math.random().toString();
-            return [{ ...action.payload, meetingId: id }, ...state];
+            let newState = [{ ...action.payload, meetingId: id }, ...state];
+            // now sort the list
+            let sortedState = newState.sort((a, b) =>
+                a.meetingDate > b.meetingDate
+                    ? 1
+                    : a.meetingDate === b.meetingDate
+                    ? a.title > b.title
+                        ? 1
+                        : -1
+                    : -1
+            );
+            return sortedState;
         case 'DELETE':
             return state.filter(
                 (meeting) => meeting.meetingId === action.payload
@@ -102,6 +130,9 @@ function MeetingsContextProvider({ children }) {
     function loadHistoric() {
         dispatchHistoric({ type: 'LOAD_HISTORIC' });
     }
+    function getActiveMeetings() {
+        dispatch({ type: 'ACTIVES' });
+    }
     // need this to expose these contents to anyone using context
     const value = {
         meetings: meetingsState,
@@ -110,6 +141,7 @@ function MeetingsContextProvider({ children }) {
         updateMeeting: updateMeeting,
         loadMeetings: loadMeetings,
         loadHistoric: loadHistoric,
+        getActiveMeetings: getActiveMeetings,
     };
     return (
         <MeetingsContext.Provider value={value}>
