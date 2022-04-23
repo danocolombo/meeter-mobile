@@ -13,6 +13,15 @@ function ActiveScreen() {
     const meetingsCtx = useContext(MeetingsContext);
     const token = authCtx.token;
     // meetingsCtx.loadMeetings();
+    var d = new Date();
+    d.setDate(d.getDate() - 1); // date - one
+    const dminusone = d.toLocaleString(); //  M/DD/YYYY, H:MM:SS PM
+    let datetime = dminusone.split(', '); // M/DD/YYYY
+    const dateparts = datetime[0].split('/');
+    const yr = dateparts[2];
+    const mn = dateparts[0] < 10 ? '0' + dateparts[0] : dataparts[0];
+    const da = dateparts[1];
+    const target = yr + '-' + mn + '-' + da;
     useEffect(() => {
         axios
             .get(
@@ -30,11 +39,9 @@ function ActiveScreen() {
             <Text style={styles.title}>Welcome!</Text>
             <MeetingsOutput
                 meetings={meetingsCtx.meetings.filter(
-                    (mtg) => mtg.meetingDate > '2021-04-01'
+                    (mtg) => mtg.meetingDate > target
                 )}
             />
-            {/* <Text>You authenticated successfully!</Text>
-            <Text>{fetchedMessage}</Text> */}
         </View>
     );
 }
