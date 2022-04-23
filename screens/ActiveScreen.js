@@ -8,6 +8,7 @@ import MeetingCard from '../components/Meeting/MeetingCard';
 
 function ActiveScreen() {
     const [fetchedMessage, setFetchedMessage] = useState();
+    const [activeMeetings, setActiveMeetings] = useState();
     const authCtx = useContext(AuthContext);
     const meetingsCtx = useContext(MeetingsContext);
     const token = authCtx.token;
@@ -22,11 +23,16 @@ function ActiveScreen() {
                 setFetchedMessage(response.data);
             });
     }, [token]);
+
     return (
         <View style={styles.rootContainer}>
             <MeetingCard />
             <Text style={styles.title}>Welcome!</Text>
-            <MeetingsOutput meetings={meetingsCtx.meetings} />
+            <MeetingsOutput
+                meetings={meetingsCtx.meetings.filter(
+                    (mtg) => mtg.meetingDate > '2021-04-01'
+                )}
+            />
             {/* <Text>You authenticated successfully!</Text>
             <Text>{fetchedMessage}</Text> */}
         </View>

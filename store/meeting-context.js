@@ -42,12 +42,15 @@ export const MeetingsContext = createContext({
             meal,
         }
     ) => {},
+    getActiveMeetings: () => {},
     deleteMeeting: (meetingId) => {},
     loadMeetings: () => {},
     loadHistoric: () => {},
 });
 function meetingReducer(state, action, navigation) {
     switch (action.type) {
+        case 'ACTIVES':
+            return ACTIVE_MEETINGS;
         case 'LOAD':
             return ACTIVE_MEETINGS;
         case 'LOAD_HISTORIC':
@@ -102,6 +105,9 @@ function MeetingsContextProvider({ children }) {
     function loadHistoric() {
         dispatchHistoric({ type: 'LOAD_HISTORIC' });
     }
+    function getActiveMeetings() {
+        dispatch({ type: 'ACTIVES' });
+    }
     // need this to expose these contents to anyone using context
     const value = {
         meetings: meetingsState,
@@ -110,6 +116,7 @@ function MeetingsContextProvider({ children }) {
         updateMeeting: updateMeeting,
         loadMeetings: loadMeetings,
         loadHistoric: loadHistoric,
+        getActiveMeetings: getActiveMeetings,
     };
     return (
         <MeetingsContext.Provider value={value}>
