@@ -19,7 +19,7 @@ function ActiveScreen() {
     let datetime = dminusone.split(', '); // M/DD/YYYY
     const dateparts = datetime[0].split('/');
     const yr = dateparts[2];
-    const mn = dateparts[0] < 10 ? '0' + dateparts[0] : dataparts[0];
+    const mn = dateparts[0] < 10 ? '0' + dateparts[0] : dateparts[0];
     const da = dateparts[1];
     const target = yr + '-' + mn + '-' + da;
     useEffect(() => {
