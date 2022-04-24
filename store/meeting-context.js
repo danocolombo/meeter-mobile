@@ -89,7 +89,7 @@ function meetingReducer(state, action, navigation) {
             return sortedState;
         case 'DELETE':
             return state.filter(
-                (meeting) => meeting.meetingId === action.payload
+                (meeting) => meeting.meetingId !== action.payload
             );
         case 'UPDATE':
             //find meeting to update
