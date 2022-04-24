@@ -1,35 +1,83 @@
+import React, { useContext } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 // import { GlobalStyles } from '../../constants/styles';
 import { Colors } from '../../constants/styles';
+import { Ionicons } from '@expo/vector-icons';
+import { MeetingsContext } from '../../store/meeting-context';
+//import { HistoricContext } from '../../store/historic-context';
 import { getFormattedDate } from '../../util/date';
+import { dateIsBeforeToday } from '../../util/helpers';
 
 function MeetingItem({ meetingId, meetingDate, meetingType, title }) {
     const navigation = useNavigation();
-
+    // const activeCtx = useContext(MeetingsContext);
+    // const historicCtx = useContext(HistoricContext);
+    // const historicCtx = useContext(HistoricContext);
+    const meetingsCtx = useContext(MeetingsContext);
     function meetingPressHandler() {
         navigation.navigate('Meeting', {
             meetingId: meetingId,
         });
         // const msg = 'meetiingId: ' + meetingId;
-        // Alert.alert('GOING', msg);
+        Alert.alert('GOING', msg);
     }
-
+    function deleteHandler() {
+        //if (dateIsBeforeToday(meetingDate)) {
+        // historicCtx.deleteMeeting(meetingId);
+        //} else {
+        // activeCtx.deleteMeeting(meetingDate);
+        //}
+        meetingsCtx.deleteMeeting(meetingId);
+        // let msg = 'DELETING ' + meetingId;
+        // Alert.alert(msg);
+    }
     return (
         <Pressable
             onPress={meetingPressHandler}
             style={({ pressed }) => pressed && styles.pressed}
         >
             <View style={styles.meetingItem}>
-                <View>
-                    <Text style={styles.meetingDate}>
-                        {meetingDate}
-                        {/* {getFormattedDate(meetingDate)} */}
-                    </Text>
-                    <Text style={[styles.textBase, styles.description]}>
-                        {meetingType} {title}
-                    </Text>
+                <View style={{ flexDirection: 'column', flex: 1 }}>
+                    <View>
+                        <View>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    width: '100%',
+                                }}
+                            >
+                                <View style={{}}>
+                                    <Text style={styles.meetingDate}>
+                                        {meetingDate}
+                                    </Text>
+                                </View>
+                                <View
+                                    style={{
+                                        flex: 1,
+
+                                        // width: '100%',
+                                        justifyContent: 'flex-end',
+                                        alignItems: 'flex-end',
+                                    }}
+                                >
+                                    <Pressable onPress={deleteHandler}>
+                                        <Ionicons
+                                            name='trash-outline'
+                                            color='white'
+                                            size={20}
+                                        />
+                                    </Pressable>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                    <View>
+                        <Text style={[styles.textBase, styles.description]}>
+                            {meetingType} {title}
+                        </Text>
+                    </View>
                 </View>
             </View>
         </Pressable>
