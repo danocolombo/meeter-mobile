@@ -14,23 +14,21 @@ import MeetingTypeButtons from './MeetingTypeButtons';
 import NumberInput from '../ui/NumberInput/NumberInput';
 import { useNavigation } from '@react-navigation/native';
 import { MeetingsContext } from '../../store/meeting-context';
-import { HistoricContext } from '../../store/historic-context';
 import * as Crypto from 'expo-crypto';
 import Button from '../ui/Button';
 import GroupListItem from '../Group/GroupListItem';
 
 import { Colors } from '../../constants/colors';
-import { dateIsBeforeToday, getUniqueId } from '../../util/helpers';
 import { GroupsContext } from '../../store/groups-context';
 
 function onDateChange() {}
 function MeetingForm({ meetingId }) {
     const navigation = useNavigation();
     const activeCtx = useContext(MeetingsContext);
-    const historicCtx = useContext(HistoricContext);
+
     const groupsCtx = useContext(GroupsContext);
     const meetings = activeCtx.meetings;
-    const historics = historicCtx.meetings;
+
     const groups = groupsCtx.groups;
 
     let theMeeting = {
@@ -43,9 +41,6 @@ function MeetingForm({ meetingId }) {
     };
     if (meetingId !== '0') {
         theMeeting = meetings.find((mtg) => mtg.meetingId === meetingId);
-        if (!theMeeting) {
-            theMeeting = historics.find((mtg) => mtg.meetingId === meetingId);
-        }
     }
     let groupsFound = groups.filter((grp) => {
         if (grp.meetingId === meetingId) {
@@ -116,50 +111,26 @@ function MeetingForm({ meetingId }) {
                 .then((result) => {
                     Alert.alert('SAVE attempt');
                     setMMeetingId(uni);
-                    if (dateIsBeforeToday(mDate)) {
-                        historicCtx.addMeeting({
-                            meetingId: mMeetingId,
-                            meetingDate: mDate,
-                            meetingType: mType,
-                            title: mSpotlight,
-                            attendanceCount: mAttendance,
-                            meal: mMeal,
-                            mealCount: mMealCount,
-                        });
-                    } else {
-                        activeCtx.addMeeting({
-                            meetingId: mMeetingId,
-                            meetingDate: mDate,
-                            meetingType: mType,
-                            title: mSpotlight,
-                            attendanceCount: mAttendance,
-                            meal: mMeal,
-                            mealCount: mMealCount,
-                        });
-                    }
+                    activeCtx.addMeeting({
+                        meetingId: mMeetingId,
+                        meetingDate: mDate,
+                        meetingType: mType,
+                        title: mSpotlight,
+                        attendanceCount: mAttendance,
+                        meal: mMeal,
+                        mealCount: mMealCount,
+                    });
                 })
                 .catch(() => console.log('error'));
         } else {
-            //determine if it is active or historical
-            if (dateIsBeforeToday(mDate)) {
-                historicCtx.updateMeeting(meetingId, {
-                    meetingDate: mDate,
-                    meetingType: mType,
-                    title: mSpotlight,
-                    attendanceCount: mAttendance,
-                    meal: mMeal,
-                    mealCount: mMealCount,
-                });
-            } else {
-                activeCtx.updateMeeting(meetingId, {
-                    meetingDate: mDate,
-                    meetingType: mType,
-                    title: mSpotlight,
-                    attendanceCount: mAttendance,
-                    meal: mMeal,
-                    mealCount: mMealCount,
-                });
-            }
+            activeCtx.updateMeeting(meetingId, {
+                meetingDate: mDate,
+                meetingType: mType,
+                title: mSpotlight,
+                attendanceCount: mAttendance,
+                meal: mMeal,
+                mealCount: mMealCount,
+            });
             Alert.alert('UPDATE attempt');
         }
     }

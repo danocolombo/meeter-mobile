@@ -1,6 +1,5 @@
 import { createContext, useReducer } from 'react';
 import { ACTIVE_MEETINGS } from '../constants/data/active';
-import { HISTORICAL_MEETINGS } from '../constants/data/historical';
 import { MEETINGS } from '../constants/data/meetings';
 //   ---------------------------------
 //todo -- can we make this blank [] ?
@@ -20,7 +19,6 @@ const INITIAL_STATE = [
 
 export const MeetingsContext = createContext({
     meetings: [],
-    historic: [],
     addMeeting: ({
         meetingId,
         meetingDate,
@@ -46,7 +44,6 @@ export const MeetingsContext = createContext({
     getActiveMeetings: () => {},
     deleteMeeting: (meetingId) => {},
     loadMeetings: () => {},
-    loadHistoric: () => {},
 });
 function meetingReducer(state, action, navigation) {
     switch (action.type) {
@@ -67,8 +64,6 @@ function meetingReducer(state, action, navigation) {
             }
             let newSort = newArray.sort(custom_sort);
             return newSort;
-        case 'LOAD_HISTORIC':
-            return HISTORICAL_MEETINGS;
         case 'ADD':
             //create the unique id
             //   =========================================
@@ -127,9 +122,6 @@ function MeetingsContextProvider({ children }) {
     function loadMeetings() {
         dispatch({ type: 'LOAD' });
     }
-    function loadHistoric() {
-        dispatchHistoric({ type: 'LOAD_HISTORIC' });
-    }
     function getActiveMeetings() {
         dispatch({ type: 'ACTIVES' });
     }
@@ -140,7 +132,6 @@ function MeetingsContextProvider({ children }) {
         deleteMeeting: deleteMeeting,
         updateMeeting: updateMeeting,
         loadMeetings: loadMeetings,
-        loadHistoric: loadHistoric,
         getActiveMeetings: getActiveMeetings,
     };
     return (

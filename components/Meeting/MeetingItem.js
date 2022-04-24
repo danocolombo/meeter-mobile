@@ -1,37 +1,21 @@
 import React, { useContext } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-// import { GlobalStyles } from '../../constants/styles';
 import { Colors } from '../../constants/styles';
 import { Ionicons } from '@expo/vector-icons';
 import { MeetingsContext } from '../../store/meeting-context';
-//import { HistoricContext } from '../../store/historic-context';
-import { getFormattedDate } from '../../util/date';
-import { dateIsBeforeToday } from '../../util/helpers';
 
 function MeetingItem({ meetingId, meetingDate, meetingType, title }) {
     const navigation = useNavigation();
-    // const activeCtx = useContext(MeetingsContext);
-    // const historicCtx = useContext(HistoricContext);
-    // const historicCtx = useContext(HistoricContext);
     const meetingsCtx = useContext(MeetingsContext);
     function meetingPressHandler() {
         navigation.navigate('Meeting', {
             meetingId: meetingId,
         });
-        // const msg = 'meetiingId: ' + meetingId;
-        Alert.alert('GOING', msg);
     }
     function deleteHandler() {
-        //if (dateIsBeforeToday(meetingDate)) {
-        // historicCtx.deleteMeeting(meetingId);
-        //} else {
-        // activeCtx.deleteMeeting(meetingDate);
-        //}
         meetingsCtx.deleteMeeting(meetingId);
-        // let msg = 'DELETING ' + meetingId;
-        // Alert.alert(msg);
     }
     return (
         <Pressable

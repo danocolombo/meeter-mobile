@@ -20,7 +20,6 @@ import { Colors } from './constants/colors';
 import AuthContextProvider from './store/auth-context';
 import { AuthContext } from './store/auth-context';
 import MeetingsContextProvider from './store/meeting-context';
-import HistoricContextProvider from './store/historic-context';
 import GroupsContextProvider from './store/groups-context';
 
 const Stack = createNativeStackNavigator();
@@ -177,9 +176,7 @@ export default function App() {
             <AuthContextProvider>
                 <MeetingsContextProvider>
                     <GroupsContextProvider>
-                        <HistoricContextProvider>
-                            <Navigation />
-                        </HistoricContextProvider>
+                        <Navigation />
                     </GroupsContextProvider>
                 </MeetingsContextProvider>
             </AuthContextProvider>
