@@ -5,6 +5,7 @@ import { MeetingsContext } from '../store/meeting-context';
 import MeetingsOutput from '../components/Meeting/MeetingsOutput';
 import { StyleSheet, Text, View } from 'react-native';
 import MeetingCard from '../components/Meeting/MeetingCard';
+import { GOOGLE_AUTH } from '@env';
 
 function ActiveScreen() {
     const [fetchedMessage, setFetchedMessage] = useState();
@@ -13,6 +14,9 @@ function ActiveScreen() {
     const meetingsCtx = useContext(MeetingsContext);
     const token = authCtx.token;
     // meetingsCtx.loadMeetings();
+    //-------------------
+    // get env variables
+    //-------------------
     var d = new Date();
     d.setDate(d.getDate() - 1); // date - one
     const dminusone = d.toLocaleString(); //  M/DD/YYYY, H:MM:SS PM
@@ -24,20 +28,15 @@ function ActiveScreen() {
     const target = yr + '-' + mn + '-' + da;
     useEffect(() => {
         axios
-            .get(
-                'https://react-native-max-2022-default-rtdb.firebaseio.com/message.json?auth=' +
-                    token
-            )
+            .get(`${GOOGLE_AUTH}/message.json?auth=` + token)
             .then((response) => {
                 setFetchedMessage(response.data);
             });
     }, [token]);
-    let apiURL = process.env.API_URL;
     return (
         <View style={styles.rootContainer}>
             <MeetingCard />
             <Text style={styles.title}>Welcome!</Text>
-            <Text>{apiURL}</Text>
             <MeetingsOutput
                 meetings={meetingsCtx.meetings.filter(
                     (mtg) => mtg.meetingDate > target
