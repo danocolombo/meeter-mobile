@@ -32,11 +32,12 @@ function ActiveScreen() {
                 setFetchedMessage(response.data);
             });
     }, [token]);
-
+    let apiURL = process.env.API_URL;
     return (
         <View style={styles.rootContainer}>
             <MeetingCard />
             <Text style={styles.title}>Welcome!</Text>
+            <Text>{apiURL}</Text>
             <MeetingsOutput
                 meetings={meetingsCtx.meetings.filter(
                     (mtg) => mtg.meetingDate > target

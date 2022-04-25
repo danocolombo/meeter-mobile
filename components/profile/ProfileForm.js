@@ -1,23 +1,26 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { getUserProfile } from '../../util/http';
 import Input from './Input';
 import Button from '../ui/Button';
 
 function ProfileForm({ inputCredentials }) {
+    const [userId, setUserId] = useState('');
     const [userName, setUserName] = useState('');
-    const [userStreet, setUserStreet] = useState('');
-    const [userCity, setUserCity] = useState('');
-    const [userStateProv, setUserStateProv] = useState('');
-    const [userPostalCode, setUserPostalCode] = useState('');
+    const [clientId, setClientId] = useState('');
+    const [client, setClient] = useState('');
+    const [email, setEmail] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
 
-    const {
-        userName: nameIsValid,
-        userStree: streetIsValid,
-        userCity: cityIsValid,
-        userStateProv: stateIsValid,
-        userPostalCode: postalCodeIsValid,
-    } = getUserProfile();
+    // const {
+    //     userName: ,
+    //     userStree: streetIsValid,
+    //     userCity: cityIsValid,
+    //     userStateProv: stateIsValid,
+    //     userPostalCode: postalCodeIsValid,
+    // } = getUserProfile();
 
     function updateInputValueHandler(inputType, enteredValue) {
         switch (inputType) {
@@ -50,59 +53,37 @@ function ProfileForm({ inputCredentials }) {
     }
 
     return (
-        <View style={styles.form}>
+        <View style={styles.rootContainer}>
             <View>
-                <Input
-                    label='Your Name'
-                    onUpdateValue={updateInputValueHandler.bind(
-                        this,
-                        'userName'
-                    )}
-                    value={userName}
-                    // keyboardType=''
-                    isInvalid={nameIsValid}
-                />
-                <Input
-                    label='Street'
-                    onUpdateValue={updateInputValueHandler.bind(
-                        this,
-                        'userStreet'
-                    )}
-                    value={userStreet}
-                    // keyboardType=''
-                    isInvalid={streetIsValid}
-                />
-                <Input
-                    label='City'
-                    onUpdateValue={updateInputValueHandler.bind(
-                        this,
-                        'userCity'
-                    )}
-                    value={userCity}
-                    // keyboardType=''
-                    isInvalid={cityIsValid}
-                />
-                <Input
-                    label='State'
-                    onUpdateValue={updateInputValueHandler.bind(
-                        this,
-                        'userStateProv'
-                    )}
-                    value={userStateProv}
-                    // keyboardType=''
-                    isInvalid={stateIsValid}
-                />
-                <Input
-                    label='Postal Code'
-                    onUpdateValue={updateInputValueHandler.bind(
-                        this,
-                        'userPostalCode'
-                    )}
-                    value={userPostalCode}
-                    // keyboardType=''
-                    isInvalid={postalCodeIsValid}
-                />
-
+                <TextInput mode='outlined' label='First Name' value='' />
+                <TextInput mode='outlined' label='Last Name' value='' />
+                <TextInput mode='outlined' label='Email' value='' />
+                <View style={styles.userInfoFrame}>
+                    <TextInput
+                        mode='flat'
+                        disabled='true'
+                        label='User Id'
+                        value={userId}
+                    />
+                    <TextInput
+                        mode='flat'
+                        disabled='true'
+                        label='User Name'
+                        value={userName}
+                    />
+                    <TextInput
+                        mode='flat'
+                        disabled='true'
+                        label='Client Id'
+                        value={clientId}
+                    />
+                    <TextInput
+                        mode='flat'
+                        disabled='true'
+                        label='Client'
+                        value={client}
+                    />
+                </View>
                 <View style={styles.buttons}>
                     <Button onPress={submitHandler}>Save</Button>
                 </View>
@@ -114,6 +95,10 @@ function ProfileForm({ inputCredentials }) {
 export default ProfileForm;
 
 const styles = StyleSheet.create({
+    rootContainer: {
+        width: '100%',
+    },
+
     buttons: {
         marginTop: 12,
     },
