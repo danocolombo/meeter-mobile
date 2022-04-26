@@ -3,7 +3,6 @@ import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../store/auth-context';
 import { MeetingsContext } from '../store/meeting-context';
 import { StyleSheet, Text, View } from 'react-native';
-import MeetingCard from '../components/Meeting/MeetingCard';
 import MeetingsOutput from '../components/Meeting/MeetingsOutput';
 
 function HistoricScreen() {
@@ -47,7 +46,6 @@ function HistoricScreen() {
     }, [meetingsCtx.meetings]);
     return (
         <View style={styles.rootContainer}>
-            <MeetingCard />
             <Text style={styles.title}>Welcome!</Text>
             <MeetingsOutput meetings={meetingList} />
         </View>

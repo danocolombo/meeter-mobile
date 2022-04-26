@@ -4,19 +4,14 @@ import { AuthContext } from '../store/auth-context';
 import { MeetingsContext } from '../store/meeting-context';
 import MeetingsOutput from '../components/Meeting/MeetingsOutput';
 import { StyleSheet, Text, View } from 'react-native';
-import MeetingCard from '../components/Meeting/MeetingCard';
+import NextMeetingCard from '../components/Meeting/NextMeetingCard';
 import { GOOGLE_AUTH } from '@env';
 
 function ActiveScreen() {
-    const [fetchedMessage, setFetchedMessage] = useState();
-    const [activeMeetings, setActiveMeetings] = useState();
     const authCtx = useContext(AuthContext);
     const meetingsCtx = useContext(MeetingsContext);
     const token = authCtx.token;
-    // meetingsCtx.loadMeetings();
-    //-------------------
-    // get env variables
-    //-------------------
+
     var d = new Date();
     d.setDate(d.getDate() - 1); // date - one
     const dminusone = d.toLocaleString(); //  M/DD/YYYY, H:MM:SS PM
@@ -26,22 +21,15 @@ function ActiveScreen() {
     const mn = dateparts[0] < 10 ? '0' + dateparts[0] : dateparts[0];
     const da = dateparts[1];
     const target = yr + '-' + mn + '-' + da;
-    useEffect(() => {
-        axios
-            .get(`${GOOGLE_AUTH}/message.json?auth=` + token)
-            .then((response) => {
-                setFetchedMessage(response.data);
-            });
-    }, [token]);
+    const activeMeetings = meetingsCtx.meetings.filter(
+        (mtg) => mtg.meetingDate > target
+    );
+
     return (
         <View style={styles.rootContainer}>
-            <MeetingCard />
+            <NextMeetingCard nextMeeting={activeMeetings[0]} />
             <Text style={styles.title}>Welcome!</Text>
-            <MeetingsOutput
-                meetings={meetingsCtx.meetings.filter(
-                    (mtg) => mtg.meetingDate > target
-                )}
-            />
+            <MeetingsOutput meetings={activeMeetings} />
         </View>
     );
 }

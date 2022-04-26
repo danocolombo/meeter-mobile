@@ -1,6 +1,7 @@
 import { createContext, useReducer } from 'react';
 import { ACTIVE_MEETINGS } from '../constants/data/active';
 import { MEETINGS } from '../constants/data/meetings';
+import { getToday } from '../util/helpers';
 //   ---------------------------------
 //todo -- can we make this blank [] ?
 //   ---------------------------------
@@ -19,6 +20,7 @@ const INITIAL_STATE = [
 
 export const MeetingsContext = createContext({
     meetings: [],
+
     addMeeting: ({
         meetingId,
         meetingDate,
@@ -64,6 +66,7 @@ function meetingReducer(state, action, navigation) {
             }
             let newSort = newArray.sort(custom_sort);
             return newSort;
+
         case 'ADD':
             //create the unique id
             //   =========================================
@@ -125,6 +128,7 @@ function MeetingsContextProvider({ children }) {
     function getActiveMeetings() {
         dispatch({ type: 'ACTIVES' });
     }
+
     // need this to expose these contents to anyone using context
     const value = {
         meetings: meetingsState,
