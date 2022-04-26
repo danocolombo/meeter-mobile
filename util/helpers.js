@@ -45,3 +45,15 @@ export async function getUniqueId() {
             console.log('failure');
         });
 }
+export function getToday() {
+    var d = new Date();
+    d.setDate(d.getDate() - 1); // date - one
+    const dminusone = d.toLocaleString(); //  M/DD/YYYY, H:MM:SS PM
+    let datetime = dminusone.split(', '); // M/DD/YYYY
+    const dateparts = datetime[0].split('/');
+    const yr = dateparts[2];
+    const mn = dateparts[0] < 10 ? '0' + dateparts[0] : dateparts[0];
+    const da = dateparts[1];
+    const target = yr + '-' + mn + '-' + da;
+    return target;
+}
