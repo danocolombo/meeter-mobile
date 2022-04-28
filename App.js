@@ -22,6 +22,7 @@ import AuthContextProvider from './store/auth-context';
 import { AuthContext } from './store/auth-context';
 import MeetingsContextProvider from './store/meeting-context';
 import GroupsContextProvider from './store/groups-context';
+import MeeterContextProvider from './store/meeter-context';
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -175,11 +176,13 @@ export default function App() {
         <>
             <StatusBar style='light' />
             <AuthContextProvider>
-                <MeetingsContextProvider>
-                    <GroupsContextProvider>
-                        <Navigation />
-                    </GroupsContextProvider>
-                </MeetingsContextProvider>
+                <MeeterContextProvider>
+                    <MeetingsContextProvider>
+                        <GroupsContextProvider>
+                            <Navigation />
+                        </GroupsContextProvider>
+                    </MeetingsContextProvider>
+                </MeeterContextProvider>
             </AuthContextProvider>
         </>
     );

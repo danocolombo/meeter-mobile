@@ -1,13 +1,20 @@
 import axios from 'axios';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useRef } from 'react';
+import LoadingOverlay from '../components/ui/LoadingOverlay';
 import { AuthContext } from '../store/auth-context';
+import { MeeterContext } from '../store/meeter-context';
 import { StyleSheet, Text, View } from 'react-native';
 import ProfileForm from '../components/profile/ProfileForm';
-// import PROFILE_DATA =
+import { getProfile } from '../providers/profile';
+
 function ProfileSceen() {
+    const [isLoading, setIsLoading] = useState(false);
     const [fetchedMessage, setFetchedMessage] = useState();
+    const [profileInfo, setProfileInfo] = useState('');
     const authCtx = useContext(AuthContext);
+    const meeterCtx = useContext(MeeterContext);
     const token = authCtx.token;
+
     useEffect(() => {
         axios
             .get(
@@ -18,10 +25,36 @@ function ProfileSceen() {
                 setFetchedMessage(response.data);
             });
     }, [token]);
+
+    useEffect(() => {
+        let id = '64a77165-a946-4b34-b68a-1654f1cd3ccd';
+        const fetchData = async () => {
+            setIsLoading(true);
+            // get profile from database
+            const data = await getProfile(id);
+            meeterCtx.updateProfile(data);
+            setIsLoading(false);
+        };
+
+        // call the function
+        fetchData()
+            .then(() => {
+                isLoading.current = false;
+            })
+            // make sure to catch any error
+            .catch(console.error);
+    }, []);
+
     return (
-        <View style={styles.rootContainer}>
-            <ProfileForm />
-        </View>
+        <>
+            {isLoading ? (
+                <LoadingOverlay />
+            ) : (
+                <View style={styles.rootContainer}>
+                    <ProfileForm />
+                </View>
+            )}
+        </>
     );
 }
 

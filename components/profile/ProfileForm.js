@@ -1,43 +1,39 @@
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import { getUserProfile } from '../../util/http';
-import Input from './Input';
+import { MeeterContext } from '../../store/meeter-context';
 import Button from '../ui/Button';
 
-function ProfileForm({ inputCredentials }) {
-    const [userId, setUserId] = useState('');
-    const [userName, setUserName] = useState('');
-    const [clientId, setClientId] = useState('');
-    const [client, setClient] = useState('');
-    const [email, setEmail] = useState('');
+function ProfileForm() {
+    const meeterCtx = useContext(MeeterContext);
+    const [userId, setUserId] = useState(meeterCtx.profile._id);
+    const [userName, setUserName] = useState(meeterCtx.profile.userName);
+    const [clientId, setClientId] = useState(meeterCtx.profile.defaultClientId);
+    const [client, setClient] = useState(meeterCtx.profile.defaultClient);
+    const [email, setEmail] = useState(meeterCtx.profile.email);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    // if (meeterCtx.profile.name) {
+    //     const wholeName = meeterCtx.profile.name;
+    //     const namePart = wholeName.split(' ');
+    //     setFirstName(namePart[0]);
+    //     setLastName(namePart[1]);
+    // }
 
-    // const {
-    //     userName: ,
-    //     userStree: streetIsValid,
-    //     userCity: cityIsValid,
-    //     userStateProv: stateIsValid,
-    //     userPostalCode: postalCodeIsValid,
-    // } = getUserProfile();
-
+    useEffect(() => {}, [meeterCtx.profile]);
     function updateInputValueHandler(inputType, enteredValue) {
         switch (inputType) {
             case 'userName':
                 setUserName(enteredValue);
                 break;
-            case 'userStreet':
-                setUserStreet(enteredValue);
+            case 'firstName':
+                setFirstName(enteredValue);
                 break;
-            case 'userCity':
-                setUserCity(enteredValue);
+            case 'lastName':
+                setLastName(enteredValue);
                 break;
-            case 'userStateProv':
-                setUserStateProv(enteredValue);
-                break;
-            case 'userPostalCode':
-                setUserPostalCode(enteredValue);
+            case 'clientId':
+                setClientId(enteredValue);
                 break;
         }
     }
@@ -45,40 +41,46 @@ function ProfileForm({ inputCredentials }) {
     function submitHandler() {
         onSubmit({
             userName: userName,
-            userStreet: userStreet,
-            userCity: userCity,
-            userStateProv: userStateProv,
-            userPostalCode: userPostalCode,
+            firstName: firstName,
+            lastName: lastName,
         });
     }
 
     return (
         <View style={styles.rootContainer}>
             <View>
-                <TextInput mode='outlined' label='First Name' value='' />
-                <TextInput mode='outlined' label='Last Name' value='' />
-                <TextInput mode='outlined' label='Email' value='' />
+                <TextInput
+                    mode='outlined'
+                    label='First Name'
+                    value={firstName}
+                />
+                <TextInput mode='outlined' label='Last Name' value={lastName} />
+                <TextInput mode='outlined' label='Email' value={email} />
                 <View style={styles.userInfoFrame}>
                     <TextInput
                         mode='flat'
+                        style={styles.reservedData}
                         disabled='true'
                         label='User Id'
                         value={userId}
                     />
                     <TextInput
                         mode='flat'
+                        style={styles.reservedData}
                         disabled='true'
                         label='User Name'
                         value={userName}
                     />
                     <TextInput
                         mode='flat'
+                        style={styles.reservedData}
                         disabled='true'
                         label='Client Id'
                         value={clientId}
                     />
                     <TextInput
                         mode='flat'
+                        style={styles.reservedData}
                         disabled='true'
                         label='Client'
                         value={client}
@@ -98,7 +100,9 @@ const styles = StyleSheet.create({
     rootContainer: {
         width: '100%',
     },
-
+    reservedData: {
+        fontSize: 12,
+    },
     buttons: {
         marginTop: 12,
     },
