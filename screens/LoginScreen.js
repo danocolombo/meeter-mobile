@@ -12,7 +12,6 @@ function LoginScreen() {
     const [isAuthenticating, setIsAuthenticating] = useState(false);
     const authCtx = useContext(AuthContext);
     const meetingCtx = useContext(MeetingsContext);
-
     const groupsCtx = useContext(GroupsContext);
     async function loginHandler({ email, password }) {
         setIsAuthenticating(true);

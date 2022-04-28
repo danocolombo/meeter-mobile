@@ -3,6 +3,7 @@ export const PROFILE = {
     lastName: 'Colombo',
     userName: 'dcolombo',
     defaultClientId: '5ee16596c1583dee0d7a6cae',
+    stateProv: 'GA',
     email: 'danocolombo@gmail.com',
     defaultClient: 'wbc',
     firstName: 'Dano',
