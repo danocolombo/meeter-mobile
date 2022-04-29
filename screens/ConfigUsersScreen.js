@@ -45,17 +45,11 @@ function ConfigUsersScreen() {
             ) : (
                 <>
                     <View style={styles.rootContainer}>
-                        <View style={styles.userFrame}>
-                            <Text style={styles.title}>USERS CONFIGS</Text>
-
-                            <View>
-                                <Text style={styles.title}>Welcome!</Text>
-                            </View>
-                            <View>
-                                <UsersOutput
-                                    users={meeterCtx.configuration.users}
-                                />
-                            </View>
+                        <Text style={styles.title}>USERS</Text>
+                        <View style={styles.listContainer}>
+                            <UsersOutput
+                                users={meeterCtx.configuration.users}
+                            />
                         </View>
                     </View>
                 </>
@@ -69,20 +63,15 @@ export default ConfigUsersScreen;
 const styles = StyleSheet.create({
     rootContainer: {
         flex: 1,
-        // justifyContent: 'center',
         alignItems: 'center',
-        padding: 5,
     },
-    userFrame: {
-        flexDirection: 'column',
-        flex: 1,
-        width: '100%',
-        borderWidth: 1,
-        borderColor: 'black',
+    listContainer: {
+        flexDirection: 'row',
     },
     title: {
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 8,
+        marginTop: 16,
     },
 });

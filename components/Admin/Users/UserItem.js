@@ -22,7 +22,12 @@ function UserItem({ userId, firstName, lastName, role, status }) {
             onPress={userPressHandler}
             style={({ pressed }) => pressed && styles.pressed}
         >
-            <View style={styles.userItem}>
+            <View
+                style={[
+                    styles.userItem,
+                    status === 'approved' && styles.approved,
+                ]}
+            >
                 <View style={{ flexDirection: 'column', flex: 1 }}>
                     <View>
                         <View>
@@ -34,7 +39,7 @@ function UserItem({ userId, firstName, lastName, role, status }) {
                             >
                                 <View style={{}}>
                                     <Text style={styles.textBase}>
-                                        {firstName}
+                                        {firstName} {lastName}
                                     </Text>
                                 </View>
                                 <View
@@ -79,13 +84,16 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         backgroundColor: Colors.primary800,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        //justifyContent: 'space-between',
         borderRadius: 10,
         elevation: 3,
         shadowColor: Colors.primary500,
         shadowRadius: 4,
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.4,
+    },
+    approved: {
+        backgroundColor: 'green',
     },
     textBase: {
         color: Colors.primary100,
