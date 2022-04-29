@@ -1,20 +1,18 @@
 import axios from 'axios';
-import { useEffect, useState, useContext, useRef } from 'react';
-import LoadingOverlay from '../components/ui/LoadingOverlay';
+import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../store/auth-context';
 import { MeeterContext } from '../store/meeter-context';
 import { StyleSheet, Text, View } from 'react-native';
-import ProfileForm from '../components/profile/ProfileForm';
-import { getProfile } from '../providers/profile';
+import { getConfigurations } from '../providers/configs';
+import LoadingOverlay from '../components/ui/LoadingOverlay';
+import UsersOutput from '../components/Admin/Users/UsersOutput';
 
-function ProfileSceen() {
+function ConfigUsersScreen() {
     const [isLoading, setIsLoading] = useState(false);
     const [fetchedMessage, setFetchedMessage] = useState();
-    const [profileInfo, setProfileInfo] = useState('');
     const authCtx = useContext(AuthContext);
     const meeterCtx = useContext(MeeterContext);
     const token = authCtx.token;
-
     useEffect(() => {
         axios
             .get(
@@ -25,24 +23,18 @@ function ProfileSceen() {
                 setFetchedMessage(response.data);
             });
     }, [token]);
-
     useEffect(() => {
-        let id = '64a77165-a946-4b34-b68a-1654f1cd3ccd';
-        const fetchData = async () => {
+        const fetchConfigs = async () => {
             setIsLoading(true);
-            // get profile from database
-            const data = await getProfile(id);
-            meeterCtx.updateProfile(data);
-            setIsLoading(false);
-            // console.log('course:\n', meeterCtx.configuration);
-        };
+            const data = await getConfigurations('wbc');
 
-        // call the function
-        fetchData()
+            meeterCtx.loadConfigurations(data);
+            setIsLoading(false);
+        };
+        fetchConfigs()
             .then(() => {
-                isLoading.current = false;
+                //isLoading.current = false;
             })
-            // make sure to catch any error
             .catch(console.error);
     }, []);
 
@@ -51,26 +43,35 @@ function ProfileSceen() {
             {isLoading ? (
                 <LoadingOverlay />
             ) : (
-                <View style={styles.rootContainer}>
-                    <ProfileForm />
-                </View>
+                <>
+                    <View style={styles.rootContainer}>
+                        <Text style={styles.title}>USERS</Text>
+                        <View style={styles.listContainer}>
+                            <UsersOutput
+                                users={meeterCtx.configuration.users}
+                            />
+                        </View>
+                    </View>
+                </>
             )}
         </>
     );
 }
 
-export default ProfileSceen;
+export default ConfigUsersScreen;
 
 const styles = StyleSheet.create({
     rootContainer: {
         flex: 1,
-        // justifyContent: 'center',
         alignItems: 'center',
-        padding: 32,
+    },
+    listContainer: {
+        flexDirection: 'row',
     },
     title: {
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 8,
+        marginTop: 16,
     },
 });

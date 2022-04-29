@@ -15,9 +15,6 @@ import ActiveScreen from './screens/ActiveScreen';
 import HistoricScreen from './screens/HistoricScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import ConfigScreen from './screens/ConfigScreen';
-import ConfigUsersScreen from './screens/ConfigUsersScreen';
-import ConfigGroupsScreen from './screens/ConfigGroupsScreen';
-import ConfigMeetingsScreen from './screens/ConfigMeetingsScreen';
 import MeetingScreen from './screens/MeetingScreen';
 import GroupScreen from './screens/GroupScreen';
 import { Colors } from './constants/colors';
@@ -88,32 +85,7 @@ function AuthenticatedDrawer() {
                 })}
             />
             <Stack.Screen name='Profile' component={ProfileScreen} />
-            <Drawer.Screen
-                name='Configurations'
-                component={ConfigBottom}
-                options={({ navigation }) => ({
-                    headerStyle: {
-                        backgroundColor: Colors.primary800,
-                    },
-                    headerTintColor: 'white',
-                    tabBarStyle: {
-                        backgroundColor: Colors.primary800,
-                    },
-                    tabBarActiveTintColor: 'white',
-                    headerRight: ({ tintColor }) => (
-                        <IconButton
-                            icon='add'
-                            size={24}
-                            color={tintColor}
-                            onPress={() => {
-                                navigation.navigate('Config', {
-                                    meetingId: '0',
-                                });
-                            }}
-                        />
-                    ),
-                })}
-            />
+            <Stack.Screen name='Config' component={ConfigScreen} />
         </Drawer.Navigator>
     );
 }
@@ -138,16 +110,6 @@ function AuthenticatedStack() {
             <Stack.Screen
                 name='Group'
                 component={GroupScreen}
-                options={({ navigation }) => ({
-                    headerStyle: {
-                        backgroundColor: Colors.primary800,
-                    },
-                    headerTintColor: 'white',
-                })}
-            />
-            <Stack.Screen
-                name='Config'
-                component={ConfigScreen}
                 options={({ navigation }) => ({
                     headerStyle: {
                         backgroundColor: Colors.primary800,
@@ -198,60 +160,7 @@ function Landing() {
         </BottomTabs.Navigator>
     );
 }
-function ConfigBottom() {
-    return (
-        <BottomTabs.Navigator
-            initialRouteName='ConfigUsers'
-            screenOptions={{ headerShown: false }}
-        >
-            <BottomTabs.Screen
-                name='ConfigGroups'
-                component={ConfigGroupsScreen}
-                options={{
-                    title: 'Default Groups',
-                    tabBarLabel: 'Groups',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons
-                            name='md-caret-back-circle-sharp'
-                            size={size}
-                            color={color}
-                        />
-                    ),
-                }}
-            />
-            <BottomTabs.Screen
-                name='ConfigUsers'
-                component={ConfigUsersScreen}
-                options={{
-                    title: 'Users',
-                    tabBarLabel: 'Users',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons
-                            name='md-caret-forward-circle-sharp'
-                            size={size}
-                            color={color}
-                        />
-                    ),
-                }}
-            />
-            <BottomTabs.Screen
-                name='ConfigMeetings'
-                component={ConfigMeetingsScreen}
-                options={{
-                    title: 'ConfigMeetings',
-                    tabBarLabel: 'Meetings',
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons
-                            name='md-caret-forward-circle-sharp'
-                            size={size}
-                            color={color}
-                        />
-                    ),
-                }}
-            />
-        </BottomTabs.Navigator>
-    );
-}
+
 function Navigation() {
     const authCtx = useContext(AuthContext);
     return (
