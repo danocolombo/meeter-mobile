@@ -34,6 +34,7 @@ function ProfileSceen() {
             const data = await getProfile(id);
             meeterCtx.updateProfile(data);
             setIsLoading(false);
+            // console.log('course:\n', meeterCtx.configuration);
         };
 
         // call the function
