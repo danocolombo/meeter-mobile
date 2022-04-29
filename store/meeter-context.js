@@ -8,6 +8,7 @@ export const MeeterContext = createContext({
     updateProfile: () => {},
     loadConfigurations: () => {},
     deleteUser: () => {},
+    deleteConfigGroup: () => {},
 });
 
 function meeterReducer(profileState, action) {
@@ -19,18 +20,6 @@ function meeterReducer(profileState, action) {
     }
 }
 function configReducer(configState, action) {
-    // console.log('configReducer......');
-    // console.log('the data\n', action.payload);
-    // console.log('client is:', action.payload.clientName);
-    // let users = action.payload.clientUsers;
-    // console.log('first dude: ', action.payload.clientUsers[0].firstName);
-    // console.log('first dude: ', action.payload.clientUsers[0].firstName);
-    // let clientUsers = [];
-    // action.payload.clientUsers.forEach((element) => {
-    //     clientUsers.push(element);
-    // });
-    // console.log('new 1: ' + clientUsers[0].firstName);
-    // console.log('---------------DONE--------------');
     switch (action.type) {
         case ACTIONS.LOAD_CONFIGURATIONS:
             return {
@@ -40,6 +29,8 @@ function configReducer(configState, action) {
                 configurations: action.payload.configurations,
             };
         case ACTIONS.CONFIG_USER_DELETE:
+            return configState;
+        case CONFIG_GROUP_DELETE:
             return configState;
         default:
             return configState;
@@ -60,6 +51,9 @@ function MeeterContextProvider({ children }) {
     function deleteUser(userId) {
         configDispatch({ type: ACTIONS.CONFIG_USER_DELETE, payload: userId });
     }
+    function deleteConfigGroup(groupId) {
+        configDispatch({ type: ACTIONS.CONFIG_GROUP_DELETE, payload: userId });
+    }
 
     const value = {
         profile: profileState,
@@ -67,6 +61,7 @@ function MeeterContextProvider({ children }) {
         updateProfile: updateProfile,
         loadConfigurations: loadConfigurations,
         deleteUser: deleteUser,
+        deleteConfigGroup: deleteConfigGroup,
     };
     return (
         <MeeterContext.Provider value={value}>
