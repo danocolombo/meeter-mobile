@@ -52,10 +52,7 @@ function groupsReducer(state, action, navigation) {
         case 'LOAD':
             return GROUPS;
         case 'ADD':
-            //create the unique id
-            //   =========================================
-            //todo ===>>>> done here? or passed to API??
-            //   =========================================
+            //console.log('IN ADD\n', action.payload, '\n=======');
             const id = new Date().toString() + Math.random().toString();
             return [{ ...action.payload, groupId: id }, ...state];
         case 'DELETE':
@@ -87,6 +84,7 @@ function GroupsContextProvider({ children }) {
     const [groupsState, dispatch] = useReducer(groupsReducer, INITIAL_STATE);
 
     function addGroup(groupData) {
+        //console.log('addGroup()groupData:\n', groupData, '\n-----------');
         dispatch({ type: 'ADD', payload: groupData });
     }
     function deleteGroup(id) {

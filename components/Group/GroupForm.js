@@ -4,24 +4,25 @@ import {
     View,
     Text,
     Alert,
-    FlatList,
-    Pressable,
-    ScrollView,
+    // FlatList,
+    // Pressable,
+    // ScrollView,
     KeyboardAvoidingView,
 } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import NumberInput from '../ui/NumberInput/NumberInput';
 import GenderButtons from './GenderButtons';
-import MeetingTypeButtons from '../Meeting/MeetingTypeButtons';
+// import MeetingTypeButtons from '../Meeting/MeetingTypeButtons';
 import { useNavigation } from '@react-navigation/native';
-import * as Crypto from 'expo-crypto';
+// import * as Crypto from 'expo-crypto';
+
 import Button from '../ui/Button';
-import GroupListItem from '../Group/GroupListItem';
+// import GroupListItem from '../Group/GroupListItem';
 import { Colors } from '../../constants/colors';
-import { dateIsBeforeToday, getUniqueId } from '../../util/helpers';
+import { getUniqueId } from '../../util/helpers';
 import { GroupsContext } from '../../store/groups-context';
 
-function onDateChange() {}
+// function onDateChange() {}
 function GroupForm({ meetingId, groupId }) {
     const navigation = useNavigation();
     const groupsCtx = useContext(GroupsContext);
@@ -31,7 +32,7 @@ function GroupForm({ meetingId, groupId }) {
     const foundGroup = groups.find((grp) => grp.groupId === groupId);
     // console.log('#### FOUND ####\n', foundGroup, '\n');
     let theGroup = {
-        meetingId: '',
+        meetingId: meetingId,
         groupId: '0',
         gender: '',
         title: '',
@@ -46,21 +47,8 @@ function GroupForm({ meetingId, groupId }) {
         theGroup = foundGroup;
         // console.log('theGroup:\n', theGroup);
     }
-    let genderValue = '';
-    switch (theGroup.gender) {
-        case 'f':
-            genderValue = 'Women';
-            break;
-        case 'm':
-            genderValue = 'Men';
-            break;
-        case 'x':
-            genderValue = 'Mixed';
-            break;
-        default:
-            break;
-    }
-    const [gGender, setGGender] = useState(genderValue);
+
+    const [gGender, setGGender] = useState(theGroup.gender);
     const [gAttendance, setGAttendance] = useState(theGroup.attendance);
     const [gTitle, setGTitle] = useState(theGroup.title);
     const [gLocation, setGLocation] = useState(theGroup.location);
@@ -72,31 +60,42 @@ function GroupForm({ meetingId, groupId }) {
 
     function confirmGroupHandler(navigation) {
         if (
-            (gGender !== 'Women' && gGender !== 'Men' && gGender !== 'Mixed') ||
+            (gGender !== 'f' && gGender !== 'm' && gGender !== 'x') ||
             gTitle.length < 3 ||
             parseInt(gAttendance) < 0 ||
             parseInt(gAttendance) > 25
         ) {
-            Alert.alert('Validation Error', 'Title is required.', [
+            Alert.alert('Validation Error', 'Title & gender are required.', [
                 { text: 'OK', style: 'destruction' },
             ]);
             return;
         }
-        if (groupId === '0') {
-            async function getUni() {
-                const digest = await Crypto.digestStringAsync(
-                    Crypto.CryptoDigestAlgorithm.SHA256,
-                    new Date().toString() + Math.random().toString()
-                );
-                return digest;
-            }
-            let uni = getUni()
-                .then((result) => {
-                    Alert.alert('SAVE attempt');
-                    setGGroupId(result);
-                    groupsCtx.addGroup({
+        if (groupId) {
+            //save the group
+            const updatedGroup = {
+                meetingId: theGroup.meetingId,
+                groupId: theGroup.groupId,
+                gender: gGender,
+                title: gTitle,
+                location: gLocation,
+                facilitator: gFacilitator,
+                cofacilitator: gCofacilitator,
+                attendance: gAttendance,
+                notes: gNotes,
+            };
+            groupsCtx.updateGroup(groupId, updatedGroup);
+            // console.log('\n=================\n');
+            // console.log(updatedGroup);
+            // console.log('\n=================');
+            Alert.alert('Group Updated', 'Your changes were saved', [
+                { text: 'OK', style: 'destruction' },
+            ]);
+        } else {
+            getUniqueId()
+                .then((newId) => {
+                    const newGroup = {
                         meetingId: theGroup.meetingId,
-                        groupId: theGroup.groupId,
+                        groupId: newId,
                         gender: gGender,
                         title: gTitle,
                         location: gLocation,
@@ -104,25 +103,21 @@ function GroupForm({ meetingId, groupId }) {
                         cofacilitator: gCofacilitator,
                         attendance: gAttendance,
                         notes: gNotes,
-                    });
+                    };
+                    groupsCtx.addGroup(newGroup);
+                    Alert.alert('Group Added', 'Your changes were saved', [
+                        { text: 'OK', style: 'destruction' },
+                    ]);
                 })
-                .catch(() => console.log('error saving Group'));
-        } else {
-            //save the group
-            groupsCtx.updateGroup(groupId, {
-                meetingId: theGroup.meetingId,
-                groupId: theGroup.groupId,
-                title: gTitle,
-                location: gLocation,
-                facilitator: gFacilitator,
-                cofacilitator: gCofacilitator,
-                attendance: gAttendance,
-                notes: gNotes,
-            });
-            Alert.alert('Group Updated', 'Your changes were saved', [
-                { text: 'OK', style: 'destruction' },
-            ]);
+                .catch((error) => {
+                    // console.log('error getting unique Id\n', error);
+                    Alert.alert('Error', 'Error adding your group', [
+                        { text: 'OK', style: 'destruction' },
+                    ]);
+                    return;
+                });
         }
+
         return;
     }
     return (

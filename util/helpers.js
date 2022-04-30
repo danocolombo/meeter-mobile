@@ -32,18 +32,11 @@ export function dateIsBeforeToday(testDate) {
     return results;
 }
 export async function getUniqueId() {
-    let uniqueValue = null;
-    await Crypto.digestStringAsync(
+    const digest = await Crypto.digestStringAsync(
         Crypto.CryptoDigestAlgorithm.SHA256,
         new Date().toString() + Math.random().toString()
-    )
-        .then((result) => {
-            console.log('result:' + result);
-            return result;
-        })
-        .catch(() => {
-            console.log('failure');
-        });
+    );
+    return digest;
 }
 export function getToday() {
     var d = new Date();

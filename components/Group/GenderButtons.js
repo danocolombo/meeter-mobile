@@ -10,8 +10,8 @@ function GenderButtons({ currentType, onChange }) {
                     style={{ flex: 0.3, margin: 5 }}
                     icon=''
                     mode='contained'
-                    dark={currentType === 'Women'}
-                    onPress={() => onChange('Women')}
+                    dark={currentType === 'f'}
+                    onPress={() => onChange('f')}
                 >
                     <Text style={{ fontWeight: 'bold', fontSize: 10 }}>
                         Women
@@ -22,8 +22,8 @@ function GenderButtons({ currentType, onChange }) {
                     style={{ flex: 0.3, margin: 5 }}
                     icon=''
                     mode='contained'
-                    dark={currentType === 'Men'}
-                    onPress={() => onChange('Men')}
+                    dark={currentType === 'm'}
+                    onPress={() => onChange('m')}
                 >
                     <Text style={{ fontWeight: 'bold', fontSize: 10 }}>
                         Men
@@ -34,8 +34,8 @@ function GenderButtons({ currentType, onChange }) {
                     style={{ flex: 0.3, margin: 5 }}
                     icon=''
                     mode='contained'
-                    dark={currentType === 'Mixed'}
-                    onPress={() => onChange('Mixed')}
+                    dark={currentType === 'x'}
+                    onPress={() => onChange('x')}
                 >
                     <Text style={{ fontWeight: 'bold', fontSize: 10 }}>
                         Mixed
