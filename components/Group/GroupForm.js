@@ -97,6 +97,7 @@ function GroupForm({ meetingId, groupId }) {
                     groupsCtx.addGroup({
                         meetingId: theGroup.meetingId,
                         groupId: theGroup.groupId,
+                        gender: gGender,
                         title: gTitle,
                         location: gLocation,
                         facilitator: gFacilitator,
@@ -106,6 +107,21 @@ function GroupForm({ meetingId, groupId }) {
                     });
                 })
                 .catch(() => console.log('error saving Group'));
+        } else {
+            //save the group
+            groupsCtx.updateGroup(groupId, {
+                meetingId: theGroup.meetingId,
+                groupId: theGroup.groupId,
+                title: gTitle,
+                location: gLocation,
+                facilitator: gFacilitator,
+                cofacilitator: gCofacilitator,
+                attendance: gAttendance,
+                notes: gNotes,
+            });
+            Alert.alert('Group Updated', 'Your changes were saved', [
+                { text: 'OK', style: 'destruction' },
+            ]);
         }
         return;
     }
@@ -185,7 +201,7 @@ function GroupForm({ meetingId, groupId }) {
                         <View style={{ marginHorizontal: 10 }}>
                             <View style={styles.buttonContainer}>
                                 <Button
-                                    onPress={() => {}}
+                                    onPress={confirmGroupHandler}
                                     customStyle={{ backgroundColor: 'green' }}
                                 >
                                     SAVE
