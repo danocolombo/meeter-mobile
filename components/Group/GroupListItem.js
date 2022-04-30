@@ -1,8 +1,9 @@
+import React, { useContext } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/styles';
-
+import { GroupsContext } from '../../store/groups-context';
 function GroupListItem({
     groupId,
     meetingId,
@@ -15,6 +16,7 @@ function GroupListItem({
     notes,
 }) {
     const navigation = useNavigation();
+    const groupsCtx = useContext(GroupsContext);
     const group = {
         groupId: groupId,
         meetingId: meetingId,
@@ -45,24 +47,64 @@ function GroupListItem({
             groupId: group.groupId,
         });
     }
-
+    function deleteHandler() {
+        groupsCtx.deleteGroup(group.groupId);
+    }
     return (
         <Pressable
             onPress={groupPressHandler}
             style={({ pressed }) => pressed && styles.pressed}
         >
             <View style={styles.groupItem}>
-                <View>
-                    <Text style={[styles.textBase, styles.description]}>
-                        {group.gender}
-                        {group.gender === 'Men' || group.gender === 'Women'
-                            ? "'s"
-                            : null}{' '}
-                        {group.title} - {group.location}
-                    </Text>
-                    <Text style={[styles.textBase, styles.description]}>
-                        {group.facilitator}
-                    </Text>
+                <View style={{ flexDirection: 'column', flex: 1 }}>
+                    <View>
+                        <View>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    width: '100%',
+                                }}
+                            >
+                                <View style={{}}>
+                                    <Text
+                                        style={[
+                                            styles.textBase,
+                                            styles.description,
+                                        ]}
+                                    >
+                                        {group.gender}
+                                        {group.gender === 'Men' ||
+                                        group.gender === 'Women'
+                                            ? "'s"
+                                            : null}{' '}
+                                        {group.title} - {group.location}
+                                    </Text>
+                                </View>
+                                <View
+                                    style={{
+                                        flex: 1,
+
+                                        // width: '100%',
+                                        justifyContent: 'flex-end',
+                                        alignItems: 'flex-end',
+                                    }}
+                                >
+                                    <Pressable onPress={deleteHandler}>
+                                        <Ionicons
+                                            name='trash-outline'
+                                            color='white'
+                                            size={20}
+                                        />
+                                    </Pressable>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                    <View>
+                        <Text style={[styles.textBase, styles.description]}>
+                            {group.facilitator}
+                        </Text>
+                    </View>
                 </View>
             </View>
         </Pressable>
