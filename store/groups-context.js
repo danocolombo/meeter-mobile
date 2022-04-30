@@ -56,7 +56,7 @@ function groupsReducer(state, action, navigation) {
             const id = new Date().toString() + Math.random().toString();
             return [{ ...action.payload, groupId: id }, ...state];
         case 'DELETE':
-            return state.filter((group) => group.groupId === action.payload);
+            return state.filter((group) => group.groupId !== action.payload);
         case 'UPDATE':
             //find group to update
             const updatableIndex = state.findIndex(
