@@ -136,8 +136,8 @@ function MeetingForm({ meetingId }) {
     }
     function addGroupHandler() {
         navigation.navigate('Group', {
-            group: { groupId: '0' },
             meetingId: meetingId,
+            group: '0',
         });
     }
     function renderGroupItem(itemData) {

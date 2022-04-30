@@ -42,9 +42,6 @@ function GenderButtons({ currentType, onChange }) {
                     </Text>
                 </Button>
             </View>
-            <View>
-                <Text>Gender:{currentType}</Text>
-            </View>
         </View>
     );
 }

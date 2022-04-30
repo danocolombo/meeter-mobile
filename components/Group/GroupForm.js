@@ -10,39 +10,57 @@ import {
     KeyboardAvoidingView,
 } from 'react-native';
 import { TextInput } from 'react-native-paper';
-
 import NumberInput from '../ui/NumberInput/NumberInput';
 import GenderButtons from './GenderButtons';
 import MeetingTypeButtons from '../Meeting/MeetingTypeButtons';
 import { useNavigation } from '@react-navigation/native';
-
 import * as Crypto from 'expo-crypto';
 import Button from '../ui/Button';
 import GroupListItem from '../Group/GroupListItem';
-
 import { Colors } from '../../constants/colors';
 import { dateIsBeforeToday, getUniqueId } from '../../util/helpers';
 import { GroupsContext } from '../../store/groups-context';
 
 function onDateChange() {}
-function GroupForm({ group, meetingId }) {
+function GroupForm({ meetingId, groupId }) {
     const navigation = useNavigation();
-    // const groupsCtx = useContext(GroupsContext);
-
+    const groupsCtx = useContext(GroupsContext);
+    // console.log('groupId:', groupId, '<====');
+    const groups = groupsCtx.groups;
+    // console.log('######## groups##########\n', groups, '\n###############');
+    const foundGroup = groups.find((grp) => grp.groupId === groupId);
+    // console.log('#### FOUND ####\n', foundGroup, '\n');
     let theGroup = {
-        meetingId: meetingId,
-        groupId: group.groupId,
-        gender: group.gender,
-        title: group.title,
-        attendance: group.attendance,
-        location: group.location,
-        facilitator: group.facilitator,
-        cofacilitator: group.cofacilitator,
-        notes: group.notes,
+        meetingId: '',
+        groupId: '0',
+        gender: '',
+        title: '',
+        attendance: '0',
+        location: '',
+        facilitator: '',
+        cofacilitator: '',
+        notes: '',
     };
-    const groupId = theGroup.groupId;
-    //const meetingId = theGroup.meetingId;
-    const [gGender, setGGender] = useState(theGroup.gender);
+    if (foundGroup) {
+        // console.log('foundGroup YES');
+        theGroup = foundGroup;
+        // console.log('theGroup:\n', theGroup);
+    }
+    let genderValue = '';
+    switch (theGroup.gender) {
+        case 'f':
+            genderValue = 'Women';
+            break;
+        case 'm':
+            genderValue = 'Men';
+            break;
+        case 'x':
+            genderValue = 'Mixed';
+            break;
+        default:
+            break;
+    }
+    const [gGender, setGGender] = useState(genderValue);
     const [gAttendance, setGAttendance] = useState(theGroup.attendance);
     const [gTitle, setGTitle] = useState(theGroup.title);
     const [gLocation, setGLocation] = useState(theGroup.location);
@@ -53,15 +71,42 @@ function GroupForm({ group, meetingId }) {
     const [gNotes, setGNotes] = useState(theGroup.notes);
 
     function confirmGroupHandler(navigation) {
-        if (gTitle.length < 3) {
+        if (
+            (gGender !== 'Women' && gGender !== 'Men' && gGender !== 'Mixed') ||
+            gTitle.length < 3 ||
+            parseInt(gAttendance) < 0 ||
+            parseInt(gAttendance) > 25
+        ) {
             Alert.alert('Validation Error', 'Title is required.', [
                 { text: 'OK', style: 'destruction' },
             ]);
             return;
         }
-        Alert.alert('Meeting', { meetingId }, [
-            { text: 'OK', style: 'destruction' },
-        ]);
+        if (groupId === '0') {
+            async function getUni() {
+                const digest = await Crypto.digestStringAsync(
+                    Crypto.CryptoDigestAlgorithm.SHA256,
+                    new Date().toString() + Math.random().toString()
+                );
+                return digest;
+            }
+            let uni = getUni()
+                .then((result) => {
+                    Alert.alert('SAVE attempt');
+                    setGGroupId(result);
+                    groupsCtx.addGroup({
+                        meetingId: theGroup.meetingId,
+                        groupId: theGroup.groupId,
+                        title: gTitle,
+                        location: gLocation,
+                        facilitator: gFacilitator,
+                        cofacilitator: gCofacilitator,
+                        attendance: gAttendance,
+                        notes: gNotes,
+                    });
+                })
+                .catch(() => console.log('error saving Group'));
+        }
         return;
     }
     return (

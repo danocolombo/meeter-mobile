@@ -4,13 +4,14 @@ import { Colors } from '../../../constants/colors';
 import { RoundedButton } from './RoundedButton';
 
 function NumberInput({ value, onAction }) {
+    let numericValue = parseInt(value);
     const increaseValue = () => {
-        const newOne = value + 1;
+        const newOne = numericValue + 1;
         onAction(newOne);
     };
     const decreaseValue = () => {
-        if (value > 0) {
-            onAction(value - 1);
+        if (numericValue > 0) {
+            onAction(numericValue - 1);
         } else {
             onAction(0);
         }
@@ -37,7 +38,7 @@ function NumberInput({ value, onAction }) {
                     onPress={decreaseValue}
                 />
                 <View style={styles.numberBox}>
-                    <Text style={styles.number}>{value}</Text>
+                    <Text style={styles.number}>{numericValue}</Text>
                 </View>
                 <RoundedButton
                     title='+'

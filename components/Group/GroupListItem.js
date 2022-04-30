@@ -41,8 +41,8 @@ function GroupListItem({
     }
     function groupPressHandler() {
         navigation.navigate('Group', {
-            group: group,
             meetingId: meetingId,
+            groupId: group.groupId,
         });
     }
 
