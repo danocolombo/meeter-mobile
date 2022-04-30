@@ -3,13 +3,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import GroupForm from '../components/Group/GroupForm';
 
 function GroupScreen({ route }) {
-    const group = route.params.group;
+    const groupId = route.params.groupId;
     const meetingId = route.params.meetingId;
     useEffect(() => {}, []);
     return (
         <>
             <View style={styles.rootContainer}>
-                <GroupForm group={group} meetingId={meetingId} />
+                <GroupForm meetingId={meetingId} groupId={groupId} />
             </View>
         </>
     );

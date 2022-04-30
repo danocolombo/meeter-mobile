@@ -4,44 +4,50 @@ import {
     View,
     Text,
     Alert,
-    FlatList,
-    Pressable,
-    ScrollView,
+    // FlatList,
+    // Pressable,
+    // ScrollView,
     KeyboardAvoidingView,
 } from 'react-native';
 import { TextInput } from 'react-native-paper';
-
 import NumberInput from '../ui/NumberInput/NumberInput';
 import GenderButtons from './GenderButtons';
-import MeetingTypeButtons from '../Meeting/MeetingTypeButtons';
+// import MeetingTypeButtons from '../Meeting/MeetingTypeButtons';
 import { useNavigation } from '@react-navigation/native';
+// import * as Crypto from 'expo-crypto';
 
-import * as Crypto from 'expo-crypto';
 import Button from '../ui/Button';
-import GroupListItem from '../Group/GroupListItem';
-
+// import GroupListItem from '../Group/GroupListItem';
 import { Colors } from '../../constants/colors';
-import { dateIsBeforeToday, getUniqueId } from '../../util/helpers';
+import { getUniqueId } from '../../util/helpers';
 import { GroupsContext } from '../../store/groups-context';
 
-function onDateChange() {}
-function GroupForm({ group, meetingId }) {
+// function onDateChange() {}
+function GroupForm({ meetingId, groupId }) {
     const navigation = useNavigation();
-    // const groupsCtx = useContext(GroupsContext);
-
+    const groupsCtx = useContext(GroupsContext);
+    // console.log('groupId:', groupId, '<====');
+    const groups = groupsCtx.groups;
+    // console.log('######## groups##########\n', groups, '\n###############');
+    const foundGroup = groups.find((grp) => grp.groupId === groupId);
+    // console.log('#### FOUND ####\n', foundGroup, '\n');
     let theGroup = {
         meetingId: meetingId,
-        groupId: group.groupId,
-        gender: group.gender,
-        title: group.title,
-        attendance: group.attendance,
-        location: group.location,
-        facilitator: group.facilitator,
-        cofacilitator: group.cofacilitator,
-        notes: group.notes,
+        groupId: '0',
+        gender: '',
+        title: '',
+        attendance: '0',
+        location: '',
+        facilitator: '',
+        cofacilitator: '',
+        notes: '',
     };
-    const groupId = theGroup.groupId;
-    //const meetingId = theGroup.meetingId;
+    if (foundGroup) {
+        // console.log('foundGroup YES');
+        theGroup = foundGroup;
+        // console.log('theGroup:\n', theGroup);
+    }
+
     const [gGender, setGGender] = useState(theGroup.gender);
     const [gAttendance, setGAttendance] = useState(theGroup.attendance);
     const [gTitle, setGTitle] = useState(theGroup.title);
@@ -53,15 +59,65 @@ function GroupForm({ group, meetingId }) {
     const [gNotes, setGNotes] = useState(theGroup.notes);
 
     function confirmGroupHandler(navigation) {
-        if (gTitle.length < 3) {
-            Alert.alert('Validation Error', 'Title is required.', [
+        if (
+            (gGender !== 'f' && gGender !== 'm' && gGender !== 'x') ||
+            gTitle.length < 3 ||
+            parseInt(gAttendance) < 0 ||
+            parseInt(gAttendance) > 25
+        ) {
+            Alert.alert('Validation Error', 'Title & gender are required.', [
                 { text: 'OK', style: 'destruction' },
             ]);
             return;
         }
-        Alert.alert('Meeting', { meetingId }, [
-            { text: 'OK', style: 'destruction' },
-        ]);
+        if (groupId) {
+            //save the group
+            const updatedGroup = {
+                meetingId: theGroup.meetingId,
+                groupId: theGroup.groupId,
+                gender: gGender,
+                title: gTitle,
+                location: gLocation,
+                facilitator: gFacilitator,
+                cofacilitator: gCofacilitator,
+                attendance: gAttendance,
+                notes: gNotes,
+            };
+            groupsCtx.updateGroup(groupId, updatedGroup);
+            // console.log('\n=================\n');
+            // console.log(updatedGroup);
+            // console.log('\n=================');
+            Alert.alert('Group Updated', 'Your changes were saved', [
+                { text: 'OK', style: 'destruction' },
+            ]);
+        } else {
+            getUniqueId()
+                .then((newId) => {
+                    const newGroup = {
+                        meetingId: theGroup.meetingId,
+                        groupId: newId,
+                        gender: gGender,
+                        title: gTitle,
+                        location: gLocation,
+                        facilitator: gFacilitator,
+                        cofacilitator: gCofacilitator,
+                        attendance: gAttendance,
+                        notes: gNotes,
+                    };
+                    groupsCtx.addGroup(newGroup);
+                    Alert.alert('Group Added', 'Your changes were saved', [
+                        { text: 'OK', style: 'destruction' },
+                    ]);
+                })
+                .catch((error) => {
+                    // console.log('error getting unique Id\n', error);
+                    Alert.alert('Error', 'Error adding your group', [
+                        { text: 'OK', style: 'destruction' },
+                    ]);
+                    return;
+                });
+        }
+
         return;
     }
     return (
@@ -140,7 +196,7 @@ function GroupForm({ group, meetingId }) {
                         <View style={{ marginHorizontal: 10 }}>
                             <View style={styles.buttonContainer}>
                                 <Button
-                                    onPress={() => {}}
+                                    onPress={confirmGroupHandler}
                                     customStyle={{ backgroundColor: 'green' }}
                                 >
                                     SAVE
