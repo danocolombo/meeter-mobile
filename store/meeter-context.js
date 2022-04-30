@@ -32,6 +32,19 @@ function configReducer(configState, action) {
             return configState;
         case CONFIG_GROUP_DELETE:
             return configState;
+        case 'CONFIG_GROUP_UPDATE':
+            //find meeting to update
+            const updatableIndex = configState.groups.findIndex(
+                (grp) => grp.groupId === action.payload.data.groupId
+            );
+            const groupToUpdate = configState.groups[updatableIndex];
+            const updatedGroup = {
+                ...groupToUpdate,
+                ...action.payload.data,
+            };
+            const updatedGroups = [...configState.groups];
+            updatedGroups[updatableIndex] = updatedGroup;
+            return updatedGroups;
         default:
             return configState;
     }
@@ -54,6 +67,9 @@ function MeeterContextProvider({ children }) {
     function deleteConfigGroup(groupId) {
         configDispatch({ type: ACTIONS.CONFIG_GROUP_DELETE, payload: userId });
     }
+    function updateDefaultGroup(data) {
+        configDispatch({ type: ACTIONS.CONFIG_GROUP_UPDATE, payload: data });
+    }
 
     const value = {
         profile: profileState,
@@ -62,6 +78,7 @@ function MeeterContextProvider({ children }) {
         loadConfigurations: loadConfigurations,
         deleteUser: deleteUser,
         deleteConfigGroup: deleteConfigGroup,
+        updateDefaultGroup: updateDefaultGroup,
     };
     return (
         <MeeterContext.Provider value={value}>

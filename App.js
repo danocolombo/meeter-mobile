@@ -17,6 +17,7 @@ import ProfileScreen from './screens/ProfileScreen';
 import ConfigScreen from './screens/ConfigScreen';
 import ConfigUsersScreen from './screens/ConfigUsersScreen';
 import ConfigGroupsScreen from './screens/ConfigGroupsScreen';
+import DefaultGroupForm from './components/Admin/Groups/DefaultGroupForm';
 import ConfigMeetingsScreen from './screens/ConfigMeetingsScreen';
 import MeetingScreen from './screens/MeetingScreen';
 import GroupScreen from './screens/GroupScreen';
@@ -155,6 +156,17 @@ function AuthenticatedStack() {
                     headerTintColor: 'white',
                 })}
             />
+            <Stack.Screen
+                name='DefaultGroupConfig'
+                component={DefaultGroupForm}
+                options={({ navigation }) => ({
+                    title: 'Default Group',
+                    headerStyle: {
+                        backgroundColor: Colors.primary800,
+                    },
+                    headerTintColor: 'white',
+                })}
+            />
         </Stack.Navigator>
     );
 }
@@ -201,7 +213,7 @@ function Landing() {
 function ConfigBottom() {
     return (
         <BottomTabs.Navigator
-            initialRouteName='ConfigUsers'
+            initialRouteName='ConfigGroups'
             screenOptions={{ headerShown: false }}
         >
             <BottomTabs.Screen
