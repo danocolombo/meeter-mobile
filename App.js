@@ -1,5 +1,8 @@
 import { useContext, useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import {
+    NavigationContainer,
+    getFocusedRouteNameFromRoute,
+} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -31,7 +34,21 @@ import MeeterContextProvider from './store/meeter-context';
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
+function getHeaderTitle(route) {
+    // If the focused route is not found, we need to assume it's the initial screen
+    // This can happen during if there hasn't been any navigation inside the screen
+    // In our case, it's "Feed" as that's the first screen inside the navigator
+    const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
 
+    switch (routeName) {
+        case 'ConfigGroups':
+            return 'ConfigGroups';
+        case 'ConfigUsers':
+            return 'ConfigUsers';
+        case 'ConfigMeetings':
+            return 'ConfigMeetings';
+    }
+}
 function AuthStack() {
     return (
         <Stack.Navigator
@@ -101,18 +118,18 @@ function AuthenticatedDrawer() {
                         backgroundColor: Colors.primary800,
                     },
                     tabBarActiveTintColor: 'white',
-                    headerRight: ({ tintColor }) => (
-                        <IconButton
-                            icon='add'
-                            size={24}
-                            color={tintColor}
-                            onPress={() => {
-                                navigation.navigate('Config', {
-                                    meetingId: '0',
-                                });
-                            }}
-                        />
-                    ),
+                    // headerRight: ({ tintColor }) => (
+                    //     <IconButton
+                    //         icon='add'
+                    //         size={24}
+                    //         color={tintColor}
+                    //         onPress={() => {
+                    //             navigation.navigate('Config', {
+                    //                 meetingId: '0',
+                    //             });
+                    //         }}
+                    //     />
+                    // ),
                 })}
             />
         </Drawer.Navigator>
@@ -219,9 +236,11 @@ function ConfigBottom() {
             <BottomTabs.Screen
                 name='ConfigGroups'
                 component={ConfigGroupsScreen}
-                options={{
+                options={({ route }) => ({
+                    headerTitle: getHeaderTitle(route),
                     title: 'Default Groups',
                     tabBarLabel: 'Groups',
+                    headerTitle: getHeaderTitle(route),
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons
                             name='md-caret-back-circle-sharp'
@@ -229,7 +248,7 @@ function ConfigBottom() {
                             color={color}
                         />
                     ),
-                }}
+                })}
             />
             <BottomTabs.Screen
                 name='ConfigUsers'

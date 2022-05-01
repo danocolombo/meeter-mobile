@@ -29,10 +29,23 @@ function configReducer(configState, action) {
                 configurations: action.payload.configurations,
             };
         case ACTIONS.CONFIG_USER_DELETE:
+            console.log('CONFIG_USER_DELETE');
             return configState;
-        case CONFIG_GROUP_DELETE:
+        case ACTIONS.CONFIG_GROUP_DELETE:
+            //get all configs
+            console.log('&&&&&&&&&&&&&&&&&&&&&');
+            // console.log('CONFIG_GROUP_DELETE:', action.payload);
+            // console.log('&&configState:', configState);
+            const origGroups = configState.groups;
+            // console.log('&&corigGroups:', origGroups);
+            const reducedGroups = origGroups.filter(
+                (grp) => grp.groupId !== action.payload
+            );
+
+            configState.groups = reducedGroups;
+            console.log('&&configState:', configState);
             return configState;
-        case 'CONFIG_GROUP_UPDATE':
+        case 'was ACTIONS.CONFIG_GROUP_DELETE':
             //find meeting to update
             const updatableIndex = configState.groups.findIndex(
                 (grp) => grp.groupId === action.payload.data.groupId
@@ -45,6 +58,7 @@ function configReducer(configState, action) {
             const updatedGroups = [...configState.groups];
             updatedGroups[updatableIndex] = updatedGroup;
             return updatedGroups;
+
         default:
             return configState;
     }
@@ -65,7 +79,7 @@ function MeeterContextProvider({ children }) {
         configDispatch({ type: ACTIONS.CONFIG_USER_DELETE, payload: userId });
     }
     function deleteConfigGroup(groupId) {
-        configDispatch({ type: ACTIONS.CONFIG_GROUP_DELETE, payload: userId });
+        configDispatch({ type: ACTIONS.CONFIG_GROUP_DELETE, payload: groupId });
     }
     function updateDefaultGroup(data) {
         configDispatch({ type: ACTIONS.CONFIG_GROUP_UPDATE, payload: data });

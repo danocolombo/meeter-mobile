@@ -3,13 +3,17 @@ import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../store/auth-context';
 import { MeeterContext } from '../store/meeter-context';
 import { StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { getConfigurations } from '../providers/configs';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
+import Button from '../components/ui/Button';
 import GroupsOutput from '../components/Admin/Groups/GroupsOutput';
 
 function ConfigUsersScreen() {
+    const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);
     const [fetchedMessage, setFetchedMessage] = useState();
+    const [defaultGroups, setDefaultGroups] = useState();
     const authCtx = useContext(AuthContext);
     const meeterCtx = useContext(MeeterContext);
     const token = authCtx.token;
@@ -37,6 +41,19 @@ function ConfigUsersScreen() {
             })
             .catch(console.error);
     }, []);
+    useEffect(() => {
+        setDefaultGroups(meeterCtx.configuration.groups);
+    }, [meeterCtx.configuration.groups]);
+    function addNewDefaultGroupHandler() {
+        console.log('click');
+        navigation.navigate('DefaultGroupConfig', {
+            groupId: '0',
+            gender: '',
+            title: '',
+            location: '',
+            facilitator: '',
+        });
+    }
 
     return (
         <>
@@ -45,11 +62,37 @@ function ConfigUsersScreen() {
             ) : (
                 <>
                     <View style={styles.rootContainer}>
-                        <Text style={styles.title}>DEFAULT GROUPS</Text>
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <View
+                                style={{
+                                    flex: 1,
+                                    alignItems: 'center',
+                                    marginLeft: 30,
+                                }}
+                            >
+                                <Text style={styles.title}>DEFAULT GROUPS</Text>
+                            </View>
+                            <View
+                                style={{
+                                    flexDirection: 'column',
+                                    marginRight: 20,
+                                }}
+                            >
+                                <Button
+                                    onPress={addNewDefaultGroupHandler}
+                                    customStyle={{ backgroundColor: 'green' }}
+                                >
+                                    +
+                                </Button>
+                            </View>
+                        </View>
                         <View style={styles.listContainer}>
-                            <GroupsOutput
-                                groups={meeterCtx.configuration.groups}
-                            />
+                            <GroupsOutput groups={defaultGroups} />
                         </View>
                     </View>
                 </>
