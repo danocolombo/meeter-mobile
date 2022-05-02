@@ -1,0 +1,33 @@
+{
+  "qathree": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-meetermobile-qathree-222102-authRole",
+      "UnauthRoleArn": "arn:aws:iam::226036691416:role/amplify-meetermobile-qathree-222102-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::226036691416:role/amplify-meetermobile-qathree-222102-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-meetermobile-qathree-222102-deployment",
+      "UnauthRoleName": "amplify-meetermobile-qathree-222102-unauthRole",
+      "StackName": "amplify-meetermobile-qathree-222102",
+      "StackId": "arn:aws:cloudformation:us-east-1:226036691416:stack/amplify-meetermobile-qathree-222102/845d50c0-c9be-11ec-be25-1212d8d9af8b",
+      "AmplifyAppId": "dvi1vx6ocm6rv"
+    },
+    "categories": {
+      "auth": {
+        "meetermobile122bc742": {},
+        "meetermobile": {
+          "userPoolId": "us-east-1_x3PBJec2H",
+          "userPoolName": "fortson",
+          "webClientId": "bok2ajh0pdp0ocgfb3nctnu51",
+          "nativeClientId": "bok2ajh0pdp0ocgfb3nctnu51",
+          "identityPoolId": "us-east-1:1e43345b-b795-4c57-bde8-4d44b0b09af8",
+          "identityPoolName": "FortsonIdentityPool",
+          "allowUnauthenticatedIdentities": false,
+          "authRoleArn": "arn:aws:iam::226036691416:role/Cognito_FortsonIdentityPoolAuth_Role",
+          "authRoleName": "Cognito_FortsonIdentityPoolAuth_Role",
+          "unauthRoleArn": "arn:aws:iam::226036691416:role/Cognito_FortsonIdentityPoolUnauth_Role",
+          "unauthRoleName": "Cognito_FortsonIdentityPoolUnauth_Role"
+        }
+      }
+    }
+  }
+}

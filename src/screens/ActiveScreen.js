@@ -1,16 +1,32 @@
-import axios from 'axios';
+// import axios from 'axios';
 import { useEffect, useState, useContext } from 'react';
-import { AuthContext } from '../store/auth-context';
+import LoadingOverlay from '../components/ui/LoadingOverlay';
 import { MeetingsContext } from '../store/meeting-context';
+import { GroupsContext } from '../store/groups-context';
 import MeetingsOutput from '../components/Meeting/MeetingsOutput';
 import { StyleSheet, Text, View } from 'react-native';
 import NextMeetingCard from '../components/Meeting/NextMeetingCard';
-import { GOOGLE_AUTH } from '@env';
 
 function ActiveScreen() {
-    const authCtx = useContext(AuthContext);
+    const [isLoading, setIsLoading] = useState(false);
     const meetingsCtx = useContext(MeetingsContext);
-    const token = authCtx.token;
+    const groupsCtx = useContext(GroupsContext);
+    const [theMeetngs, setTheMeetings] = useState();
+    useEffect(() => {
+        if (!theMeetngs) {
+            setIsLoading(true);
+            try {
+                meetingsCtx.loadMeetings();
+                groupsCtx.loadGroups();
+            } catch (error) {
+                Alert.alert(
+                    'Authentication failed!',
+                    'Could not log you in. Please check your credentials or try again later!'
+                );
+            }
+            setIsLoading(false);
+        }
+    }, []);
 
     var d = new Date();
     d.setDate(d.getDate() - 1); // date - one
@@ -25,6 +41,9 @@ function ActiveScreen() {
         (mtg) => mtg.meetingDate > target
     );
 
+    if (isLoading) {
+        return <LoadingOverlay message='Fetching data...' />;
+    }
     return (
         <View style={styles.rootContainer}>
             <NextMeetingCard nextMeeting={activeMeetings[0]} />

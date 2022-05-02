@@ -5,27 +5,39 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
-import IconButton from './components/ui/IconButton';
+import IconButton from './src/components/ui/IconButton';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+// after other import statements
+import { Amplify } from 'aws-amplify';
+import awsconfig from './src/aws-exports';
 
-import LoginScreen from './screens/LoginScreen';
-import SignupScreen from './screens/SignupScreen';
-import ActiveScreen from './screens/ActiveScreen';
-import HistoricScreen from './screens/HistoricScreen';
-import ProfileScreen from './screens/ProfileScreen';
-import ConfigScreen from './screens/ConfigScreen';
-import ConfigUsersScreen from './screens/ConfigUsersScreen';
-import ConfigGroupsScreen from './screens/ConfigGroupsScreen';
-import ConfigMeetingsScreen from './screens/ConfigMeetingsScreen';
-import MeetingScreen from './screens/MeetingScreen';
-import GroupScreen from './screens/GroupScreen';
-import { Colors } from './constants/colors';
-import AuthContextProvider from './store/auth-context';
-import { AuthContext } from './store/auth-context';
-import MeetingsContextProvider from './store/meeting-context';
-import GroupsContextProvider from './store/groups-context';
-import MeeterContextProvider from './store/meeter-context';
+import { withAuthenticator } from 'aws-amplify-react-native';
+
+import LoginScreen from './src/screens/LoginScreen';
+import SignupScreen from './src/screens/SignupScreen';
+import ActiveScreen from './src/screens/ActiveScreen';
+import HistoricScreen from './src/screens/HistoricScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
+import ConfigScreen from './src/screens/ConfigScreen';
+import ConfigUsersScreen from './src/screens/ConfigUsersScreen';
+import ConfigGroupsScreen from './src/screens/ConfigGroupsScreen';
+import ConfigMeetingsScreen from './src/screens/ConfigMeetingsScreen';
+import MeetingScreen from './src/screens/MeetingScreen';
+import GroupScreen from './src/screens/GroupScreen';
+import { Colors } from './src/constants/colors';
+import AuthContextProvider from './src/store/auth-context';
+import { AuthContext } from './src/store/auth-context';
+import MeetingsContextProvider from './src/store/meeting-context';
+import GroupsContextProvider from './src/store/groups-context';
+import MeeterContextProvider from './src/store/meeter-context';
+
+Amplify.configure({
+    ...awsconfig,
+    Analytics: {
+        disabled: true,
+    },
+});
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -256,25 +268,25 @@ function Navigation() {
     const authCtx = useContext(AuthContext);
     return (
         <NavigationContainer>
-            {!authCtx.isAuthenticated && <AuthStack />}
-            {authCtx.isAuthenticated && <AuthenticatedStack />}
+            <AuthenticatedStack />
         </NavigationContainer>
     );
 }
 
-export default function App() {
+function App() {
     return (
         <>
             <StatusBar style='light' />
-            <AuthContextProvider>
-                <MeeterContextProvider>
-                    <MeetingsContextProvider>
-                        <GroupsContextProvider>
-                            <Navigation />
-                        </GroupsContextProvider>
-                    </MeetingsContextProvider>
-                </MeeterContextProvider>
-            </AuthContextProvider>
+
+            <MeeterContextProvider>
+                <MeetingsContextProvider>
+                    <GroupsContextProvider>
+                        <Navigation />
+                    </GroupsContextProvider>
+                </MeetingsContextProvider>
+            </MeeterContextProvider>
         </>
     );
 }
+
+export default withAuthenticator(App);

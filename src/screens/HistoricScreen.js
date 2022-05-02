@@ -21,16 +21,7 @@ function HistoricScreen() {
     const mn = dateparts[0] < 10 ? '0' + dateparts[0] : dateparts[0];
     const da = dateparts[1];
     const target = yr + '-' + mn + '-' + da;
-    useEffect(() => {
-        axios
-            .get(
-                'https://react-native-max-2022-default-rtdb.firebaseio.com/message.json?auth=' +
-                    token
-            )
-            .then((response) => {
-                setFetchedMessage(response.data);
-            });
-    }, [token]);
+
     useEffect(() => {
         let meetingData = meetingsCtx.meetings.filter(
             (mtg) => mtg.meetingDate < target

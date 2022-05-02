@@ -21,6 +21,9 @@ function ConfigUsersScreen() {
             )
             .then((response) => {
                 setFetchedMessage(response.data);
+            })
+            .error((error) => {
+                console.log('error in ConfigUserScreen\n', error);
             });
     }, [token]);
     useEffect(() => {
