@@ -13,16 +13,7 @@ function ConfigUsersScreen() {
     const authCtx = useContext(AuthContext);
     const meeterCtx = useContext(MeeterContext);
     const token = authCtx.token;
-    useEffect(() => {
-        axios
-            .get(
-                'https://react-native-max-2022-default-rtdb.firebaseio.com/message.json?auth=' +
-                    token
-            )
-            .then((response) => {
-                setFetchedMessage(response.data);
-            });
-    }, [token]);
+
     useEffect(() => {
         const fetchConfigs = async () => {
             setIsLoading(true);

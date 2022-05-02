@@ -12,9 +12,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Amplify } from 'aws-amplify';
 import awsconfig from './src/aws-exports';
 
-import { withAuthenticator } from 'aws-amplify-react-native';
+import { AmplifySignOut, withAuthenticator } from 'aws-amplify-react-native';
 
 import LoginScreen from './src/screens/LoginScreen';
+import LogoutScreen from './src/components/CognitoLogout';
 import SignupScreen from './src/screens/SignupScreen';
 import ActiveScreen from './src/screens/ActiveScreen';
 import HistoricScreen from './src/screens/HistoricScreen';
@@ -126,6 +127,7 @@ function AuthenticatedDrawer() {
                     ),
                 })}
             />
+            <Stack.Screen name='Logout' component={LogoutScreen} />
         </Drawer.Navigator>
     );
 }

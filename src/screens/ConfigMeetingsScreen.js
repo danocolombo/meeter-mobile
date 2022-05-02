@@ -9,16 +9,7 @@ function ConfigMeetingsScreen() {
     const [fetchedMessage, setFetchedMessage] = useState();
     const authCtx = useContext(AuthContext);
     const token = authCtx.token;
-    useEffect(() => {
-        axios
-            .get(
-                'https://react-native-max-2022-default-rtdb.firebaseio.com/message.json?auth=' +
-                    token
-            )
-            .then((response) => {
-                setFetchedMessage(response.data);
-            });
-    }, [token]);
+
     return (
         <View style={styles.rootContainer}>
             <Text style={styles.title}>SYSTEM CONFIGS</Text>

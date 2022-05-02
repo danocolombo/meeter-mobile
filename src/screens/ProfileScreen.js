@@ -16,17 +16,6 @@ function ProfileSceen() {
     const token = authCtx.token;
 
     useEffect(() => {
-        axios
-            .get(
-                'https://react-native-max-2022-default-rtdb.firebaseio.com/message.json?auth=' +
-                    token
-            )
-            .then((response) => {
-                setFetchedMessage(response.data);
-            });
-    }, [token]);
-
-    useEffect(() => {
         let id = '64a77165-a946-4b34-b68a-1654f1cd3ccd';
         const fetchData = async () => {
             setIsLoading(true);
