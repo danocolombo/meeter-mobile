@@ -2,9 +2,12 @@ import axios from 'axios';
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../store/auth-context';
 import { StyleSheet, Text, View } from 'react-native';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import MeetingCard from '../components/Meeting/MeetingCard';
 
-function ConfigScreen() {
+function ConfigScreen(navigation) {
+    // const routeName = getFocusedRouteNameFromRoute();
+    console.log('===========\n', navigation, '\n===========');
     const [fetchedMessage, setFetchedMessage] = useState();
     const authCtx = useContext(AuthContext);
     const token = authCtx.token;

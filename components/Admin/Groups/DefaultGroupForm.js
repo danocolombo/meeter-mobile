@@ -9,107 +9,80 @@ import {
     // ScrollView,
     KeyboardAvoidingView,
 } from 'react-native';
+import { MeeterContext } from '../../../store/meeter-context';
 import { TextInput } from 'react-native-paper';
-import NumberInput from '../ui/NumberInput/NumberInput';
-import GenderButtons from './GenderButtons';
+import NumberInput from '../../ui/NumberInput/NumberInput';
+import GenderButtons from '../../Group//GenderButtons';
 // import MeetingTypeButtons from '../Meeting/MeetingTypeButtons';
 import { useNavigation } from '@react-navigation/native';
 // import * as Crypto from 'expo-crypto';
 
-import Button from '../ui/Button';
+import Button from '../../ui/Button';
 // import GroupListItem from '../Group/GroupListItem';
-import { Colors } from '../../constants/colors';
-import { getUniqueId } from '../../util/helpers';
-import { GroupsContext } from '../../store/groups-context';
+import { Colors } from '../../../constants/colors';
+import { getUniqueId } from '../../../util/helpers';
+import { GroupsContext } from '../../../store/groups-context';
 
 // function onDateChange() {}
-function GroupForm({ meetingId, groupId }) {
-    const navHook = useNavigation();
-    const groupsCtx = useContext(GroupsContext);
-    // console.log('groupId:', groupId, '<====');
-    const groups = groupsCtx.groups;
-    // console.log('######## groups##########\n', groups, '\n###############');
-    const foundGroup = groups.find((grp) => grp.groupId === groupId);
-    // console.log('#### FOUND ####\n', foundGroup, '\n');
+function DefaultGroupForm({ route, navigation }) {
+    // const navigation = useNavigation();
+    const { groupId, gender, title, location, facilitator } = route.params;
+    const meeterCtx = useContext(MeeterContext);
+
     let theGroup = {
-        meetingId: meetingId,
         groupId: '0',
         gender: '',
         title: '',
-        attendance: '0',
         location: '',
         facilitator: '',
-        cofacilitator: '',
-        notes: '',
     };
-    if (foundGroup) {
-        // console.log('foundGroup YES');
-        theGroup = foundGroup;
-        // console.log('theGroup:\n', theGroup);
-    }
 
-    const [gGender, setGGender] = useState(theGroup.gender);
-    const [gAttendance, setGAttendance] = useState(theGroup.attendance);
-    const [gTitle, setGTitle] = useState(theGroup.title);
-    const [gLocation, setGLocation] = useState(theGroup.location);
-    const [gFacilitator, setGFacilitator] = useState(theGroup.facilitator);
-    const [gCofacilitator, setGCofacilitator] = useState(
-        theGroup.cofacilitator
-    );
-    const [gNotes, setGNotes] = useState(theGroup.notes);
+    const [groupIdState, setGroupIdState] = useState(groupId);
+    const [genderState, setGenderState] = useState(gender);
+    const [titleState, setTitleState] = useState(title);
+    const [locationState, setLocationState] = useState(location);
+    const [facilitatorState, setFacilitatorState] = useState(facilitator);
 
     function confirmGroupHandler(navigation) {
         if (
-            (gGender !== 'f' && gGender !== 'm' && gGender !== 'x') ||
-            gTitle.length < 3 ||
-            parseInt(gAttendance) < 0 ||
-            parseInt(gAttendance) > 25
+            (genderState !== 'f' &&
+                genderState !== 'm' &&
+                genderState !== 'x') ||
+            titleState.length < 3
         ) {
-            Alert.alert('Validation Error', 'Title & gender are required.', [
+            Alert.alert('Validation Error', 'Title & gender is required.', [
                 { text: 'OK', style: 'destruction' },
             ]);
             return;
         }
-        if (groupId) {
+        if (groupIdState) {
             //save the group
             const updatedGroup = {
-                meetingId: theGroup.meetingId,
-                groupId: theGroup.groupId,
-                gender: gGender,
-                title: gTitle,
-                location: gLocation,
-                facilitator: gFacilitator,
-                cofacilitator: gCofacilitator,
-                attendance: gAttendance,
-                notes: gNotes,
+                groupId: groupIdState,
+                gender: genderState,
+                title: titleState,
+                location: locationState,
+                facilitator: facilitatorState,
             };
-            groupsCtx.updateGroup(groupId, updatedGroup);
-            // console.log('\n=================\n');
-            // console.log(updatedGroup);
-            // console.log('\n=================');
+            meeterCtx.updateDefaultGroup(updatedGroup);
+
             Alert.alert('Group Updated', 'Your changes were saved', [
                 { text: 'OK', style: 'destruction' },
             ]);
-            navHook.goBack();
         } else {
             getUniqueId()
                 .then((newId) => {
                     const newGroup = {
-                        meetingId: theGroup.meetingId,
                         groupId: newId,
-                        gender: gGender,
-                        title: gTitle,
-                        location: gLocation,
-                        facilitator: gFacilitator,
-                        cofacilitator: gCofacilitator,
-                        attendance: gAttendance,
-                        notes: gNotes,
+                        gender: genderState,
+                        title: titleState,
+                        location: locationState,
+                        facilitator: facilitatorState,
                     };
-                    groupsCtx.addGroup(newGroup);
+                    meeterCtx.addDefaultGroup(newGroup);
                     Alert.alert('Group Added', 'Your changes were saved', [
                         { text: 'OK', style: 'destruction' },
                     ]);
-                    navHook.goBack();
                 })
                 .catch((error) => {
                     // console.log('error getting unique Id\n', error);
@@ -129,72 +102,35 @@ function GroupForm({ meetingId, groupId }) {
                     <View style={styles.groupFrame}>
                         <View>
                             <GenderButtons
-                                currentType={gGender}
-                                onChange={setGGender}
+                                currentType={genderState}
+                                onChange={setGenderState}
                             />
                         </View>
                         <View>
                             <TextInput
                                 mode='outlined'
                                 label='Title'
-                                value={gTitle}
-                                onChangeText={setGTitle}
+                                value={titleState}
+                                onChangeText={setTitleState}
                             />
                         </View>
                         <View>
                             <TextInput
                                 mode='outlined'
                                 label='Location'
-                                value={gLocation}
-                                onChangeText={setGLocation}
+                                value={locationState}
+                                onChangeText={setLocationState}
                             />
                         </View>
                         <View>
                             <TextInput
                                 mode='outlined'
                                 label='Facilitator'
-                                value={gFacilitator}
-                                onChangeText={setGFacilitator}
+                                value={facilitatorState}
+                                onChangeText={setFacilitatorState}
                             />
                         </View>
-                        <View>
-                            <TextInput
-                                mode='outlined'
-                                label='Co-Facilitator'
-                                value={gCofacilitator}
-                                onChangeText={setGCofacilitator}
-                            />
-                        </View>
-                        <View
-                            style={{
-                                // flexDirection: 'row',
-                                alignItems: 'center',
-                                // marginVertical: 10,
-                            }}
-                        >
-                            <View
-                                style={{
-                                    justifyContent: 'center',
-                                    marginRight: 10,
-                                }}
-                            >
-                                <Text style={{ fontSize: 16 }}>Attendance</Text>
-                            </View>
-                            <NumberInput
-                                value={gAttendance}
-                                onAction={setGAttendance}
-                            />
-                        </View>
-                        <View>
-                            <TextInput
-                                mode='outlined'
-                                label='Notes & Comments'
-                                value={gNotes}
-                                multiline={true}
-                                numberOfLines={2}
-                                onChangeText={setGNotes}
-                            />
-                        </View>
+
                         <View style={{ marginHorizontal: 10 }}>
                             <View style={styles.buttonContainer}>
                                 <Button
@@ -212,7 +148,7 @@ function GroupForm({ meetingId, groupId }) {
     );
 }
 
-export default GroupForm;
+export default DefaultGroupForm;
 
 const styles = StyleSheet.create({
     rootContainer: {

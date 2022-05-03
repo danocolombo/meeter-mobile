@@ -23,7 +23,7 @@ import { GroupsContext } from '../../store/groups-context';
 
 function onDateChange() {}
 function MeetingForm({ meetingId }) {
-    const navigation = useNavigation();
+    const navHook = useNavigation();
     const activeCtx = useContext(MeetingsContext);
 
     const groupsCtx = useContext(GroupsContext);
@@ -109,7 +109,6 @@ function MeetingForm({ meetingId }) {
             }
             let uni = getUni()
                 .then((result) => {
-                    Alert.alert('SAVE attempt');
                     setMMeetingId(uni);
                     activeCtx.addMeeting({
                         meetingId: mMeetingId,
@@ -120,6 +119,7 @@ function MeetingForm({ meetingId }) {
                         meal: mMeal,
                         mealCount: mMealCount,
                     });
+                    navHook.goBack();
                 })
                 .catch(() => console.log('error'));
         } else {
@@ -131,11 +131,12 @@ function MeetingForm({ meetingId }) {
                 meal: mMeal,
                 mealCount: mMealCount,
             });
-            Alert.alert('UPDATE attempt');
+
+            navHook.goBack();
         }
     }
     function addGroupHandler() {
-        navigation.navigate('Group', {
+        navHook.navigate('Group', {
             meetingId: meetingId,
             group: '0',
         });

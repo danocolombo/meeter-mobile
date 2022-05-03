@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -8,10 +8,20 @@ import { MeeterContext } from '../../../store/meeter-context';
 
 function GroupItem({ groupId, gender, title, location, facilitator }) {
     const navigation = useNavigation();
+    const [groupIdState, setGroupIdState] = useState(groupId);
+    const [genderState, setGenderState] = useState(gender);
+    const [titleState, setTitleState] = useState(title);
+    const [locationState, setLocationState] = useState(location);
+    const [facilitatorState, setFacilitatorState] = useState(facilitator);
+
     const meeterCtx = useContext(MeeterContext);
     function userPressHandler() {
-        navigation.navigate('User', {
-            groupId: groupId,
+        navigation.navigate('DefaultGroupConfig', {
+            groupId: groupIdState,
+            gender: genderState,
+            title: titleState,
+            location: locationState,
+            facilitator: facilitatorState,
         });
     }
     function deleteHandler() {
