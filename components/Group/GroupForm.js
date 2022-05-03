@@ -24,7 +24,7 @@ import { GroupsContext } from '../../store/groups-context';
 
 // function onDateChange() {}
 function GroupForm({ meetingId, groupId }) {
-    const navigation = useNavigation();
+    const navHook = useNavigation();
     const groupsCtx = useContext(GroupsContext);
     // console.log('groupId:', groupId, '<====');
     const groups = groupsCtx.groups;
@@ -90,6 +90,7 @@ function GroupForm({ meetingId, groupId }) {
             Alert.alert('Group Updated', 'Your changes were saved', [
                 { text: 'OK', style: 'destruction' },
             ]);
+            navHook.goBack();
         } else {
             getUniqueId()
                 .then((newId) => {
@@ -108,6 +109,7 @@ function GroupForm({ meetingId, groupId }) {
                     Alert.alert('Group Added', 'Your changes were saved', [
                         { text: 'OK', style: 'destruction' },
                     ]);
+                    navHook.goBack();
                 })
                 .catch((error) => {
                     // console.log('error getting unique Id\n', error);

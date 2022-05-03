@@ -1,8 +1,5 @@
 import { useContext, useEffect } from 'react';
-import {
-    NavigationContainer,
-    getFocusedRouteNameFromRoute,
-} from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -20,7 +17,6 @@ import ProfileScreen from './screens/ProfileScreen';
 import ConfigScreen from './screens/ConfigScreen';
 import ConfigUsersScreen from './screens/ConfigUsersScreen';
 import ConfigGroupsScreen from './screens/ConfigGroupsScreen';
-import DefaultGroupForm from './components/Admin/Groups/DefaultGroupForm';
 import ConfigMeetingsScreen from './screens/ConfigMeetingsScreen';
 import MeetingScreen from './screens/MeetingScreen';
 import GroupScreen from './screens/GroupScreen';
@@ -34,21 +30,7 @@ import MeeterContextProvider from './store/meeter-context';
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
-function getHeaderTitle(route) {
-    // If the focused route is not found, we need to assume it's the initial screen
-    // This can happen during if there hasn't been any navigation inside the screen
-    // In our case, it's "Feed" as that's the first screen inside the navigator
-    const routeName = getFocusedRouteNameFromRoute(route) ?? 'Feed';
 
-    switch (routeName) {
-        case 'ConfigGroups':
-            return 'ConfigGroups';
-        case 'ConfigUsers':
-            return 'ConfigUsers';
-        case 'ConfigMeetings':
-            return 'ConfigMeetings';
-    }
-}
 function AuthStack() {
     return (
         <Stack.Navigator
@@ -118,18 +100,18 @@ function AuthenticatedDrawer() {
                         backgroundColor: Colors.primary800,
                     },
                     tabBarActiveTintColor: 'white',
-                    // headerRight: ({ tintColor }) => (
-                    //     <IconButton
-                    //         icon='add'
-                    //         size={24}
-                    //         color={tintColor}
-                    //         onPress={() => {
-                    //             navigation.navigate('Config', {
-                    //                 meetingId: '0',
-                    //             });
-                    //         }}
-                    //     />
-                    // ),
+                    headerRight: ({ tintColor }) => (
+                        <IconButton
+                            icon='add'
+                            size={24}
+                            color={tintColor}
+                            onPress={() => {
+                                navigation.navigate('Config', {
+                                    meetingId: '0',
+                                });
+                            }}
+                        />
+                    ),
                 })}
             />
         </Drawer.Navigator>
@@ -167,17 +149,6 @@ function AuthenticatedStack() {
                 name='Config'
                 component={ConfigScreen}
                 options={({ navigation }) => ({
-                    headerStyle: {
-                        backgroundColor: Colors.primary800,
-                    },
-                    headerTintColor: 'white',
-                })}
-            />
-            <Stack.Screen
-                name='DefaultGroupConfig'
-                component={DefaultGroupForm}
-                options={({ navigation }) => ({
-                    title: 'Default Group',
                     headerStyle: {
                         backgroundColor: Colors.primary800,
                     },
@@ -230,17 +201,15 @@ function Landing() {
 function ConfigBottom() {
     return (
         <BottomTabs.Navigator
-            initialRouteName='ConfigGroups'
+            initialRouteName='ConfigUsers'
             screenOptions={{ headerShown: false }}
         >
             <BottomTabs.Screen
                 name='ConfigGroups'
                 component={ConfigGroupsScreen}
-                options={({ route }) => ({
-                    headerTitle: getHeaderTitle(route),
+                options={{
                     title: 'Default Groups',
                     tabBarLabel: 'Groups',
-                    headerTitle: getHeaderTitle(route),
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons
                             name='md-caret-back-circle-sharp'
@@ -248,7 +217,7 @@ function ConfigBottom() {
                             color={color}
                         />
                     ),
-                })}
+                }}
             />
             <BottomTabs.Screen
                 name='ConfigUsers'

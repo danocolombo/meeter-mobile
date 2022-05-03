@@ -136,7 +136,7 @@ function MeetingForm({ meetingId }) {
         }
     }
     function addGroupHandler() {
-        navigation.navigate('Group', {
+        navHook.navigate('Group', {
             meetingId: meetingId,
             group: '0',
         });
