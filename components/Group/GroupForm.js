@@ -106,9 +106,6 @@ function GroupForm({ meetingId, groupId }) {
                         notes: gNotes,
                     };
                     groupsCtx.addGroup(newGroup);
-                    Alert.alert('Group Added', 'Your changes were saved', [
-                        { text: 'OK', style: 'destruction' },
-                    ]);
                     navHook.goBack();
                 })
                 .catch((error) => {

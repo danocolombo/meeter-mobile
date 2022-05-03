@@ -13,13 +13,13 @@ function HistoricScreen() {
     const token = authCtx.token;
     //get today's date
     var d = new Date();
-    d.setDate(d.getDate() - 1); // date - one
+    d.setDate(d.getDate() - 0); // we don't want to adjust the date
     const dminusone = d.toLocaleString(); //  M/DD/YYYY, H:MM:SS PM
     let datetime = dminusone.split(', '); // M/DD/YYYY
     const dateparts = datetime[0].split('/');
     const yr = dateparts[2];
     const mn = dateparts[0] < 10 ? '0' + dateparts[0] : dateparts[0];
-    const da = dateparts[1];
+    const da = dateparts[1] < 10 ? '0' + dateparts[1] : dateparts[1];
     const target = yr + '-' + mn + '-' + da;
     useEffect(() => {
         axios

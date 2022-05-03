@@ -19,7 +19,7 @@ function ActiveScreen() {
     const dateparts = datetime[0].split('/');
     const yr = dateparts[2];
     const mn = dateparts[0] < 10 ? '0' + dateparts[0] : dateparts[0];
-    const da = dateparts[1];
+    const da = dateparts[1] < 10 ? '0' + dateparts[1] : dateparts[1];
     const target = yr + '-' + mn + '-' + da;
     const activeMeetings = meetingsCtx.meetings.filter(
         (mtg) => mtg.meetingDate > target
