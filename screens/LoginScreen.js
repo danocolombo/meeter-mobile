@@ -18,7 +18,7 @@ function LoginScreen() {
         try {
             const token = await login(email, password);
             authCtx.authenticate(token);
-            meetingCtx.loadMeetings();
+            // meetingCtx.loadMeetings();
             groupsCtx.loadGroups();
         } catch (error) {
             Alert.alert(

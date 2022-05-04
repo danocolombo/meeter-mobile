@@ -46,12 +46,15 @@ export const MeetingsContext = createContext({
     getActiveMeetings: () => {},
     deleteMeeting: (meetingId) => {},
     loadMeetings: () => {},
+    saveMeetings: () => {},
 });
 function meetingReducer(state, action, navigation) {
     switch (action.type) {
         case 'ACTIVES':
             return ACTIVE_MEETINGS;
+
         case 'LOAD':
+        case 'SAVE_MEETINGS':
             //get the data and sort it.
             let newArray = [];
             MEETINGS.forEach((item) => {
@@ -108,8 +111,14 @@ function meetingReducer(state, action, navigation) {
 }
 function MeetingsContextProvider({ children }) {
     //logic here
-    const [meetingsState, dispatch] = useReducer(meetingReducer, INITIAL_STATE);
-
+    //const [meetingsState, dispatch] = useReducer(meetingReducer, INITIAL_STATE);
+    const [meetingsState, dispatch] = useReducer(meetingReducer, {});
+    function saveMeetings(meetingData) {
+        dispatch({
+            type: 'SAVE_MEETINGS',
+            payload: { data: meetingData },
+        });
+    }
     function addMeeting(meetingData) {
         dispatch({ type: 'ADD', payload: meetingData });
     }
@@ -136,6 +145,7 @@ function MeetingsContextProvider({ children }) {
         deleteMeeting: deleteMeeting,
         updateMeeting: updateMeeting,
         loadMeetings: loadMeetings,
+        saveMeetings: saveMeetings,
         getActiveMeetings: getActiveMeetings,
     };
     return (
