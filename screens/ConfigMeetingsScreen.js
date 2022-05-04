@@ -12,7 +12,7 @@ function ConfigMeetingsScreen() {
     useEffect(() => {
         axios
             .get(
-                'https://react-native-max-2022-default-rtdb.firebaseio.com/message.json?auth=' +
+                'https://meeter7-app-default-rtdb.firebaseio.com/message.json?auth=' +
                     token
             )
             .then((response) => {

@@ -2,6 +2,7 @@ import { createContext, useReducer } from 'react';
 import { ACTIVE_MEETINGS } from '../constants/data/active';
 import { MEETINGS } from '../constants/data/meetings';
 import { getToday } from '../util/helpers';
+import { MeeterContext } from './meeter-context';
 //   ---------------------------------
 //todo -- can we make this blank [] ?
 //   ---------------------------------
@@ -51,6 +52,8 @@ function meetingReducer(state, action, navigation) {
     switch (action.type) {
         case 'ACTIVES':
             return ACTIVE_MEETINGS;
+        case 'SAVE_MEETINGS':
+            return action.payload;
         case 'LOAD':
             //get the data and sort it.
             let newArray = [];
@@ -122,6 +125,9 @@ function MeetingsContextProvider({ children }) {
             payload: { meetingId: meetingId, data: meetingData },
         });
     }
+    function saveMeetings(meetingData) {
+        dispatch({ type: 'SAVE_MEETINGS', payload: meetingData });
+    }
     function loadMeetings() {
         dispatch({ type: 'LOAD' });
     }
@@ -136,6 +142,7 @@ function MeetingsContextProvider({ children }) {
         deleteMeeting: deleteMeeting,
         updateMeeting: updateMeeting,
         loadMeetings: loadMeetings,
+        saveMeetings: saveMeetings,
         getActiveMeetings: getActiveMeetings,
     };
     return (

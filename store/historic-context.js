@@ -43,7 +43,7 @@ export const HistoricContext = createContext({
         }
     ) => {},
     deleteMeeting: (meetingId) => {},
-    loadMeetings: () => {},
+    //loadMeetings: () => {},
     loadHistoric: () => {},
 });
 function meetingReducer(state, action) {
