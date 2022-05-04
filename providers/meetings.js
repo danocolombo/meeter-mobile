@@ -17,7 +17,7 @@ export async function getAllMeetings(id) {
     };
     let body = JSON.stringify(obj);
     let api2use = MEETER_API + '/meetings';
-    console.log('request:\n', body);
+
     let res = await axios.post(api2use, body, config);
 
     if (res.status === 200) {

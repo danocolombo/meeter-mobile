@@ -2,7 +2,6 @@ import { createContext, useReducer } from 'react';
 import { ACTIVE_MEETINGS } from '../constants/data/active';
 import { MEETINGS } from '../constants/data/meetings';
 import { getToday } from '../util/helpers';
-import { MeeterContext } from './meeter-context';
 //   ---------------------------------
 //todo -- can we make this blank [] ?
 //   ---------------------------------
@@ -47,14 +46,15 @@ export const MeetingsContext = createContext({
     getActiveMeetings: () => {},
     deleteMeeting: (meetingId) => {},
     loadMeetings: () => {},
+    saveMeetings: () => {},
 });
 function meetingReducer(state, action, navigation) {
     switch (action.type) {
         case 'ACTIVES':
             return ACTIVE_MEETINGS;
-        case 'SAVE_MEETINGS':
-            return action.payload;
+
         case 'LOAD':
+        case 'SAVE_MEETINGS':
             //get the data and sort it.
             let newArray = [];
             MEETINGS.forEach((item) => {
@@ -112,7 +112,12 @@ function meetingReducer(state, action, navigation) {
 function MeetingsContextProvider({ children }) {
     //logic here
     const [meetingsState, dispatch] = useReducer(meetingReducer, INITIAL_STATE);
-
+    function saveMeetings(meetingData) {
+        dispatch({
+            type: 'SAVE_MEETINGS',
+            payload: { data: meetingData },
+        });
+    }
     function addMeeting(meetingData) {
         dispatch({ type: 'ADD', payload: meetingData });
     }
@@ -124,9 +129,6 @@ function MeetingsContextProvider({ children }) {
             type: 'UPDATE',
             payload: { meetingId: meetingId, data: meetingData },
         });
-    }
-    function saveMeetings(meetingData) {
-        dispatch({ type: 'SAVE_MEETINGS', payload: meetingData });
     }
     function loadMeetings() {
         dispatch({ type: 'LOAD' });
