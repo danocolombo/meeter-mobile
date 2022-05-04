@@ -27,7 +27,10 @@ function ActiveScreen() {
             });
     }, [token]);
     useEffect(() => {
-        if (!meetingsCtx.meetings) {
+        if (
+            meetingsCtx.meetings.length === undefined ||
+            meetingsCtx.meetings.length < 1
+        ) {
             setIsLoading(true);
             var d = new Date();
             d.setDate(d.getDate() - 1); // date - one
@@ -41,14 +44,12 @@ function ActiveScreen() {
 
             const getTheData = async () => {
                 const realMeetings = await getAllMeetings('wbc');
-                console.log(realMeetings);
                 meetingsCtx.saveMeetings(realMeetings);
+                setActiveMeetings(realMeetings);
             };
             getTheData()
                 .then(() => {
-                    // if (results) {
-                    //     setActiveMeetings(results);
-                    // }
+                    console.log('loaded');
                 })
                 .catch(console.error);
             setIsLoading(false);

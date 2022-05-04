@@ -111,7 +111,8 @@ function meetingReducer(state, action, navigation) {
 }
 function MeetingsContextProvider({ children }) {
     //logic here
-    const [meetingsState, dispatch] = useReducer(meetingReducer, INITIAL_STATE);
+    //const [meetingsState, dispatch] = useReducer(meetingReducer, INITIAL_STATE);
+    const [meetingsState, dispatch] = useReducer(meetingReducer, {});
     function saveMeetings(meetingData) {
         dispatch({
             type: 'SAVE_MEETINGS',
