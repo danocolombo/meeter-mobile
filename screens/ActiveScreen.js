@@ -45,7 +45,17 @@ function ActiveScreen() {
             const getTheData = async () => {
                 const realMeetings = await getAllMeetings('wbc');
                 meetingsCtx.saveMeetings(realMeetings);
-                setActiveMeetings(realMeetings);
+                const theseMeetings = realMeetings.filter(
+                    (mtg) => mtg.meetingDate > target
+                );
+                function custom_sort(a, b) {
+                    return (
+                        new Date(a.meetingDate).getTime() -
+                        new Date(b.meetingDate).getTime()
+                    );
+                }
+                let newSort = theseMeetings.sort(custom_sort);
+                setActiveMeetings(newSort);
             };
             getTheData()
                 .then(() => {
