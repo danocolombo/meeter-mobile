@@ -46,11 +46,14 @@ export const GroupsContext = createContext({
     getGroups: () => {},
     deleteGroup: (groupId) => {},
     loadGroups: () => {},
+    saveGroups: () => {},
 });
 function groupsReducer(state, action, navigation) {
     switch (action.type) {
         case 'LOAD':
             return GROUPS;
+        case 'SAVE_GROUPS':
+            return action.payload;
         case 'ADD':
             //console.log('IN ADD\n', action.payload, '\n=======');
             const id = new Date().toString() + Math.random().toString();
@@ -87,6 +90,9 @@ function GroupsContextProvider({ children }) {
         //console.log('addGroup()groupData:\n', groupData, '\n-----------');
         dispatch({ type: 'ADD', payload: groupData });
     }
+    function saveGroups(groupData) {
+        dispatch({ type: 'SAVE_GROUPS', payload: groupData });
+    }
     function deleteGroup(id) {
         dispatch({ type: 'DELETE', payload: id });
     }
@@ -114,6 +120,7 @@ function GroupsContextProvider({ children }) {
         updateGroup: updateGroup,
         loadGroups: loadGroups,
         getGroups: getGroups,
+        saveGroups: saveGroups,
     };
     return (
         <GroupsContext.Provider value={value}>

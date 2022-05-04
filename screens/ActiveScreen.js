@@ -2,10 +2,12 @@ import axios from 'axios';
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../store/auth-context';
 import { MeetingsContext } from '../store/meeting-context';
+import { GroupsContext } from '../store/groups-context';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import MeetingsOutput from '../components/Meeting/MeetingsOutput';
 import NextMeetingCard from '../components/Meeting/NextMeetingCard';
 import { getAllMeetings } from '../providers/meetings';
+import { getAllGroups } from '../providers/groups';
 import { StyleSheet, Text, View } from 'react-native';
 import { GOOGLE_AUTH } from '@env';
 
@@ -15,6 +17,7 @@ function ActiveScreen() {
     const [fetchedMessage, setFetchedMessage] = useState();
     const authCtx = useContext(AuthContext);
     const meetingsCtx = useContext(MeetingsContext);
+    const groupsCtx = useContext(GroupsContext);
     const token = authCtx.token;
     useEffect(() => {
         axios
@@ -59,7 +62,15 @@ function ActiveScreen() {
             };
             getTheData()
                 .then(() => {
-                    console.log('loaded');
+                    const getGroupData = async () => {
+                        const realGroups = await getAllGroups('wbc');
+                        groupsCtx.saveGroups(realGroups);
+                    };
+                    getGroupData()
+                        .then(() => {
+                            // console.log('loaded');
+                        })
+                        .catch(console.error);
                 })
                 .catch(console.error);
             setIsLoading(false);
