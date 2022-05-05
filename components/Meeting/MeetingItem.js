@@ -6,7 +6,13 @@ import { Colors } from '../../constants/styles';
 import { Ionicons } from '@expo/vector-icons';
 import { MeetingsContext } from '../../store/meeting-context';
 
-function MeetingItem({ meetingId, meetingDate, meetingType, title }) {
+function MeetingItem({
+    meetingId,
+    meetingDate,
+    meetingType,
+    title,
+    setMSupportContact,
+}) {
     const navigation = useNavigation();
     const meetingsCtx = useContext(MeetingsContext);
     function meetingPressHandler() {
@@ -62,6 +68,11 @@ function MeetingItem({ meetingId, meetingDate, meetingType, title }) {
                             {meetingType} {title}
                         </Text>
                     </View>
+                    {/* <View>
+                        <Text style={[styles.textBase, styles.description]}>
+                            {setMSupportContact}
+                        </Text>
+                    </View> */}
                 </View>
             </View>
         </Pressable>

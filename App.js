@@ -40,8 +40,16 @@ function AuthStack() {
                 contentStyle: { backgroundColor: Colors.primary100 },
             }}
         >
-            <Stack.Screen name='Login' component={LoginScreen} />
-            <Stack.Screen name='Signup' component={SignupScreen} />
+            <Stack.Screen
+                name='Login'
+                component={LoginScreen}
+                options={{ title: 'Meeter' }}
+            />
+            <Stack.Screen
+                name='Signup'
+                component={SignupScreen}
+                options={{ title: 'Meeter' }}
+            />
         </Stack.Navigator>
     );
 }
