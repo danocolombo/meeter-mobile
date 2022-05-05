@@ -47,7 +47,7 @@ function ActiveScreen() {
 
             const getTheData = async () => {
                 const realMeetings = await getAllMeetings('wbc');
-                meetingsCtx.saveMeetings(realMeetings);
+                meetingsCtx.meetings = realMeetings;
                 const theseMeetings = realMeetings.filter(
                     (mtg) => mtg.meetingDate > target
                 );
