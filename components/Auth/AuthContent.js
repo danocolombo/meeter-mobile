@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import FlatButton from '../ui/FlatButton';
@@ -56,26 +56,43 @@ function AuthContent({ isLogin, onAuthenticate }) {
     }
 
     return (
-        <View style={styles.authContent}>
-            <AuthForm
-                isLogin={isLogin}
-                onSubmit={submitHandler}
-                credentialsInvalid={credentialsInvalid}
-            />
-            <View style={styles.buttons}>
-                <FlatButton onPress={switchAuthModeHandler}>
-                    {isLogin ? 'Create a new user' : 'Log in instead'}
-                </FlatButton>
+        <>
+            <View style={styles.titleContainer}>
+                <Text style={styles.title}>
+                    {isLogin ? 'LOGIN' : 'SIGN-UP'}
+                </Text>
             </View>
-        </View>
+
+            <View style={styles.authContent}>
+                <AuthForm
+                    isLogin={isLogin}
+                    onSubmit={submitHandler}
+                    credentialsInvalid={credentialsInvalid}
+                />
+                <View style={styles.buttons}>
+                    <FlatButton onPress={switchAuthModeHandler}>
+                        {isLogin ? 'Create a new user' : 'Log in instead'}
+                    </FlatButton>
+                </View>
+            </View>
+        </>
     );
 }
 
 export default AuthContent;
 
 const styles = StyleSheet.create({
+    titleContainer: {
+        alignItems: 'center',
+        marginVertical: 20,
+    },
+    title: {
+        fontWeight: 'bold',
+        fontSize: 24,
+        color: Colors.primary800,
+    },
     authContent: {
-        marginTop: 64,
+        marginTop: 0,
         marginHorizontal: 32,
         padding: 16,
         borderRadius: 8,

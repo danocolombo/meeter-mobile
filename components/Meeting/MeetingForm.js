@@ -42,11 +42,19 @@ function MeetingForm({ meetingId }) {
     if (meetingId !== '0') {
         theMeeting = meetings.find((mtg) => mtg.meetingId === meetingId);
     }
-    let groupsFound = groups.filter((grp) => {
+    let theGroups = groups.filter((grp) => {
         if (grp.meetingId === meetingId) {
             return grp;
         }
     });
+    function custom_sort(a, b) {
+        return (
+            // new Date(a.meetingDate).getTime() -
+            // new Date(b.meetingDate).getTime()
+            a.meetingType - b.meetingType
+        );
+    }
+    let groupsFound = theGroups.sort(custom_sort);
     const [mMeetingId, setMMeetingId] = useState(meetingId);
     const [mDate, setMDate] = useState(theMeeting.meetingDate);
     const [mType, setMType] = useState(theMeeting.meetingType);
