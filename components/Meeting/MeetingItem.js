@@ -11,7 +11,7 @@ function MeetingItem({
     meetingDate,
     meetingType,
     title,
-    setMSupportContact,
+    supportContact,
 }) {
     const navigation = useNavigation();
     const meetingsCtx = useContext(MeetingsContext);
@@ -68,11 +68,13 @@ function MeetingItem({
                             {meetingType} {title}
                         </Text>
                     </View>
-                    {/* <View>
-                        <Text style={[styles.textBase, styles.description]}>
-                            {setMSupportContact}
-                        </Text>
-                    </View> */}
+                    {supportContact ? (
+                        <View>
+                            <Text style={[styles.textBase, styles.description]}>
+                                {supportContact}
+                            </Text>
+                        </View>
+                    ) : null}
                 </View>
             </View>
         </Pressable>

@@ -1,6 +1,7 @@
 import { createContext, useReducer } from 'react';
-import { ACTIVE_MEETINGS } from '../constants/data/active';
-import { MEETINGS } from '../constants/data/meetings';
+import { ACTIONS } from '../constants/actions';
+//import { ACTIVE_MEETINGS } from '../constants/data/active';
+//import { MEETINGS } from '../constants/data/meetings';
 import { getToday } from '../util/helpers';
 //   ---------------------------------
 //todo -- can we make this blank [] ?
@@ -8,19 +9,50 @@ import { getToday } from '../util/helpers';
 const INITIAL_STATE = [
     {
         meetingId: 'x1',
-        meetingDate: '2022-04-20',
-        meetingType: 'special',
-        title: 'test',
-        supportContact: 'tbd',
+    },
+];
+const _INITIAL_STATE = [
+    {
+        announcementsContact: '',
         attendanceCount: 0,
+        avContact: '',
+        cafeContact: '',
+        cafeCount: 0,
+        childrenContact: '',
+        childrenCount: 0,
+        cleanupContact: '',
+        clientId: 'wbc',
+        closingContact: '',
+        donations: 0,
+        facilitatorContact: '',
+        greeterContact1: '',
+        greeterContact2: '',
+        meal: '',
+        mealContact: '',
         mealCount: 0,
-        meal: 'tbd',
+        meetingDate: '2022-05-30',
+        meetingId: 'x1',
+        meetingType: 'Special',
+        newcomersCount: 0,
+        notes: '',
+        nurseryContact: '',
+        nurseryCount: 0,
+        resourceContact: '',
+        securityContact: '',
+        setupContact: '',
+        supportContact: '',
+        title: 'INITIAL_STATE',
+        transportationContact: '',
+        transportationCount: 0,
+        worship: '',
+        youthContact: '',
+        youthCount: 0,
     },
 ];
 
 export const MeetingsContext = createContext({
     meetings: [],
-
+    activeMeetings: [],
     addMeeting: ({
         meetingId,
         meetingDate,
@@ -48,7 +80,7 @@ export const MeetingsContext = createContext({
     loadMeetings: () => {},
     saveMeetings: () => {},
 });
-function meetingReducer(state, action, navigation) {
+function meetingsReducer(state, action, navigation) {
     switch (action.type) {
         case 'ACTIVES':
             return ACTIVE_MEETINGS;
@@ -93,11 +125,14 @@ function meetingReducer(state, action, navigation) {
                 (meeting) => meeting.meetingId !== action.payload
             );
         case 'UPDATE':
+            console.log('action.payload:\n', action.payload);
+
             //find meeting to update
             const updatableIndex = state.findIndex(
                 (meeting) => meeting.meetingId === action.payload.meetingId
             );
             const meetingToUpdate = state[updatableIndex];
+            return state;
             const updatedMeeting = {
                 ...meetingToUpdate,
                 ...action.payload.data,
@@ -109,10 +144,20 @@ function meetingReducer(state, action, navigation) {
             return state;
     }
 }
+
+function activeReducer(activeState, action) {
+    switch (action.type) {
+        case ACTIONS.SAVE_ACTIVE_MEETINGS:
+            return action.payload;
+        default:
+            return activeState;
+    }
+}
 function MeetingsContextProvider({ children }) {
     //logic here
     //const [meetingsState, dispatch] = useReducer(meetingReducer, INITIAL_STATE);
-    const [meetingsState, dispatch] = useReducer(meetingReducer, {});
+    const [meetingsState, dispatch] = useReducer(meetingsReducer, {});
+    const [activeState, activeDispatch] = useReducer(activeReducer, {});
     function saveMeetings(meetingData) {
         dispatch({
             type: 'SAVE_MEETINGS',
@@ -137,16 +182,24 @@ function MeetingsContextProvider({ children }) {
     function getActiveMeetings() {
         dispatch({ type: 'ACTIVES' });
     }
+    function saveActiveMeetings(meetingData) {
+        activeDispatch({
+            type: ACTIONS.SAVE_ACTIVE_MEETINGS,
+            payload: meetingData,
+        });
+    }
 
     // need this to expose these contents to anyone using context
     const value = {
         meetings: meetingsState,
+        activeMeetings: activeState,
         addMeeting: addMeeting,
         deleteMeeting: deleteMeeting,
         updateMeeting: updateMeeting,
         loadMeetings: loadMeetings,
         saveMeetings: saveMeetings,
         getActiveMeetings: getActiveMeetings,
+        saveActiveMeetings: saveActiveMeetings,
     };
     return (
         <MeetingsContext.Provider value={value}>

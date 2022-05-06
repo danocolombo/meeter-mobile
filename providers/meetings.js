@@ -28,3 +28,33 @@ export async function getAllMeetings(id) {
         return null;
     }
 }
+
+export async function getAllActiveMeetingsForClient(client, startDate) {
+    const config = {
+        headers: {
+            'Access-Control-Allow-Headers':
+                'Content-Type, x-auth-token, Access-Control-Allow-Headers',
+            'Content-Type': 'application/json',
+        },
+    };
+    let obj = {
+        operation: 'getAllActiveMeetingsForClient',
+        payload: {
+            clientId: client,
+            date: startDate,
+        },
+    };
+
+    let body = JSON.stringify(obj);
+    let api2use = MEETER_API + '/meetings';
+
+    let res = await axios.post(api2use, body, config);
+
+    var returnValue = res.data.Items;
+    if (res.status === 200) {
+        return returnValue;
+    } else {
+        console.log('we got no meetings');
+        return null;
+    }
+}

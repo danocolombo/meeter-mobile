@@ -6,7 +6,10 @@ import { GroupsContext } from '../store/groups-context';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import MeetingsOutput from '../components/Meeting/MeetingsOutput';
 import NextMeetingCard from '../components/Meeting/NextMeetingCard';
-import { getAllMeetings } from '../providers/meetings';
+import {
+    getAllMeetings,
+    getAllActiveMeetingsForClient,
+} from '../providers/meetings';
 import { getAllGroups } from '../providers/groups';
 import { StyleSheet, Text, View } from 'react-native';
 import { GOOGLE_AUTH } from '@env';
@@ -31,8 +34,8 @@ function ActiveScreen() {
     }, [token]);
     useEffect(() => {
         if (
-            meetingsCtx.meetings.length === undefined ||
-            meetingsCtx.meetings.length < 1
+            meetingsCtx.activeMeetings.length === undefined ||
+            meetingsCtx.activeMeetings.length < 1
         ) {
             setIsLoading(true);
             var d = new Date();
@@ -46,19 +49,22 @@ function ActiveScreen() {
             const target = yr + '-' + mn + '-' + da;
 
             const getTheData = async () => {
-                const realMeetings = await getAllMeetings('wbc');
-                meetingsCtx.meetings = realMeetings;
-                const theseMeetings = realMeetings.filter(
-                    (mtg) => mtg.meetingDate > target
+                const futureMeetings = await getAllActiveMeetingsForClient(
+                    'wbc',
+                    target
                 );
-                function custom_sort(a, b) {
-                    return (
-                        new Date(a.meetingDate).getTime() -
-                        new Date(b.meetingDate).getTime()
-                    );
-                }
-                let newSort = theseMeetings.sort(custom_sort);
-                setActiveMeetings(newSort);
+                meetingsCtx.activeMeetings = futureMeetings;
+                // const theseMeetings = realMeetings.filter(
+                //     (mtg) => mtg.meetingDate > target
+                // );
+                // function custom_sort(a, b) {
+                //     return (
+                //         new Date(a.meetingDate).getTime() -
+                //         new Date(b.meetingDate).getTime()
+                //     );
+                // }
+                // let newSort = theseMeetings.sort(custom_sort);
+                setActiveMeetings(futureMeetings);
             };
             getTheData()
                 .then(() => {
