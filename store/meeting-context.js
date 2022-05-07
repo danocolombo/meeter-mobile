@@ -2,7 +2,7 @@ import { createContext, useReducer } from 'react';
 import { ACTIONS } from '../constants/actions';
 //import { ACTIVE_MEETINGS } from '../constants/data/active';
 //import { MEETINGS } from '../constants/data/meetings';
-import { getToday } from '../util/helpers';
+import { getToday, printObject } from '../util/helpers';
 //   ---------------------------------
 //todo -- can we make this blank [] ?
 //   ---------------------------------
@@ -77,8 +77,32 @@ export const MeetingsContext = createContext({
             meal,
         }
     ) => {},
+    updateHistoricMeeting: () => {},
+    updateActiveMeeting: () => {},
     getActiveMeetings: () => {},
-    deleteMeeting: (meetingId) => {},
+    deleteMeeting: () => {},
+    // updateActiveMeeting:
+    //     (meetingId,
+    //     {
+    //         meetingDate,
+    //         meetingType,
+    //         title,
+    //         supportingContact,
+    //         attendanceCount,
+    //         mealCount,
+    //         meal,
+    //     }),
+    // updateHistoricMeeting:
+    //     (meetingId,
+    //     {
+    //         meetingDate,
+    //         meetingType,
+    //         title,
+    //         supportingContact,
+    //         attendanceCount,
+    //         mealCount,
+    //         meal,
+    //     }),
     loadMeetings: () => {},
     saveMeetings: () => {},
 });
@@ -150,6 +174,8 @@ function historicReducer(historicState, action) {
     switch (action.type) {
         case ACTIONS.SAVE_HISTORIC_MEETINGS:
             return action.payload;
+        case ACTIONS.UPDATE_HISTORIC_MEETING:
+            return action.payload;
         default:
             return historicState;
     }
@@ -158,6 +184,26 @@ function activeReducer(activeState, action) {
     switch (action.type) {
         case ACTIONS.SAVE_ACTIVE_MEETINGS:
             return action.payload;
+        case ACTIONS.UPDATE_ACTIVE_MEETING:
+            // let am = activeState.activeMeetings;
+            // console.log(am);
+            printObject('state', state);
+            return activeState;
+
+            //find meeting to update
+            const updatableIndex = activeState.activeMeetings.findIndex(
+                (meeting) => meeting.meetingId === action.payload.meetingId
+            );
+            const meetingToUpdate = activeState.activeMeetings[updatableIndex];
+            const updatedMeeting = {
+                ...meetingToUpdate,
+                ...action.payload.data,
+            };
+            const updatedMeetings = [...activeState.activeMeetings];
+            updatedMeetings[updatableIndex] = updatedMeeting;
+            return updatedMeetings;
+
+        // return action.payload;
         default:
             return activeState;
     }
@@ -180,9 +226,15 @@ function MeetingsContextProvider({ children }) {
     function deleteMeeting(id) {
         dispatch({ type: 'DELETE', payload: id });
     }
-    function updateMeeting(meetingId, meetingData) {
-        dispatch({
-            type: 'UPDATE',
+    function updateActiveMeeting(meetingId, meetingData) {
+        activeDispatch({
+            type: ACTIONS.UPDATE_ACTIVE_MEETING,
+            payload: { meetingId: meetingId, data: meetingData },
+        });
+    }
+    function updateHistoricMeeting(meetingId, meetingData) {
+        historicDispatch({
+            type: ACTIONS.UPDATE_HISTORIC_MEETING,
             payload: { meetingId: meetingId, data: meetingData },
         });
     }
@@ -212,7 +264,8 @@ function MeetingsContextProvider({ children }) {
         historicMeetings: historicState,
         addMeeting: addMeeting,
         deleteMeeting: deleteMeeting,
-        updateMeeting: updateMeeting,
+        updateActiveMeeting: updateActiveMeeting,
+        updateHistoricMeeting: updateHistoricMeeting,
         loadMeetings: loadMeetings,
         saveMeetings: saveMeetings,
         getActiveMeetings: getActiveMeetings,

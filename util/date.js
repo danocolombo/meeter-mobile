@@ -10,7 +10,7 @@ export function subtractMonths(numOfMonths, date = new Date()) {
 
     return date;
 }
-function isMeetingDateBeforeToday(meetingDate) {
+export function isMeetingDateBeforeToday(meetingDate) {
     let datePart = meetingDate.split('-');
     //need to increment month
     let mo = parseInt(datePart[1] - 1);

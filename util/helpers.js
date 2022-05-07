@@ -50,3 +50,15 @@ export function getToday() {
     const target = yr + '-' + mn + '-' + da;
     return target;
 }
+export function printObject(label, target) {
+    // const util = require('util');
+    const util = require('util');
+    console.log(
+        label,
+        ':  \n' +
+            util.inspect(target, {
+                showHidden: false,
+                depth: null,
+            })
+    );
+}
