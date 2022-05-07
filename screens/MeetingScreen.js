@@ -4,6 +4,7 @@ import MeetingForm from '../components/Meeting/MeetingForm';
 
 function MeetingScreen({ route, navigation }) {
     const meetingId = route.params.meetingId;
+    const meetingDate = route.params.meetingDate;
     useEffect(() => {}, []);
     return (
         <>

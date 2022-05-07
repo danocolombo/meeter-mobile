@@ -17,17 +17,16 @@ import { MeetingsContext } from '../../store/meeting-context';
 import * as Crypto from 'expo-crypto';
 import Button from '../ui/Button';
 import GroupListItem from '../Group/GroupListItem';
-
+import { isMeetingDateBeforeToday } from '../../util/date';
 import { Colors } from '../../constants/colors';
 import { GroupsContext } from '../../store/groups-context';
 
 function onDateChange() {}
 function MeetingForm({ meetingId }) {
     const navHook = useNavigation();
-    const activeCtx = useContext(MeetingsContext);
+    const meetingCtx = useContext(MeetingsContext);
 
     const groupsCtx = useContext(GroupsContext);
-    const meetings = activeCtx.meetings;
 
     const groups = groupsCtx.groups;
 
@@ -39,9 +38,19 @@ function MeetingForm({ meetingId }) {
         meal: '',
         mealCount: 0,
     };
+    let foundMeeting;
     if (meetingId !== '0') {
-        theMeeting = meetings.find((mtg) => mtg.meetingId === meetingId);
+        foundMeeting = meetingCtx.activeMeetings.find(
+            (mtg) => mtg.meetingId === meetingId
+        );
+        if (!foundMeeting) {
+            foundMeeting = meetingCtx.historicMeetings.find(
+                (mtg) => mtg.meetingId === meetingId
+            );
+        }
+        theMeeting = foundMeeting;
     }
+
     let theGroups = groups.filter((grp) => {
         if (grp.meetingId === meetingId) {
             return grp;

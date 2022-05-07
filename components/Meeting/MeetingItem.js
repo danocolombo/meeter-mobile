@@ -18,6 +18,7 @@ function MeetingItem({
     function meetingPressHandler() {
         navigation.navigate('Meeting', {
             meetingId: meetingId,
+            meetingDate: meetingDate,
         });
     }
     function deleteHandler() {

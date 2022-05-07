@@ -27,3 +27,31 @@ export async function getAllGroups(id) {
         return null;
     }
 }
+export async function getGroupsAfterCompKey(id, grpCompKey, direction) {
+    const config = {
+        headers: {
+            'Access-Control-Allow-Headers':
+                'Content-Type, x-auth-token, Access-Control-Allow-Headers',
+            'Content-Type': 'application/json',
+        },
+    };
+    let obj = {
+        operation: 'getGroupsAfterCompKey',
+        payload: {
+            clientId: id,
+            grpCompKey: grpCompKey,
+            direction: direction,
+        },
+    };
+    let body = JSON.stringify(obj);
+    let api2use = MEETER_API + '/groups';
+
+    let res = await axios.post(api2use, body, config);
+
+    if (res.status === 200) {
+        return res.data.body;
+    } else {
+        console.log('we got no groups');
+        return null;
+    }
+}

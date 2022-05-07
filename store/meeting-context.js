@@ -15,6 +15,7 @@ const _INITIAL_STATE = [
     {
         announcementsContact: '',
         attendanceCount: 0,
+        mtgCompKey: '',
         avContact: '',
         cafeContact: '',
         cafeCount: 0,
@@ -53,6 +54,7 @@ const _INITIAL_STATE = [
 export const MeetingsContext = createContext({
     meetings: [],
     activeMeetings: [],
+    historicMeetings: [],
     addMeeting: ({
         meetingId,
         meetingDate,
@@ -144,7 +146,14 @@ function meetingsReducer(state, action, navigation) {
             return state;
     }
 }
-
+function historicReducer(historicState, action) {
+    switch (action.type) {
+        case ACTIONS.SAVE_HISTORIC_MEETINGS:
+            return action.payload;
+        default:
+            return historicState;
+    }
+}
 function activeReducer(activeState, action) {
     switch (action.type) {
         case ACTIONS.SAVE_ACTIVE_MEETINGS:
@@ -158,6 +167,7 @@ function MeetingsContextProvider({ children }) {
     //const [meetingsState, dispatch] = useReducer(meetingReducer, INITIAL_STATE);
     const [meetingsState, dispatch] = useReducer(meetingsReducer, {});
     const [activeState, activeDispatch] = useReducer(activeReducer, {});
+    const [historicState, historicDispatch] = useReducer(historicReducer, {});
     function saveMeetings(meetingData) {
         dispatch({
             type: 'SAVE_MEETINGS',
@@ -188,11 +198,18 @@ function MeetingsContextProvider({ children }) {
             payload: meetingData,
         });
     }
+    function saveHistoricMeetings(meetingData) {
+        historicDispatch({
+            type: ACTIONS.SAVE_HISTORIC_MEETINGS,
+            payload: meetingData,
+        });
+    }
 
     // need this to expose these contents to anyone using context
     const value = {
         meetings: meetingsState,
         activeMeetings: activeState,
+        historicMeetings: historicState,
         addMeeting: addMeeting,
         deleteMeeting: deleteMeeting,
         updateMeeting: updateMeeting,
@@ -200,6 +217,7 @@ function MeetingsContextProvider({ children }) {
         saveMeetings: saveMeetings,
         getActiveMeetings: getActiveMeetings,
         saveActiveMeetings: saveActiveMeetings,
+        saveHistoricMeetings: saveHistoricMeetings,
     };
     return (
         <MeetingsContext.Provider value={value}>
