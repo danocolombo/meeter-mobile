@@ -6,14 +6,20 @@ import { GroupsContext } from '../store/groups-context';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import MeetingsOutput from '../components/Meeting/MeetingsOutput';
 import NextMeetingCard from '../components/Meeting/NextMeetingCard';
-import { getAllMeetings } from '../providers/meetings';
-import { getAllGroups } from '../providers/groups';
+import {
+    getAllMeetings,
+    getAllActiveMeetingsForClient,
+    getMeetingsBetweenDates,
+} from '../providers/meetings';
+import { subtractMonths } from '../util/date';
+import { getGroupsAfterCompKey } from '../providers/groups';
 import { StyleSheet, Text, View } from 'react-native';
 import { GOOGLE_AUTH } from '@env';
 
 function ActiveScreen() {
     const [isLoading, setIsLoading] = useState(false);
     const [activeMeetings, setActiveMeetings] = useState([]);
+    const [historicMeetings, setHistoricMeetings] = useState([]);
     const [fetchedMessage, setFetchedMessage] = useState();
     const authCtx = useContext(AuthContext);
     const meetingsCtx = useContext(MeetingsContext);
@@ -31,8 +37,8 @@ function ActiveScreen() {
     }, [token]);
     useEffect(() => {
         if (
-            meetingsCtx.meetings.length === undefined ||
-            meetingsCtx.meetings.length < 1
+            meetingsCtx.activeMeetings.length === undefined ||
+            meetingsCtx.activeMeetings.length < 1
         ) {
             setIsLoading(true);
             var d = new Date();
@@ -46,31 +52,47 @@ function ActiveScreen() {
             const target = yr + '-' + mn + '-' + da;
 
             const getTheData = async () => {
-                const realMeetings = await getAllMeetings('wbc');
-                meetingsCtx.meetings = realMeetings;
-                const theseMeetings = realMeetings.filter(
-                    (mtg) => mtg.meetingDate > target
+                const futureMeetings = await getAllActiveMeetingsForClient(
+                    'wbc',
+                    target
                 );
-                function custom_sort(a, b) {
-                    return (
-                        new Date(a.meetingDate).getTime() -
-                        new Date(b.meetingDate).getTime()
-                    );
-                }
-                let newSort = theseMeetings.sort(custom_sort);
-                setActiveMeetings(newSort);
+                meetingsCtx.activeMeetings = futureMeetings;
+                setActiveMeetings(futureMeetings);
             };
             getTheData()
                 .then(() => {
-                    const getGroupData = async () => {
-                        const realGroups = await getAllGroups('wbc');
-                        groupsCtx.saveGroups(realGroups);
+                    const getHistory = async () => {
+                        //------------------------------
+                        // need to get two months back
+                        //==============================
+                        let twoMonthsAgo = subtractMonths(2).toJSON();
+
+                        let startDate = twoMonthsAgo.slice(0, 10);
+                        const historicMeetings = await getMeetingsBetweenDates(
+                            'wbc',
+                            startDate,
+                            target,
+                            'DESC'
+                        );
+                        meetingsCtx.historicMeetings = historicMeetings;
+                        setHistoricMeetings(historicMeetings);
                     };
-                    getGroupData()
-                        .then(() => {
-                            // console.log('loaded');
-                        })
-                        .catch(console.error);
+                    getHistory().then(() => {
+                        const getGroupData = async () => {
+                            const realGroups = await getGroupsAfterCompKey(
+                                'wbc',
+                                'wbc#2022#',
+                                'ASC'
+                            );
+
+                            groupsCtx.saveGroups(realGroups.Items);
+                        };
+                        getGroupData()
+                            .then(() => {
+                                // console.log('loaded');
+                            })
+                            .catch(console.error);
+                    });
                 })
                 .catch(console.error);
             setIsLoading(false);

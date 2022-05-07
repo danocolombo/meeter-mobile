@@ -3,6 +3,7 @@ import { FlatList } from 'react-native';
 import MeetingItem from './MeetingItem';
 
 function renderMeetingItem(itemData) {
+    // console.log('itemData\n', itemData, '==============================');
     return <MeetingItem {...itemData.item} />;
 }
 

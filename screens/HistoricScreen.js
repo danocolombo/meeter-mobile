@@ -7,7 +7,7 @@ import MeetingsOutput from '../components/Meeting/MeetingsOutput';
 
 function HistoricScreen() {
     const [fetchedMessage, setFetchedMessage] = useState();
-    const [meetingList, setMeetingList] = useState();
+    const [historicMeetings, setHistoricMeetings] = useState();
     const authCtx = useContext(AuthContext);
     const meetingsCtx = useContext(MeetingsContext);
     const token = authCtx.token;
@@ -20,7 +20,7 @@ function HistoricScreen() {
     const yr = dateparts[2];
     const mn = dateparts[0] < 10 ? '0' + dateparts[0] : dateparts[0];
     const da = dateparts[1] < 10 ? '0' + dateparts[1] : dateparts[1];
-    const target = yr + '-' + mn + '-' + da;
+    const today = yr + '-' + mn + '-' + da;
     useEffect(() => {
         axios
             .get(
@@ -32,22 +32,14 @@ function HistoricScreen() {
             });
     }, [token]);
     useEffect(() => {
-        let meetingData = meetingsCtx.meetings.filter(
-            (mtg) => mtg.meetingDate < target
-        );
-        function custom_sort(a, b) {
-            return (
-                new Date(b.meetingDate).getTime() -
-                new Date(a.meetingDate).getTime()
-            );
+        if (meetingsCtx.historicMeetings) {
+            setHistoricMeetings(meetingsCtx.historicMeetings);
         }
-        let newSort = meetingData.sort(custom_sort);
-        setMeetingList(newSort);
-    }, [meetingsCtx.meetings]);
+    }, []);
     return (
         <View style={styles.rootContainer}>
             <Text style={styles.title}>Welcome!</Text>
-            <MeetingsOutput meetings={meetingList} />
+            <MeetingsOutput meetings={historicMeetings} />
         </View>
     );
 }

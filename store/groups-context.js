@@ -1,5 +1,5 @@
 import { createContext, useReducer } from 'react';
-import { GROUPS } from '../constants/data/groups';
+//import { GROUPS } from '../constants/data/groups';
 //   ---------------------------------
 //todo -- can we make this blank [] ?
 //   ---------------------------------
@@ -50,8 +50,8 @@ export const GroupsContext = createContext({
 });
 function groupsReducer(state, action, navigation) {
     switch (action.type) {
-        case 'LOAD':
-            return GROUPS;
+        // case 'LOAD':
+        //     return GROUPS;
         case 'SAVE_GROUPS':
             return action.payload;
         case 'ADD':
@@ -65,6 +65,7 @@ function groupsReducer(state, action, navigation) {
             const updatableIndex = state.findIndex(
                 (group) => group.groupId === action.payload.groupId
             );
+            console.log('updatableIndex:\n', updatableIndex);
             const groupToUpdate = state[updatableIndex];
             const updatedGroup = {
                 ...groupToUpdate,

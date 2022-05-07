@@ -17,17 +17,17 @@ import { MeetingsContext } from '../../store/meeting-context';
 import * as Crypto from 'expo-crypto';
 import Button from '../ui/Button';
 import GroupListItem from '../Group/GroupListItem';
-
+import { isMeetingDateBeforeToday } from '../../util/date';
 import { Colors } from '../../constants/colors';
 import { GroupsContext } from '../../store/groups-context';
+import { or } from 'react-native-reanimated';
 
 function onDateChange() {}
 function MeetingForm({ meetingId }) {
     const navHook = useNavigation();
-    const activeCtx = useContext(MeetingsContext);
+    const meetingsCtx = useContext(MeetingsContext);
 
     const groupsCtx = useContext(GroupsContext);
-    const meetings = activeCtx.meetings;
 
     const groups = groupsCtx.groups;
 
@@ -39,9 +39,23 @@ function MeetingForm({ meetingId }) {
         meal: '',
         mealCount: 0,
     };
+    let foundMeeting;
     if (meetingId !== '0') {
-        theMeeting = meetings.find((mtg) => mtg.meetingId === meetingId);
+        foundMeeting = meetingsCtx.activeMeetings.find(
+            (mtg) => mtg.meetingId === meetingId
+        );
+        if (!foundMeeting) {
+            foundMeeting = meetingsCtx.historicMeetings.find(
+                (mtg) => mtg.meetingId === meetingId
+            );
+        }
+        theMeeting = foundMeeting;
     }
+    //=========================================
+    // save a copy of original, in case they
+    // change the date between active/historic
+    //=========================================
+    let originalMeeting = theMeeting;
     let theGroups = groups.filter((grp) => {
         if (grp.meetingId === meetingId) {
             return grp;
@@ -118,6 +132,7 @@ function MeetingForm({ meetingId }) {
             let uni = getUni()
                 .then((result) => {
                     setMMeetingId(uni);
+                    //todo ----- active or historic
                     activeCtx.addMeeting({
                         meetingId: mMeetingId,
                         meetingDate: mDate,
@@ -131,14 +146,37 @@ function MeetingForm({ meetingId }) {
                 })
                 .catch(() => console.log('error'));
         } else {
-            activeCtx.updateMeeting(meetingId, {
-                meetingDate: mDate,
-                meetingType: mType,
-                title: mSpotlight,
-                attendanceCount: mAttendance,
-                meal: mMeal,
-                mealCount: mMealCount,
-            });
+            if (isMeetingDateBeforeToday(originalMeeting.meetingDate)) {
+                console.log('HISTORIC MEETING');
+                meetingsCtx.updateHistoricMeeting(meetingId, {
+                    meetingDate: mDate,
+                    meetingType: mType,
+                    title: mSpotlight,
+                    attendanceCount: mAttendance,
+                    meal: mMeal,
+                    mealCount: mMealCount,
+                });
+            } else {
+                meetingsCtx.updateActiveMeeting(meetingId, {
+                    meetingDate: mDate,
+                    meetingType: mType,
+                    title: mSpotlight,
+                    attendanceCount: mAttendance,
+                    meal: mMeal,
+                    mealCount: mMealCount,
+                });
+            }
+            return;
+            //updates need to made using the date.
+
+            // activeCtx.updateMeeting(meetingId, {
+            //     meetingDate: mDate,
+            //     meetingType: mType,
+            //     title: mSpotlight,
+            //     attendanceCount: mAttendance,
+            //     meal: mMeal,
+            //     mealCount: mMealCount,
+            // });
 
             navHook.goBack();
         }
