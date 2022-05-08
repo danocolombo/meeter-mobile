@@ -12,11 +12,16 @@ import {
     getMeetingsBetweenDates,
 } from '../providers/meetings';
 import { subtractMonths } from '../util/date';
+import { printObject } from '../util/helpers';
 import { getGroupsAfterCompKey } from '../providers/groups';
 import { StyleSheet, Text, View } from 'react-native';
 import { GOOGLE_AUTH } from '@env';
+import { useDispatch, useSelector } from 'react-redux';
+import { testHit, reset, loadMeetings } from '../features/meetings/activeSlice';
+import { store } from '../store/redux/store';
 
 function ActiveScreen() {
+    const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
     const [activeMeetings, setActiveMeetings] = useState([]);
     const [historicMeetings, setHistoricMeetings] = useState([]);
@@ -25,6 +30,16 @@ function ActiveScreen() {
     const meetingsCtx = useContext(MeetingsContext);
     const groupsCtx = useContext(GroupsContext);
     const token = authCtx.token;
+    const testResults = useSelector(
+        (store) => store.activeMeetings.testResults
+    );
+    const activeMeetingStore = useSelector(
+        (store) => store.activeMeetings.activeMeetings
+    );
+    printObject('activeMeetingStore', activeMeetingStore);
+
+    const mersion = useSelector((store) => store.meeter.version);
+    const amersion = useSelector((store) => store.activeMeetings.version);
     useEffect(() => {
         axios
             .get(
@@ -56,6 +71,7 @@ function ActiveScreen() {
                     'wbc',
                     target
                 );
+                dispatch(loadMeetings, { payload: futureMeetings });
                 meetingsCtx.activeMeetings = futureMeetings;
                 setActiveMeetings(futureMeetings);
             };
@@ -106,6 +122,27 @@ function ActiveScreen() {
                 <View style={styles.rootContainer}>
                     <NextMeetingCard nextMeeting={activeMeetings[0]} />
                     <Text style={styles.title}>Welcome!</Text>
+                    <Text>TestResults: {testResults}</Text>
+
+                    {/* <Text>Meeter isLoading: {isLoading}</Text> */}
+
+                    <button
+                        onClick={() => {
+                            dispatch(testHit());
+                        }}
+                        title='Increment'
+                    >
+                        HIT
+                    </button>
+                    <button
+                        // onClick={() => {
+                        //     dispatch(reset());
+                        // }}
+                        title='Reset'
+                    >
+                        RESET
+                    </button>
+                    {/* <Text>Count: {count}</Text> */}
                     <MeetingsOutput meetings={activeMeetings} />
                 </View>
             )}

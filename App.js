@@ -21,11 +21,15 @@ import ConfigMeetingsScreen from './screens/ConfigMeetingsScreen';
 import MeetingScreen from './screens/MeetingScreen';
 import GroupScreen from './screens/GroupScreen';
 import { Colors } from './constants/colors';
+// ------- CONTEXT IMPORTS
 import AuthContextProvider from './store/auth-context';
 import { AuthContext } from './store/auth-context';
 import MeetingsContextProvider from './store/meeting-context';
 import GroupsContextProvider from './store/groups-context';
 import MeeterContextProvider from './store/meeter-context';
+// ------ REDUX IMPORTS
+import { store } from './store/redux/store';
+import { Provider } from 'react-redux';
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -274,15 +278,17 @@ export default function App() {
     return (
         <>
             <StatusBar style='light' />
-            <AuthContextProvider>
-                <MeeterContextProvider>
-                    <MeetingsContextProvider>
-                        <GroupsContextProvider>
-                            <Navigation />
-                        </GroupsContextProvider>
-                    </MeetingsContextProvider>
-                </MeeterContextProvider>
-            </AuthContextProvider>
+            <Provider store={store}>
+                <AuthContextProvider>
+                    <MeeterContextProvider>
+                        <MeetingsContextProvider>
+                            <GroupsContextProvider>
+                                <Navigation />
+                            </GroupsContextProvider>
+                        </MeetingsContextProvider>
+                    </MeeterContextProvider>
+                </AuthContextProvider>
+            </Provider>
         </>
     );
 }
