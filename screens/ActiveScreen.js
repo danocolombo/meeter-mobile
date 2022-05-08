@@ -103,10 +103,13 @@ function ActiveScreen() {
             {isLoading ? (
                 <LoadingOverlay />
             ) : (
-                <View style={styles.rootContainer}>
-                    <NextMeetingCard nextMeeting={activeMeetings[0]} />
-                    <Text style={styles.title}>Welcome!</Text>
-                    <MeetingsOutput meetings={activeMeetings} />
+                // <View style={styles.rootContainer}>
+                //     <NextMeetingCard nextMeeting={activeMeetings[0]} />
+                //     <Text style={styles.title}>Welcome!</Text>
+                //     <MeetingsOutput meetings={activeMeetings} />
+                // </View>
+                <View>
+                    <Text>TESTING</Text>
                 </View>
             )}
         </>

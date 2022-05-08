@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
+import { Provider } from 'react-redux';
 import IconButton from './components/ui/IconButton';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,7 +22,8 @@ import ConfigMeetingsScreen from './screens/ConfigMeetingsScreen';
 import MeetingScreen from './screens/MeetingScreen';
 import GroupScreen from './screens/GroupScreen';
 import { Colors } from './constants/colors';
-import AuthContextProvider from './store/auth-context';
+//import AuthContextProvider from './store/auth-context';
+import { store } from './store/redux/store';
 import { AuthContext } from './store/auth-context';
 import MeetingsContextProvider from './store/meeting-context';
 import GroupsContextProvider from './store/groups-context';
@@ -274,7 +276,8 @@ export default function App() {
     return (
         <>
             <StatusBar style='light' />
-            <AuthContextProvider>
+            <Provider store={store}>
+                {/* <AuthContextProvider> */}
                 <MeeterContextProvider>
                     <MeetingsContextProvider>
                         <GroupsContextProvider>
@@ -282,7 +285,8 @@ export default function App() {
                         </GroupsContextProvider>
                     </MeetingsContextProvider>
                 </MeeterContextProvider>
-            </AuthContextProvider>
+                {/* </AuthContextProvider> */}
+            </Provider>
         </>
     );
 }
