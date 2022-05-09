@@ -26,7 +26,9 @@ import { AuthContext } from './store/auth-context';
 import MeetingsContextProvider from './store/meeting-context';
 import GroupsContextProvider from './store/groups-context';
 import MeeterContextProvider from './store/meeter-context';
-
+//----- redux --------
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -273,16 +275,20 @@ function Navigation() {
 export default function App() {
     return (
         <>
-            <StatusBar style='light' />
-            <AuthContextProvider>
-                <MeeterContextProvider>
-                    <MeetingsContextProvider>
-                        <GroupsContextProvider>
-                            <Navigation />
-                        </GroupsContextProvider>
-                    </MeetingsContextProvider>
-                </MeeterContextProvider>
-            </AuthContextProvider>
+            <Provider>
+                <PersistGate>
+                    <StatusBar style='light' />
+                    <AuthContextProvider>
+                        <MeeterContextProvider>
+                            <MeetingsContextProvider>
+                                <GroupsContextProvider>
+                                    <Navigation />
+                                </GroupsContextProvider>
+                            </MeetingsContextProvider>
+                        </MeeterContextProvider>
+                    </AuthContextProvider>
+                </PersistGate>
+            </Provider>
         </>
     );
 }
