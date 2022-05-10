@@ -17,7 +17,13 @@ import { getGroupsAfterCompKey } from '../providers/groups';
 import { StyleSheet, Text, View } from 'react-native';
 import { GOOGLE_AUTH } from '@env';
 import { useDispatch, useSelector } from 'react-redux';
-import { testHit, reset, loadMeetings } from '../features/meetings/activeSlice';
+import {
+    testHit,
+    reset,
+    loadMeetings,
+    getActiveMeetings,
+    getCartItems,
+} from '../features/meetings/activeSlice';
 import { store } from '../store/redux/store';
 
 function ActiveScreen() {
@@ -112,6 +118,11 @@ function ActiveScreen() {
                 })
                 .catch(console.error);
             setIsLoading(false);
+            //   =======================
+            //   try a thunk query.....
+            //   =======================
+            //dispatch(getActiveMeetings());
+            dispatch(getCartItems('random'));
         }
     }, []);
     return (
