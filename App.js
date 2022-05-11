@@ -1,4 +1,5 @@
 import { useContext, useEffect } from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -269,19 +270,21 @@ function Navigation() {
         </NavigationContainer>
     );
 }
-
+const queryClient = new QueryClient();
 export default function App() {
     return (
         <>
             <StatusBar style='light' />
             <AuthContextProvider>
-                <MeeterContextProvider>
-                    <MeetingsContextProvider>
-                        <GroupsContextProvider>
-                            <Navigation />
-                        </GroupsContextProvider>
-                    </MeetingsContextProvider>
-                </MeeterContextProvider>
+                <QueryClientProvider client={queryClient}>
+                    <MeeterContextProvider>
+                        <MeetingsContextProvider>
+                            <GroupsContextProvider>
+                                <Navigation />
+                            </GroupsContextProvider>
+                        </MeetingsContextProvider>
+                    </MeeterContextProvider>
+                </QueryClientProvider>
             </AuthContextProvider>
         </>
     );

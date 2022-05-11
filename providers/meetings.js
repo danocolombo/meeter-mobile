@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { MEETER_API } from '@env';
-
+import { subtractMonths, getToday } from '../util/date';
 export async function getAllMeetings(id) {
     const config = {
         headers: {
@@ -94,3 +94,43 @@ export async function getMeetingsBetweenDates(
         return null;
     }
 }
+export const fetchActiveMeetings = async () => {
+    const config = {
+        headers: {
+            'Access-Control-Allow-Headers':
+                'Content-Type, x-auth-token, Access-Control-Allow-Headers',
+            'Content-Type': 'application/json',
+        },
+    };
+    let obj = {
+        operation: 'getMeetingsOnAfterDate',
+        payload: {
+            clientId: 'wbc',
+            date: '2022-05-10',
+            direction: 'ASC',
+        },
+    };
+
+    let body = JSON.stringify(obj);
+    let api2use = MEETER_API + '/meetings';
+
+    let res = await axios.post(api2use, body, config);
+    return res.data;
+};
+export const fetchHistoricMeetings = async () => {
+    return true;
+    //------------------------------
+    // need to get two months back
+    //==============================
+    let twoMonthsAgo = subtractMonths(2).toJSON();
+
+    let startDate = twoMonthsAgo.slice(0, 10);
+    let target = getToday();
+    const historicMeetings = await getMeetingsBetweenDates(
+        'wbc',
+        startDate,
+        target,
+        'DESC'
+    );
+    return historicMeetings;
+};

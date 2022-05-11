@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState, useContext } from 'react';
+import { useQuery } from 'react-query';
+import { MEETER_API } from '@env';
 import { AuthContext } from '../store/auth-context';
 import { MeetingsContext } from '../store/meeting-context';
 import { GroupsContext } from '../store/groups-context';
@@ -10,10 +12,12 @@ import {
     getAllMeetings,
     getAllActiveMeetingsForClient,
     getMeetingsBetweenDates,
+    fetchActiveMeetings,
+    fetchHistoricMeetings,
 } from '../providers/meetings';
 import { subtractMonths } from '../util/date';
 import { getGroupsAfterCompKey } from '../providers/groups';
-import { StyleSheet, Text, View } from 'react-native';
+import { DatePickerAndroid, StyleSheet, Text, View } from 'react-native';
 import { GOOGLE_AUTH } from '@env';
 
 function ActiveScreen() {
@@ -35,69 +39,38 @@ function ActiveScreen() {
                 setFetchedMessage(response.data);
             });
     }, [token]);
-    useEffect(() => {
-        if (
-            meetingsCtx.activeMeetings.length === undefined ||
-            meetingsCtx.activeMeetings.length < 1
-        ) {
-            setIsLoading(true);
-            var d = new Date();
-            d.setDate(d.getDate() - 1); // date - one
-            const dminusone = d.toLocaleString(); //  M/DD/YYYY, H:MM:SS PM
-            let datetime = dminusone.split(', '); // M/DD/YYYY
-            const dateparts = datetime[0].split('/');
-            const yr = dateparts[2];
-            const mn = dateparts[0] < 10 ? '0' + dateparts[0] : dateparts[0];
-            const da = dateparts[1] < 10 ? '0' + dateparts[1] : dateparts[1];
-            const target = yr + '-' + mn + '-' + da;
 
-            const getTheData = async () => {
-                const futureMeetings = await getAllActiveMeetingsForClient(
-                    'wbc',
-                    target
+    //   ------------------------------------
+    //   fetch the active meetings
+    //   ------------------------------------
+    const { data, status } = useQuery(['actives', status], fetchActiveMeetings);
+    if (status === 'loading') {
+        console.log('LOADING');
+        return <LoadingOverlay />;
+    } else if (status === 'error') {
+        console.log('ERROR getting active meetings');
+    } else {
+        if (data.status === '200') {
+            // 200 from getActive Meetings, save and continue...
+            if (
+                //only load meetings if we are empty...
+                meetingsCtx.activeMeetings.length === undefined ||
+                meetingsCtx.activeMeetings.length < 1
+            ) {
+                //save active meetings...
+                meetingsCtx.activeMeetings = data.body.Items;
+                return (
+                    <View style={styles.rootContainer}>
+                        <NextMeetingCard nextMeeting={data.body.Items[0]} />
+                        <Text style={styles.title}>Welcome!</Text>
+                        <MeetingsOutput meetings={data.body.Items} />
+                    </View>
                 );
-                meetingsCtx.activeMeetings = futureMeetings;
-                setActiveMeetings(futureMeetings);
-            };
-            getTheData()
-                .then(() => {
-                    const getHistory = async () => {
-                        //------------------------------
-                        // need to get two months back
-                        //==============================
-                        let twoMonthsAgo = subtractMonths(2).toJSON();
-
-                        let startDate = twoMonthsAgo.slice(0, 10);
-                        const historicMeetings = await getMeetingsBetweenDates(
-                            'wbc',
-                            startDate,
-                            target,
-                            'DESC'
-                        );
-                        meetingsCtx.historicMeetings = historicMeetings;
-                        setHistoricMeetings(historicMeetings);
-                    };
-                    getHistory().then(() => {
-                        const getGroupData = async () => {
-                            const realGroups = await getGroupsAfterCompKey(
-                                'wbc',
-                                'wbc#2022#',
-                                'ASC'
-                            );
-
-                            groupsCtx.saveGroups(realGroups.Items);
-                        };
-                        getGroupData()
-                            .then(() => {
-                                // console.log('loaded');
-                            })
-                            .catch(console.error);
-                    });
-                })
-                .catch(console.error);
-            setIsLoading(false);
+            }
         }
-    }, []);
+        console.log(data);
+    }
+
     return (
         <>
             {isLoading ? (
