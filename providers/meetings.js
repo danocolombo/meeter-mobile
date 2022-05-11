@@ -118,7 +118,6 @@ export const fetchActiveMeetings = async () => {
     return res.data;
 };
 export const fetchHistoricMeetings = async () => {
-    return true;
     //------------------------------
     // need to get two months back
     //==============================

@@ -13,7 +13,6 @@ import {
     getAllActiveMeetingsForClient,
     getMeetingsBetweenDates,
     fetchActiveMeetings,
-    fetchHistoricMeetings,
 } from '../providers/meetings';
 import { subtractMonths } from '../util/date';
 import { getGroupsAfterCompKey } from '../providers/groups';
@@ -45,7 +44,7 @@ function ActiveScreen() {
     //   ------------------------------------
     const { data, status } = useQuery(['actives', status], fetchActiveMeetings);
     if (status === 'loading') {
-        console.log('LOADING');
+        // console.log('LOADING');
         return <LoadingOverlay />;
     } else if (status === 'error') {
         console.log('ERROR getting active meetings');
@@ -68,22 +67,23 @@ function ActiveScreen() {
                 );
             }
         }
-        console.log(data);
+        //console.log(data);
     }
+    // return <div>What??</div>;
 
-    return (
-        <>
-            {isLoading ? (
-                <LoadingOverlay />
-            ) : (
-                <View style={styles.rootContainer}>
-                    <NextMeetingCard nextMeeting={activeMeetings[0]} />
-                    <Text style={styles.title}>Welcome!</Text>
-                    <MeetingsOutput meetings={activeMeetings} />
-                </View>
-            )}
-        </>
-    );
+    // return (
+    //     <>
+    //         {isLoading ? (
+    //             <LoadingOverlay />
+    //         ) : (
+    //             <View style={styles.rootContainer}>
+    //                 <NextMeetingCard nextMeeting={activeMeetings[0]} />
+    //                 <Text style={styles.title}>Welcome!</Text>
+    //                 <MeetingsOutput meetings={activeMeetings} />
+    //             </View>
+    //         )}
+    //     </>
+    // );
 }
 
 export default ActiveScreen;
