@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState, useContext } from 'react';
 import { useQuery } from 'react-query';
+import { useSelector, useDispatch } from 'react-redux';
 import { MEETER_API } from '@env';
 import { AuthContext } from '../store/auth-context';
 import { MeetingsContext } from '../store/meeting-context';
@@ -14,6 +15,10 @@ import {
     getMeetingsBetweenDates,
     fetchActiveMeetings,
 } from '../providers/meetings';
+import {
+    loadActiveMeetings,
+    increment,
+} from '../features/meetings/meetingsSlice';
 import { subtractMonths } from '../util/date';
 import { getGroupsAfterCompKey } from '../providers/groups';
 import { DatePickerAndroid, StyleSheet, Text, View } from 'react-native';
@@ -28,6 +33,8 @@ function ActiveScreen() {
     const meetingsCtx = useContext(MeetingsContext);
     const groupsCtx = useContext(GroupsContext);
     const token = authCtx.token;
+    const meetingsCounter = useSelector((state) => state.meetings.count);
+    const dispatch = useDispatch();
     useEffect(() => {
         axios
             .get(
@@ -57,11 +64,16 @@ function ActiveScreen() {
                 meetingsCtx.activeMeetings.length < 1
             ) {
                 //save active meetings...
+                dispatch(increment);
                 meetingsCtx.activeMeetings = data.body.Items;
+                //dispatch(loadActiveMeetings, data.body.Items);
                 return (
                     <View style={styles.rootContainer}>
                         <NextMeetingCard nextMeeting={data.body.Items[0]} />
                         <Text style={styles.title}>Welcome!</Text>
+                        <Text>meetingsCounter:{meetingsCounter}</Text>
+                        <button onClick={() => dispatch(increment())}>+</button>
+
                         <MeetingsOutput meetings={data.body.Items} />
                     </View>
                 );

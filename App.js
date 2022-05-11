@@ -9,6 +9,9 @@ import { Ionicons } from '@expo/vector-icons';
 import IconButton from './components/ui/IconButton';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+// - - - - - redux toolkit - -  - - - - -
+import { store } from './store/redux/store';
+import { Provider } from 'react-redux';
 
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
@@ -274,18 +277,20 @@ const queryClient = new QueryClient();
 export default function App() {
     return (
         <>
-            <StatusBar style='light' />
-            <AuthContextProvider>
-                <QueryClientProvider client={queryClient}>
-                    <MeeterContextProvider>
-                        <MeetingsContextProvider>
-                            <GroupsContextProvider>
-                                <Navigation />
-                            </GroupsContextProvider>
-                        </MeetingsContextProvider>
-                    </MeeterContextProvider>
-                </QueryClientProvider>
-            </AuthContextProvider>
+            <Provider store={store}>
+                <StatusBar style='light' />
+                <AuthContextProvider>
+                    <QueryClientProvider client={queryClient}>
+                        <MeeterContextProvider>
+                            <MeetingsContextProvider>
+                                <GroupsContextProvider>
+                                    <Navigation />
+                                </GroupsContextProvider>
+                            </MeetingsContextProvider>
+                        </MeeterContextProvider>
+                    </QueryClientProvider>
+                </AuthContextProvider>
+            </Provider>
         </>
     );
 }
