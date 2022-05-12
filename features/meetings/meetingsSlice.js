@@ -1,11 +1,55 @@
-import { createSlice } from '@reduxjs/toolkit';
-
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 const initialState = {
     count: 88,
     activeMeetings: [],
     historicMeetings: [],
+    isLoading: false,
 };
+export const getActiveMeetings = createAsyncThunk(
+    'meetings/getActiveMeetings',
+    async (name, thunkAPI) => {
+        try {
+            console.log('name:', name);
+            const config = {
+                headers: {
+                    'Access-Control-Allow-Headers':
+                        'Content-Type, x-auth-token, Access-Control-Allow-Headers',
+                    'Content-Type': 'application/json',
+                },
+            };
+            let obj = {
+                operation: 'getMeetingsOnAfterDate',
+                payload: {
+                    clientId: 'wbc',
+                    date: '2022-05-12',
+                    direction: 'ASC',
+                },
+            };
+            let body = JSON.stringify(obj);
+            let api2use =
+                'https://2byneyioe4.execute-api.us-east-1.amazonaws.com/dev/meetings';
 
+            const resp = await axios.post(api2use, body, config);
+
+            //const resp = await axios(url);
+
+            return resp.data.body.Items;
+        } catch (error) {
+            return thunkAPI.rejectWithValue('something went wrong');
+        }
+    }
+);
+export const saveActiveMeetings = createAsyncThunk(
+    'meetings/saveActiveMeetings',
+    async (meetings, thunkAPI) => {
+        try {
+            return meetings;
+        } catch (error) {
+            return thunkAPI.rejectWithValue('something went wrong');
+        }
+    }
+);
 export const meetingsSlice = createSlice({
     name: 'meetings',
     initialState,
@@ -26,14 +70,23 @@ export const meetingsSlice = createSlice({
             state.count += action.payload;
         },
     },
+    extraReducers: {
+        [saveActiveMeetings.pending]: (state) => {
+            state.isLoading = true;
+        },
+        [saveActiveMeetings.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            state.activeMeetings = action.payload;
+        },
+        [saveActiveMeetings.rejected]: (state, action) => {
+            console.log(action);
+            console.log('yep, we got rejected...');
+            state.isLoading = false;
+        },
+    },
 });
 
-export const {
-    increment,
-    decrement,
-    reset,
-    incrementByAmount,
-    loadActiveMeetings,
-} = meetingsSlice.actions;
+export const { increment, decrement, reset, incrementByAmount } =
+    meetingsSlice.actions;
 
 export default meetingsSlice.reducer;
