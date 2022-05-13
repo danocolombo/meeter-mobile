@@ -17,7 +17,6 @@ import { useNavigation } from '@react-navigation/native';
 import { MeetingsContext } from '../../store/meeting-context';
 import * as Crypto from 'expo-crypto';
 import Button from '../ui/Button';
-import GroupsForMeetingForm from '../Group/GroupsForMeetingForm';
 import GroupListItem from '../Group/GroupListItem';
 import { isMeetingDateBeforeToday } from '../../util/date';
 import { Colors } from '../../constants/colors';
@@ -27,7 +26,6 @@ import { or } from 'react-native-reanimated';
 function onDateChange() {}
 function MeetingForm({ meetingId }) {
     const navHook = useNavigation();
-
     const meetingsCtx = useContext(MeetingsContext);
 
     const groupsCtx = useContext(GroupsContext);
@@ -321,19 +319,14 @@ function MeetingForm({ meetingId }) {
                                 )}
                             </Pressable>
                         </View>
-                        <View>
-                            <GroupsForMeetingForm
-                                meetingId={meetingId}
-                                groupsFound={groupsFound}
-                            />
-                        </View>
-                        {/* <View style={styles.groupContainer}>
+
+                        <View style={styles.groupContainer}>
                             <FlatList
                                 data={groupsFound}
                                 renderItem={renderGroupItem}
                                 keyExtractor={(group) => group.groupId}
                             />
-                        </View> */}
+                        </View>
                     </View>
                 </View>
             </KeyboardAvoidingView>
