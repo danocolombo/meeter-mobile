@@ -46,11 +46,18 @@ function ActiveScreen() {
     //   ------------------------------------
     //   fetch the active meetings
     //   ------------------------------------
-    const { data, status } = useQuery(['actives', status], fetchActiveMeetings);
+    const { data, status } = useQuery(['actives', status], () =>
+        fetchActiveMeetings()
+    );
     if (status === 'loading') {
         return <LoadingOverlay />;
     } else if (status === 'error') {
         console.log('ERROR getting active meetings');
+        return (
+            <View>
+                <Text>Error getting active meetings</Text>
+            </View>
+        );
     } else {
         if (data.status === '200') {
             // 200 from getActive Meetings, save and continue...

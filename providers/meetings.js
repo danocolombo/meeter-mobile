@@ -106,7 +106,7 @@ export const fetchActiveMeetings = async () => {
         operation: 'getMeetingsOnAfterDate',
         payload: {
             clientId: 'wbc',
-            date: '2022-05-10',
+            date: '2022-05-14',
             direction: 'ASC',
         },
     };
@@ -115,6 +115,7 @@ export const fetchActiveMeetings = async () => {
     let api2use = MEETER_API + '/meetings';
 
     let res = await axios.post(api2use, body, config);
+    console.log('meetings:\n', res.data);
     return res.data;
 };
 export const fetchHistoricMeetings = async () => {

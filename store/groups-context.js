@@ -57,7 +57,8 @@ function groupsReducer(state, action, navigation) {
         case 'ADD':
             //console.log('IN ADD\n', action.payload, '\n=======');
             const id = new Date().toString() + Math.random().toString();
-            return [{ ...action.payload, groupId: id }, ...state];
+            let newState = [{ ...action.payload }, ...state];
+            return newState;
         case 'DELETE':
             return state.filter((group) => group.groupId !== action.payload);
         case 'UPDATE':
