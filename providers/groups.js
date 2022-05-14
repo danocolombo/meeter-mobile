@@ -55,3 +55,26 @@ export async function getGroupsAfterCompKey(id, grpCompKey, direction) {
         return null;
     }
 }
+export const fetchGroupsForMeeting = async (meetingId) => {
+    const config = {
+        headers: {
+            'Access-Control-Allow-Headers':
+                'Content-Type, x-auth-token, Access-Control-Allow-Headers',
+            'Content-Type': 'application/json',
+        },
+    };
+    let obj = {
+        operation: 'getGroupsByMeetingId',
+        payload: {
+            meetingId: meetingId,
+        },
+    };
+
+    let body = JSON.stringify(obj);
+    let api2use = MEETER_API + '/groups';
+    console.log('---------- provider/groups');
+    console.log(api2use);
+    console.log(obj);
+    let res = await axios.post(api2use, body, config);
+    return res.data;
+};
