@@ -72,9 +72,9 @@ export const fetchGroupsForMeeting = async (meetingId) => {
 
     let body = JSON.stringify(obj);
     let api2use = MEETER_API + '/groups';
-    console.log('---------- provider/groups');
-    console.log(api2use);
-    console.log(obj);
+    // console.log('---------- provider/groups');
+    // console.log(api2use);
+    // console.log(obj);
     let res = await axios.post(api2use, body, config);
     return res.data;
 };

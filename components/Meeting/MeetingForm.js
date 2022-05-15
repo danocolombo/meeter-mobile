@@ -33,6 +33,10 @@ function MeetingForm({ meetingId }) {
     const groupsCtx = useContext(GroupsContext);
 
     const groups = groupsCtx.groups;
+    //---------------------------------------
+    // we don't want to show groups if it
+    // is new meeting
+    //---------------------------------------
     //get groups....
 
     let theMeeting = {
@@ -301,39 +305,38 @@ function MeetingForm({ meetingId }) {
                             </View>
                         </View>
 
-                        <View style={styles.groupDividerRow}>
-                            <Text style={styles.groupHeader}>Groups</Text>
-                            <Pressable
-                                onPress={addGroupHandler}
-                                style={({ pressed }) => [
-                                    {
-                                        backgroundColor: pressed
-                                            ? 'rgb(210, 230, 255)'
-                                            : Colors.gray20,
-                                    },
-                                    styles.wrapperCustom,
-                                ]}
-                            >
-                                {({ pressed }) => (
-                                    <Text style={styles.text}>
-                                        {pressed ? '+' : '+'}
+                        {meetingId !== '0' && (
+                            <>
+                                <View style={styles.groupDividerRow}>
+                                    <Text style={styles.groupHeader}>
+                                        Groups
                                     </Text>
-                                )}
-                            </Pressable>
-                        </View>
-                        <View>
-                            <GroupsForMeetingForm
-                                meetingId={meetingId}
-                                groupsFound={groupsFound}
-                            />
-                        </View>
-                        {/* <View style={styles.groupContainer}>
-                            <FlatList
-                                data={groupsFound}
-                                renderItem={renderGroupItem}
-                                keyExtractor={(group) => group.groupId}
-                            />
-                        </View> */}
+                                    <Pressable
+                                        onPress={addGroupHandler}
+                                        style={({ pressed }) => [
+                                            {
+                                                backgroundColor: pressed
+                                                    ? 'rgb(210, 230, 255)'
+                                                    : Colors.gray20,
+                                            },
+                                            styles.wrapperCustom,
+                                        ]}
+                                    >
+                                        {({ pressed }) => (
+                                            <Text style={styles.text}>
+                                                {pressed ? '+' : '+'}
+                                            </Text>
+                                        )}
+                                    </Pressable>
+                                </View>
+                                <View>
+                                    <GroupsForMeetingForm
+                                        meetingId={meetingId}
+                                        groupsFound={groupsFound}
+                                    />
+                                </View>
+                            </>
+                        )}
                     </View>
                 </View>
             </KeyboardAvoidingView>
@@ -349,7 +352,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     meetingFrame: {
-        width: '100%',
+        minWidth: '95%',
         borderColor: Colors.primary800,
         marginTop: 5,
         borderWidth: 2,

@@ -8,14 +8,14 @@ function GroupsForMeetingForm({ meetingId, groupsFound }) {
     function renderGroupItem(itemData) {
         return <GroupListItem {...itemData.item} />;
     }
-    console.log('groupsFound', groupsFound);
+    // console.log('groupsFound', groupsFound);
     const { data, status } = useQuery(['meetingGroups', status], () =>
         fetchGroupsForMeeting(meetingId)
     );
     if (status === 'loading') {
         return <LoadingOverlay />;
     } else if (status === 'error') {
-        console.log('ERROR getting active meetings');
+        // console.log('ERROR getting active meetings');
         return (
             <>
                 <View>

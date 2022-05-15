@@ -115,7 +115,7 @@ export const fetchActiveMeetings = async () => {
     let api2use = MEETER_API + '/meetings';
 
     let res = await axios.post(api2use, body, config);
-    console.log('meetings:\n', res.data);
+    // console.log('meetings:\n', res.data);
     return res.data;
 };
 export const fetchHistoricMeetings = async () => {
