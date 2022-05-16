@@ -1,14 +1,15 @@
 import axios from 'axios';
 import { MEETER_API } from '@env';
 import { subtractMonths, getToday } from '../util/date';
+
+const headers = {
+    headers: {
+        'Access-Control-Allow-Headers':
+            'Content-Type, x-auth-token, Access-Control-Allow-Headers',
+        'Content-Type': 'application/json',
+    },
+};
 export async function getAllMeetings(id) {
-    const config = {
-        headers: {
-            'Access-Control-Allow-Headers':
-                'Content-Type, x-auth-token, Access-Control-Allow-Headers',
-            'Content-Type': 'application/json',
-        },
-    };
     let obj = {
         operation: 'getAllMeetings',
         payload: {
@@ -18,7 +19,7 @@ export async function getAllMeetings(id) {
     let body = JSON.stringify(obj);
     let api2use = MEETER_API + '/meetings';
 
-    let res = await axios.post(api2use, body, config);
+    let res = await axios.post(api2use, body, headers);
 
     if (res.status === 200) {
         return res.data.body;
@@ -30,13 +31,6 @@ export async function getAllMeetings(id) {
 }
 
 export async function getAllActiveMeetingsForClient(client, startDate) {
-    const config = {
-        headers: {
-            'Access-Control-Allow-Headers':
-                'Content-Type, x-auth-token, Access-Control-Allow-Headers',
-            'Content-Type': 'application/json',
-        },
-    };
     let obj = {
         operation: 'getMeetingsOnAfterDate',
         payload: {
@@ -49,7 +43,7 @@ export async function getAllActiveMeetingsForClient(client, startDate) {
     let body = JSON.stringify(obj);
     let api2use = MEETER_API + '/meetings';
 
-    let res = await axios.post(api2use, body, config);
+    let res = await axios.post(api2use, body, headers);
 
     var returnValue = res.data.body.Items;
     if (res.status === 200) {
@@ -66,13 +60,6 @@ export async function getMeetingsBetweenDates(
     stopDate,
     direction
 ) {
-    const config = {
-        headers: {
-            'Access-Control-Allow-Headers':
-                'Content-Type, x-auth-token, Access-Control-Allow-Headers',
-            'Content-Type': 'application/json',
-        },
-    };
     let obj = {
         operation: 'getMeetingsBetweenDates',
         payload: {
@@ -85,7 +72,7 @@ export async function getMeetingsBetweenDates(
 
     let body = JSON.stringify(obj);
     let api2use = MEETER_API + '/meetings';
-    let res = await axios.post(api2use, body, config);
+    let res = await axios.post(api2use, body, headers);
     var returnValue = res.data.body.Items;
     if (res.status === 200) {
         return returnValue;
@@ -96,13 +83,7 @@ export async function getMeetingsBetweenDates(
 }
 export const fetchActiveMeetings = async () => {
     const tDay = getToday();
-    const config = {
-        headers: {
-            'Access-Control-Allow-Headers':
-                'Content-Type, x-auth-token, Access-Control-Allow-Headers',
-            'Content-Type': 'application/json',
-        },
-    };
+
     let obj = {
         operation: 'getMeetingsOnAfterDate',
         payload: {
@@ -115,7 +96,7 @@ export const fetchActiveMeetings = async () => {
     let body = JSON.stringify(obj);
     let api2use = MEETER_API + '/meetings';
 
-    let res = await axios.post(api2use, body, config);
+    let res = await axios.post(api2use, body, headers);
     // console.log('meetings:\n', res.data);
     return res.data;
 };
@@ -134,4 +115,21 @@ export const fetchHistoricMeetings = async () => {
         'DESC'
     );
     return historicMeetings;
+};
+//   ===============================
+//   deleteMeeting(meetingId)
+//   ===============================
+export const deleteMeeting = async (meetingId) => {
+    let obj = {
+        operation: 'deleteMeeting',
+        payload: {
+            meetingId: meetingId,
+        },
+    };
+
+    let body = JSON.stringify(obj);
+    let api2use = MEETER_API + '/meetings';
+
+    let res = await axios.post(api2use, body, headers);
+    return res.data;
 };
