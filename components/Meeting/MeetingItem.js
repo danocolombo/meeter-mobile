@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useContext, useState } from 'react';
+import { Pressable, StyleSheet, Text, View, Modal } from 'react-native';
 
-import { Colors } from '../../constants/styles';
+import { useNavigation } from '@react-navigation/native';
+import MeetingDeleteConfirmModal from './MeetingDeleteConfirmModal';
+import { Colors } from '../../constants/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { MeetingsContext } from '../../store/meeting-context';
 
@@ -13,6 +14,7 @@ function MeetingItem({
     title,
     supportContact,
 }) {
+    const [showDeleteModalConfirm, setShowDeleteModalConfirm] = useState(false);
     const navigation = useNavigation();
     const meetingsCtx = useContext(MeetingsContext);
     function meetingPressHandler() {
@@ -24,61 +26,90 @@ function MeetingItem({
     function deleteHandler() {
         meetingsCtx.deleteMeeting(meetingId);
     }
+    function deleteRequestHandler() {
+        setShowDeleteModalConfirm(true);
+    }
+    function confirmDeleteHandler() {
+        setShowDeleteModalConfirm(false);
+    }
+    function cancelDeleteHandler() {
+        setShowDeleteModalConfirm(false);
+    }
     return (
-        <Pressable
-            onPress={meetingPressHandler}
-            style={({ pressed }) => pressed && styles.pressed}
-        >
-            <View style={styles.meetingItem}>
-                <View style={{ flexDirection: 'column', flex: 1 }}>
-                    <View>
+        <>
+            <Modal visible={showDeleteModalConfirm}>
+                <MeetingDeleteConfirmModal
+                    onConfirmPress={confirmDeleteHandler}
+                    onCancelPress={cancelDeleteHandler}
+                    meeting={{
+                        meetingDate: meetingDate,
+                        meetingType: meetingType,
+                        title: title,
+                    }}
+                />
+            </Modal>
+            <Pressable
+                onPress={meetingPressHandler}
+                style={({ pressed }) => pressed && styles.pressed}
+            >
+                <View style={styles.meetingItem}>
+                    <View style={{ flexDirection: 'column', flex: 1 }}>
                         <View>
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-                                    width: '100%',
-                                }}
-                            >
-                                <View style={{}}>
-                                    <Text style={styles.meetingDate}>
-                                        {meetingDate}
-                                    </Text>
-                                </View>
+                            <View>
                                 <View
                                     style={{
-                                        flex: 1,
-
-                                        // width: '100%',
-                                        justifyContent: 'flex-end',
-                                        alignItems: 'flex-end',
+                                        flexDirection: 'row',
+                                        width: '100%',
                                     }}
                                 >
-                                    <Pressable onPress={deleteHandler}>
-                                        <Ionicons
-                                            name='trash-outline'
-                                            color='white'
-                                            size={20}
-                                        />
-                                    </Pressable>
+                                    <View style={{}}>
+                                        <Text style={styles.meetingDate}>
+                                            {meetingDate}
+                                        </Text>
+                                    </View>
+                                    <View
+                                        style={{
+                                            flex: 1,
+
+                                            // width: '100%',
+                                            justifyContent: 'flex-end',
+                                            alignItems: 'flex-end',
+                                        }}
+                                    >
+                                        <Pressable
+                                            onPress={deleteRequestHandler}
+                                        >
+                                            <Ionicons
+                                                name='trash-outline'
+                                                color='white'
+                                                size={20}
+                                            />
+                                        </Pressable>
+                                    </View>
                                 </View>
                             </View>
                         </View>
-                    </View>
-                    <View>
-                        <Text style={[styles.textBase, styles.description]}>
-                            {meetingType} {title}
-                        </Text>
-                    </View>
-                    {supportContact ? (
                         <View>
                             <Text style={[styles.textBase, styles.description]}>
-                                {supportContact}
+                                {meetingType} {title}
                             </Text>
                         </View>
-                    ) : null}
+                        {supportContact ? (
+                            <View>
+                                <Text
+                                    style={[
+                                        styles.textBase,
+                                        styles.description,
+                                    ]}
+                                >
+                                    {supportContact}
+                                </Text>
+                            </View>
+                        ) : null}
+                    </View>
                 </View>
-            </View>
-        </Pressable>
+            </Pressable>
+        </>
     );
 }
 

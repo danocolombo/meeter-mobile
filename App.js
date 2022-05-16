@@ -145,6 +145,18 @@ function AuthenticatedStack() {
                         backgroundColor: Colors.primary800,
                     },
                     headerTintColor: 'white',
+                    headerRight: ({ tintColor }) => (
+                        <IconButton
+                            icon='trash'
+                            size={24}
+                            color={tintColor}
+                            onPress={() => {
+                                navigation.navigate('Config', {
+                                    meetingId: '0',
+                                });
+                            }}
+                        />
+                    ),
                 })}
             />
             <Stack.Screen
