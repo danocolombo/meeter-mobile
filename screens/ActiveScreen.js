@@ -40,9 +40,6 @@ function ActiveScreen() {
                 setFetchedMessage(response.data);
             });
     }, [token]);
-    // useEffect(() => {
-    //     setActiveMeetings(activeReduxMeetings);
-    // }, [activeReduxMeetings]);
 
     //   ------------------------------------
     //   fetch the active meetings
@@ -54,10 +51,15 @@ function ActiveScreen() {
         return <LoadingOverlay />;
     } else if (status === 'success') {
         console.log('data', data);
-        dispatch(saveActiveMeetings, data.body.Items);
+        if (activeMeetings.length === 0) {
+            dispatch(saveActiveMeetings(data.body.Items));
+        }
+        console.log('isLoading', isLoading);
         return (
-            <View>
-                <Text>SUCCESS</Text>
+            <View style={styles.rootContainer}>
+                <NextMeetingCard nextMeeting={activeMeetings[0]} />
+                <Text style={styles.title}>Welcome!</Text>
+                <MeetingsOutput meetings={activeMeetings} />
             </View>
         );
     } else if (status === 'error') {
@@ -69,28 +71,11 @@ function ActiveScreen() {
         );
     } else {
         console.log('status: ', status);
-        // if (data.status === '200') {
-        //     // 200 from getActive Meetings, save and continue...
-        //     if (
-        //         //only load meetings if we are empty...
-        //         //meetingsCtx.activeMeetings.length === undefined ||
-        //         //meetingsCtx.activeMeetings.length < 1
-        //         activeMeetings
-        //     ) {
-        //         //save meetings to redux
-        //         dispatch(saveActiveMeetings(data.body.Items));
-        //         meetingsCtx.activeMeetings = data.body.Items;
-        //         return (
-        //             <View style={styles.rootContainer}>
-        //                 <NextMeetingCard nextMeeting={data.body.Items[0]} />
-        //                 <Text style={styles.title}>Welcome!</Text>
-
-        //                 <MeetingsOutput meetings={data.body.Items} />
-        //                 {/* <MeetingsOutput meetings={activeMeetings} /> */}
-        //             </View>
-        //         );
-        //     }
-        // }
+        return (
+            <View>
+                <Text>else....</Text>
+            </View>
+        );
     }
 }
 
