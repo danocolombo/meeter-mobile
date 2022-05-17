@@ -17,17 +17,18 @@ import { DatePickerAndroid, StyleSheet, Text, View } from 'react-native';
 import { GOOGLE_AUTH } from '@env';
 
 function ActiveScreen() {
-    const activeReduxMeetings = useSelector((state) => state.activeMeetings);
+    // const activeReduxMeetings = useSelector((state) => state.activeMeetings);
     const [isLoading, setIsLoading] = useState(false);
-    const [activeMeetings, setActiveMeetings] = useState(activeReduxMeetings);
-    const [historicMeetings, setHistoricMeetings] = useState([]);
+    // const [activeMeetings, setActiveMeetings] = useState(activeReduxMeetings);
+    // const [historicMeetings, setHistoricMeetings] = useState([]);
     const [fetchedMessage, setFetchedMessage] = useState();
     const authCtx = useContext(AuthContext);
-    const meetingsCtx = useContext(MeetingsContext);
-    const groupsCtx = useContext(GroupsContext);
+    // const meetingsCtx = useContext(MeetingsContext);
+    // const groupsCtx = useContext(GroupsContext);
     const token = authCtx.token;
-    const counter = useSelector((state) => state.count);
+    // const counter = useSelector((state) => state.count);
     // const activeReduxMeetings = useSelector((state) => state.activeMeetings);
+    let activeMeetings = useSelector((state) => state.meetings.activeMeetings);
     const dispatch = useDispatch();
     useEffect(() => {
         axios
@@ -39,9 +40,9 @@ function ActiveScreen() {
                 setFetchedMessage(response.data);
             });
     }, [token]);
-    useEffect(() => {
-        setActiveMeetings(activeReduxMeetings);
-    }, [activeReduxMeetings]);
+    // useEffect(() => {
+    //     setActiveMeetings(activeReduxMeetings);
+    // }, [activeReduxMeetings]);
 
     //   ------------------------------------
     //   fetch the active meetings
@@ -51,6 +52,14 @@ function ActiveScreen() {
     );
     if (status === 'loading') {
         return <LoadingOverlay />;
+    } else if (status === 'success') {
+        console.log('data', data);
+        dispatch(saveActiveMeetings, data.body.Items);
+        return (
+            <View>
+                <Text>SUCCESS</Text>
+            </View>
+        );
     } else if (status === 'error') {
         console.log('ERROR getting active meetings');
         return (
@@ -59,27 +68,29 @@ function ActiveScreen() {
             </View>
         );
     } else {
-        if (data.status === '200') {
-            // 200 from getActive Meetings, save and continue...
-            if (
-                //only load meetings if we are empty...
-                meetingsCtx.activeMeetings.length === undefined ||
-                meetingsCtx.activeMeetings.length < 1
-            ) {
-                //save meetings to redux
-                dispatch(saveActiveMeetings(data.body.Items));
-                meetingsCtx.activeMeetings = data.body.Items;
-                return (
-                    <View style={styles.rootContainer}>
-                        <NextMeetingCard nextMeeting={data.body.Items[0]} />
-                        <Text style={styles.title}>Welcome!</Text>
+        console.log('status: ', status);
+        // if (data.status === '200') {
+        //     // 200 from getActive Meetings, save and continue...
+        //     if (
+        //         //only load meetings if we are empty...
+        //         //meetingsCtx.activeMeetings.length === undefined ||
+        //         //meetingsCtx.activeMeetings.length < 1
+        //         activeMeetings
+        //     ) {
+        //         //save meetings to redux
+        //         dispatch(saveActiveMeetings(data.body.Items));
+        //         meetingsCtx.activeMeetings = data.body.Items;
+        //         return (
+        //             <View style={styles.rootContainer}>
+        //                 <NextMeetingCard nextMeeting={data.body.Items[0]} />
+        //                 <Text style={styles.title}>Welcome!</Text>
 
-                        <MeetingsOutput meetings={data.body.Items} />
-                        {/* <MeetingsOutput meetings={activeMeetings} /> */}
-                    </View>
-                );
-            }
-        }
+        //                 <MeetingsOutput meetings={data.body.Items} />
+        //                 {/* <MeetingsOutput meetings={activeMeetings} /> */}
+        //             </View>
+        //         );
+        //     }
+        // }
     }
 }
 
