@@ -2,6 +2,7 @@ import { createContext, useReducer } from 'react';
 import { ACTIONS } from '../constants/actions';
 //import { ACTIVE_MEETINGS } from '../constants/data/active';
 //import { MEETINGS } from '../constants/data/meetings';
+
 import { getToday, printObject } from '../util/helpers';
 //   ---------------------------------
 //todo -- can we make this blank [] ?
@@ -147,9 +148,17 @@ function meetingsReducer(state, action, navigation) {
             );
             return sortedState;
         case 'DELETE':
-            return state.filter(
-                (meeting) => meeting.meetingId !== action.payload
+            console.log(
+                'meeting-context DELETE action.payload',
+                action.payload
             );
+            printObject('state', state);
+            const newMtgList = state.activeMeetings.filter((mtg) => {
+                meeting.meetingId !== action.payload;
+            });
+            let newMtgState = { ...state, activeMeetings: newMtgList };
+            return newMtgState;
+
         case 'UPDATE':
             console.log('action.payload:\n', action.payload);
 

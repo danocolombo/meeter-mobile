@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { printObject } from '../../util/helpers';
 const initialState = {
     count: 88,
     activeMeetings: [],
@@ -69,6 +70,16 @@ export const meetingsSlice = createSlice({
         incrementByAmount: (state, action) => {
             state.count += action.payload;
         },
+        deleteActiveMeeting: (state, action) => {
+            console.log('featurs/meetingsSlice action.payload', action.payload);
+
+            const reducedMeetings = state.activeMeetings.filter(
+                (mtg) => mtg.meetingId !== action.payload
+            );
+            state.activeMeetings = reducedMeetings;
+            printObject('state', state);
+            return state;
+        },
     },
     extraReducers: {
         [saveActiveMeetings.pending]: (state) => {
@@ -86,7 +97,12 @@ export const meetingsSlice = createSlice({
     },
 });
 
-export const { increment, decrement, reset, incrementByAmount } =
-    meetingsSlice.actions;
+export const {
+    increment,
+    decrement,
+    reset,
+    incrementByAmount,
+    deleteActiveMeeting,
+} = meetingsSlice.actions;
 
 export default meetingsSlice.reducer;

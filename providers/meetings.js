@@ -1,5 +1,8 @@
 import axios from 'axios';
+import { useContext } from 'react';
 import { MEETER_API } from '@env';
+//import { MeetingsContext } from '../store/meeting-context';
+import { deleteActiveMeeting } from '../features/meetings/meetingsSlice';
 import { subtractMonths, getToday } from '../util/date';
 
 const headers = {
@@ -120,16 +123,22 @@ export const fetchHistoricMeetings = async () => {
 //   deleteMeeting(meetingId)
 //   ===============================
 export const deleteMeeting = async (meetingId) => {
-    let obj = {
-        operation: 'deleteMeeting',
-        payload: {
-            meetingId: meetingId,
-        },
-    };
+    // const meetingsCtx = useContext(MeetingsContext);
+    //first of all let's try to delete remotely.
+    //console.log('meetingId:', meetingId);
+    deleteActiveMeeting(meetingId);
+    console.log('gone');
+    return true;
+    // let obj = {
+    //     operation: 'deleteMeeting',
+    //     payload: {
+    //         meetingId: meetingId,
+    //     },
+    // };
 
-    let body = JSON.stringify(obj);
-    let api2use = MEETER_API + '/meetings';
+    // let body = JSON.stringify(obj);
+    // let api2use = MEETER_API + '/meetings';
 
-    let res = await axios.post(api2use, body, headers);
-    return res.data;
+    // let res = await axios.post(api2use, body, headers);
+    // return res.data;
 };

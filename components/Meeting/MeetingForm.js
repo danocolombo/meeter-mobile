@@ -18,11 +18,10 @@ import { MeetingsContext } from '../../store/meeting-context';
 import * as Crypto from 'expo-crypto';
 import Button from '../ui/Button';
 import GroupsForMeetingForm from '../Group/GroupsForMeetingForm';
-import GroupListItem from '../Group/GroupListItem';
 import { isMeetingDateBeforeToday } from '../../util/date';
 import { Colors } from '../../constants/colors';
 import { GroupsContext } from '../../store/groups-context';
-import { or } from 'react-native-reanimated';
+// import { or } from 'react-native-reanimated';
 
 function onDateChange() {}
 function MeetingForm({ meetingId }) {
@@ -194,9 +193,6 @@ function MeetingForm({ meetingId }) {
             meetingId: meetingId,
             group: '0',
         });
-    }
-    function renderGroupItem(itemData) {
-        return <GroupListItem {...itemData.item} />;
     }
     return (
         <View style={styles.rootContainer}>

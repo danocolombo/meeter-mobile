@@ -1,8 +1,10 @@
 import React, { useContext, useState } from 'react';
 import { Pressable, StyleSheet, Text, View, Modal } from 'react-native';
-
+import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import MeetingDeleteConfirmModal from './MeetingDeleteConfirmModal';
+import { deleteActiveMeeting } from '../../features/meetings/meetingsSlice';
+// import { deleteMeeting } from '../../providers/meetings';
 import { Colors } from '../../constants/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { MeetingsContext } from '../../store/meeting-context';
@@ -14,9 +16,10 @@ function MeetingItem({
     title,
     supportContact,
 }) {
+    const dispatch = useDispatch();
     const [showDeleteModalConfirm, setShowDeleteModalConfirm] = useState(false);
     const navigation = useNavigation();
-    const meetingsCtx = useContext(MeetingsContext);
+    //const meetingsCtx = useContext(MeetingsContext);
     function meetingPressHandler() {
         navigation.navigate('Meeting', {
             meetingId: meetingId,
@@ -24,12 +27,16 @@ function MeetingItem({
         });
     }
     function deleteHandler() {
-        meetingsCtx.deleteMeeting(meetingId);
+        // meetingsCtx.deleteMeeting(meetingId);
+        // deleteMeeting(meetingId);
     }
     function deleteRequestHandler() {
         setShowDeleteModalConfirm(true);
     }
     function confirmDeleteHandler() {
+        dispatch(deleteActiveMeeting(meetingId));
+
+        // meetingsCtx.deleteMeeting(meetingId);
         setShowDeleteModalConfirm(false);
     }
     function cancelDeleteHandler() {

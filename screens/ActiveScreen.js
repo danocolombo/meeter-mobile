@@ -19,7 +19,8 @@ import { GOOGLE_AUTH } from '@env';
 function ActiveScreen() {
     const activeReduxMeetings = useSelector((state) => state.activeMeetings);
     const [isLoading, setIsLoading] = useState(false);
-    const [activeMeetings, setActiveMeetings] = useState(activeReduxMeetings);
+    const [WASactiveMeetings, setActiveMeetings] =
+        useState(activeReduxMeetings);
     const [historicMeetings, setHistoricMeetings] = useState([]);
     const [fetchedMessage, setFetchedMessage] = useState();
     const authCtx = useContext(AuthContext);
@@ -27,6 +28,9 @@ function ActiveScreen() {
     const groupsCtx = useContext(GroupsContext);
     const token = authCtx.token;
     const counter = useSelector((state) => state.count);
+    const activeMeetings = useSelector(
+        (state) => state.meetings.activeMeetings
+    );
     // const activeReduxMeetings = useSelector((state) => state.activeMeetings);
     const dispatch = useDispatch();
     useEffect(() => {
@@ -39,9 +43,9 @@ function ActiveScreen() {
                 setFetchedMessage(response.data);
             });
     }, [token]);
-    useEffect(() => {
-        setActiveMeetings(activeReduxMeetings);
-    }, [activeReduxMeetings]);
+    // useEffect(() => {
+    //     setActiveMeetings(activeReduxMeetings);
+    // }, [activeReduxMeetings]);
 
     //   ------------------------------------
     //   fetch the active meetings
@@ -58,26 +62,32 @@ function ActiveScreen() {
                 <Text>Error getting active meetings</Text>
             </View>
         );
+    } else if (status === 'fulfilled') {
+        console.log('fulfilled is status');
     } else {
+        console.log('else');
         if (data.status === '200') {
             // 200 from getActive Meetings, save and continue...
             if (
-                //only load meetings if we are empty...
+                //  only load meetings if we are empty...
                 meetingsCtx.activeMeetings.length === undefined ||
                 meetingsCtx.activeMeetings.length < 1
             ) {
                 //save meetings to redux
                 dispatch(saveActiveMeetings(data.body.Items));
-                meetingsCtx.activeMeetings = data.body.Items;
-                return (
-                    <View style={styles.rootContainer}>
-                        <NextMeetingCard nextMeeting={data.body.Items[0]} />
-                        <Text style={styles.title}>Welcome!</Text>
+                // meetingsCtx.activeMeetings = data.body.Items;
+                console.log('ActiveScreen activeMeetings', activeMeetings);
+                if (activeMeetings) {
+                    return (
+                        <View style={styles.rootContainer}>
+                            <NextMeetingCard nextMeeting={data.body.Items[0]} />
+                            <Text style={styles.title}>Welcome!</Text>
 
-                        <MeetingsOutput meetings={data.body.Items} />
-                        {/* <MeetingsOutput meetings={activeMeetings} /> */}
-                    </View>
-                );
+                            <MeetingsOutput meetings={activeMeetings} />
+                            {/* <MeetingsOutput meetings={activeMeetings} /> */}
+                        </View>
+                    );
+                }
             }
         }
     }
