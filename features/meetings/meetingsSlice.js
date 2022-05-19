@@ -1,11 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-const initialState = {
-    count: 88,
-    activeMeetings: [],
-    historicMeetings: [],
-    isLoading: false,
-};
+import { printObject } from '../../util/helpers';
+
 export const getActiveMeetings = createAsyncThunk(
     'meetings/getActiveMeetings',
     async (name, thunkAPI) => {
@@ -44,15 +40,23 @@ export const saveActiveMeetings = createAsyncThunk(
     'meetings/saveActiveMeetings',
     async (meetings, thunkAPI) => {
         try {
+            console.log('inside thunk\nmeetings:', meetings);
             return meetings;
         } catch (error) {
             return thunkAPI.rejectWithValue('something went wrong');
         }
     }
 );
+//deleteActiveMeeting;
+
 export const meetingsSlice = createSlice({
     name: 'meetings',
-    initialState,
+    initialState: {
+        count: 88,
+        activeMeetings: [],
+        historicMeetings: [],
+        isLoading: null,
+    },
     reducers: {
         loadActiveMeetings: (state, action) => {
             state.activeMeetings = action.payload;
@@ -68,6 +72,25 @@ export const meetingsSlice = createSlice({
         },
         incrementByAmount: (state, action) => {
             state.count += action.payload;
+        },
+        deleteActiveMeeting: (state, action) => {
+            // console.log('meetingSlice:deleteActiveMeeting');
+            // console.log('meetingId:', action.payload);
+            // printObject('state.activeMeetings', state.activeMeetings);
+            const smaller = state.activeMeetings.filter(
+                (mtg) => mtg.meetingId !== action.payload
+            );
+            // printObject('smaller', smaller);
+            // console.log(
+            //     'before filter\nstate.activeMeetings:',
+            //     state.activeMeetings
+            // );
+            // const reducedList = state.activeMeetings.filter((mtg) => {
+            //     mtg.meetingId === action.payload;
+            // });
+            // console.log('reducedList:\n', reducedList);
+            state.activeMeetings = smaller;
+            return state;
         },
     },
     extraReducers: {
@@ -86,7 +109,12 @@ export const meetingsSlice = createSlice({
     },
 });
 
-export const { increment, decrement, reset, incrementByAmount } =
-    meetingsSlice.actions;
+export const {
+    increment,
+    decrement,
+    reset,
+    incrementByAmount,
+    deleteActiveMeeting,
+} = meetingsSlice.actions;
 
 export default meetingsSlice.reducer;

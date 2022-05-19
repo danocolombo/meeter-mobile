@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { Alert } from 'react-native';
-
+import { useDispatch } from 'react-redux';
+import { loadUser } from '../features/meetings/userSlice';
 import AuthContent from '../components/Auth/AuthContent';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import { AuthContext } from '../store/auth-context';
@@ -9,6 +10,7 @@ import { login } from '../util/auth';
 import { GroupsContext } from '../store/groups-context';
 
 function LoginScreen() {
+    const dispatch = useDispatch();
     const [isAuthenticating, setIsAuthenticating] = useState(false);
     const authCtx = useContext(AuthContext);
     const meetingCtx = useContext(MeetingsContext);
@@ -18,8 +20,9 @@ function LoginScreen() {
         try {
             const token = await login(email, password);
             authCtx.authenticate(token);
+            dispatch(loadUser({ token: token, userName: email }));
             // meetingCtx.loadMeetings();
-            groupsCtx.loadGroups();
+            // groupsCtx.loadGroups();
         } catch (error) {
             Alert.alert(
                 'Authentication failed!',

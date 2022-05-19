@@ -1,6 +1,14 @@
 import axios from 'axios';
 import { MEETER_API } from '@env';
 import { subtractMonths, getToday } from '../util/date';
+import { useDispatch } from 'react-redux';
+const config = {
+    headers: {
+        'Access-Control-Allow-Headers':
+            'Content-Type, x-auth-token, Access-Control-Allow-Headers',
+        'Content-Type': 'application/json',
+    },
+};
 export async function getAllMeetings(id) {
     const config = {
         headers: {
@@ -133,4 +141,30 @@ export const fetchHistoricMeetings = async () => {
         'DESC'
     );
     return historicMeetings;
+};
+export const deleteMeeting = async (meetingId) => {
+    console.log('do API call deleteMeeting(', meetingId, ')');
+    let obj = {
+        operation: 'deleteMeeting',
+        payload: {
+            Key: {
+                meetingId: meetingId,
+            },
+        },
+    };
+
+    let body = JSON.stringify(obj);
+    let api2use = MEETER_API + '/meetings';
+
+    let res = await axios.post(api2use, body, config);
+
+    var returnValue = res.data.body;
+    if (res.status === 200) {
+        return returnValue;
+    } else {
+        console.log('we got no meetings');
+        return null;
+    }
+    // const dispatch = useDispatch();
+    // dispatch(deleteActiveMeeting(meetingId));
 };
