@@ -103,6 +103,7 @@ export async function getMeetingsBetweenDates(
     }
 }
 export const fetchActiveMeetings = async () => {
+    const today = getToday();
     const config = {
         headers: {
             'Access-Control-Allow-Headers':
@@ -114,7 +115,7 @@ export const fetchActiveMeetings = async () => {
         operation: 'getMeetingsOnAfterDate',
         payload: {
             clientId: 'wbc',
-            date: '2022-05-14',
+            date: today,
             direction: 'ASC',
         },
     };

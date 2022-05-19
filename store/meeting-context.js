@@ -187,7 +187,7 @@ function activeReducer(activeState, action) {
         case ACTIONS.UPDATE_ACTIVE_MEETING:
             // let am = activeState.activeMeetings;
             // console.log(am);
-            printObject('state', state);
+            //printObject('state', state);
             return activeState;
 
             //find meeting to update
