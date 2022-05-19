@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { printObject } from '../../util/helpers';
-
+import { getToday } from '../../util/helpers';
 export const getActiveMeetings = createAsyncThunk(
     'meetings/getActiveMeetings',
-    async (name, thunkAPI) => {
+    async (meetings, thunkAPI) => {
         try {
-            console.log('name:', name);
+            // console.log('inside getActiveMeetings');
             const config = {
                 headers: {
                     'Access-Control-Allow-Headers':
@@ -14,22 +14,25 @@ export const getActiveMeetings = createAsyncThunk(
                     'Content-Type': 'application/json',
                 },
             };
+            const today = getToday();
+            // console.log('today', today);
             let obj = {
                 operation: 'getMeetingsOnAfterDate',
                 payload: {
                     clientId: 'wbc',
-                    date: '2022-05-12',
+                    date: today,
                     direction: 'ASC',
                 },
             };
             let body = JSON.stringify(obj);
+            // printObject('body', body);
             let api2use =
                 'https://2byneyioe4.execute-api.us-east-1.amazonaws.com/dev/meetings';
 
             const resp = await axios.post(api2use, body, config);
 
             //const resp = await axios(url);
-
+            // printObject('meetings(1)', resp);
             return resp.data.body.Items;
         } catch (error) {
             return thunkAPI.rejectWithValue('something went wrong');
@@ -40,7 +43,6 @@ export const saveActiveMeetings = createAsyncThunk(
     'meetings/saveActiveMeetings',
     async (meetings, thunkAPI) => {
         try {
-            console.log('inside thunk\nmeetings:', meetings);
             return meetings;
         } catch (error) {
             return thunkAPI.rejectWithValue('something went wrong');
@@ -103,6 +105,18 @@ export const meetingsSlice = createSlice({
         },
         [saveActiveMeetings.rejected]: (state, action) => {
             console.log(action);
+            console.log('yep, we got rejected...');
+            state.isLoading = false;
+        },
+        [getActiveMeetings.pending]: (state) => {
+            state.isLoading = true;
+        },
+        [getActiveMeetings.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            state.activeMeetings = action.payload;
+        },
+        [getActiveMeetings.rejected]: (state, action) => {
+            printObject('action', action);
             console.log('yep, we got rejected...');
             state.isLoading = false;
         },
