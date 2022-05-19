@@ -1,56 +1,76 @@
 import axios from 'axios';
 import { useEffect, useState, useContext } from 'react';
 import { useQuery } from 'react-query';
-import { useSelector, useDispatch } from 'react-redux';
-import { MEETER_API } from '@env';
-import { AuthContext } from '../store/auth-context';
-import { MeetingsContext } from '../store/meeting-context';
-import { GroupsContext } from '../store/groups-context';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import MeetingsOutput from '../components/Meeting/MeetingsOutput';
 import NextMeetingCard from '../components/Meeting/NextMeetingCard';
 import { fetchActiveMeetings } from '../providers/meetings';
 import { saveActiveMeetings } from '../features/meetings/meetingsSlice';
-import { subtractMonths } from '../util/date';
-import { getGroupsAfterCompKey } from '../providers/groups';
 import { DatePickerAndroid, StyleSheet, Text, View } from 'react-native';
 import { GOOGLE_AUTH } from '@env';
 
 function ActiveScreen() {
-    const activeReduxMeetings = useSelector((state) => state.activeMeetings);
-    const [isLoading, setIsLoading] = useState(false);
-    const [activeMeetings, setActiveMeetings] = useState(activeReduxMeetings);
-    const [historicMeetings, setHistoricMeetings] = useState([]);
+    const [isLoading1, setIsLoading] = useState(false);
+    const isLoading = useSelector((state) => state.meetings.isLoading);
+    const authToken = useSelector((state) => state.user.authToken);
     const [fetchedMessage, setFetchedMessage] = useState();
-    const authCtx = useContext(AuthContext);
-    const meetingsCtx = useContext(MeetingsContext);
-    const groupsCtx = useContext(GroupsContext);
-    const token = authCtx.token;
-    const counter = useSelector((state) => state.count);
-    // const activeReduxMeetings = useSelector((state) => state.activeMeetings);
+
+    let activeMeetings = useSelector((state) => state.meetings.activeMeetings);
     const dispatch = useDispatch();
-    useEffect(() => {
-        axios
-            .get(
-                'https://meeter7-app-default-rtdb.firebaseio.com/message.json?auth=' +
-                    token
-            )
-            .then((response) => {
-                setFetchedMessage(response.data);
-            });
-    }, [token]);
-    useEffect(() => {
-        setActiveMeetings(activeReduxMeetings);
-    }, [activeReduxMeetings]);
+
+    // useEffect(() => {
+    //     if (authToken) {
+    //         axios
+    //             .get(
+    //                 'https://meeter7-app-default-rtdb.firebaseio.com/message.json?auth=' +
+    //                     authToken
+    //             )
+    //             .then((response) => {
+    //                 setFetchedMessage(response.data);
+    //             });
+    //     }
+    // }, [authToken]);
+    // console.log('fetchedMessage:', fetchedMessage);
 
     //   ------------------------------------
     //   fetch the active meetings
     //   ------------------------------------
+
     const { data, status } = useQuery(['actives', status], () =>
         fetchActiveMeetings()
     );
+    // console.log('main value of status:', status);
     if (status === 'loading') {
         return <LoadingOverlay />;
+    } else if (status === 'success') {
+        // console.log('success test: isLoading: ', isLoading);
+        if (isLoading) {
+            // console.log('inside overlay: isLoading', isLoading);
+            return <LoadingOverlay />;
+        } else {
+            //     dispatch(saveActiveMeetings(data.body.Items));
+            //     return (
+            //         <View style={styles.rootContainer}>
+            //             <NextMeetingCard nextMeeting={activeMeetings[0]} />
+            //             <Text style={styles.title}>Welcome!</Text>
+            //             <MeetingsOutput meetings={activeMeetings} />
+            //         </View>
+            //     );
+            // }
+            // console.log('success - not Loading');
+            if (activeMeetings.length === 0) {
+                dispatch(saveActiveMeetings(data.body.Items));
+            }
+            // console.log('isLoading', isLoading);
+            return (
+                <View style={styles.rootContainer}>
+                    <NextMeetingCard nextMeeting={activeMeetings[0]} />
+                    <Text style={styles.title}>Welcome!</Text>
+                    <MeetingsOutput meetings={activeMeetings} />
+                </View>
+            );
+        }
     } else if (status === 'error') {
         console.log('ERROR getting active meetings');
         return (
@@ -59,27 +79,12 @@ function ActiveScreen() {
             </View>
         );
     } else {
-        if (data.status === '200') {
-            // 200 from getActive Meetings, save and continue...
-            if (
-                //only load meetings if we are empty...
-                meetingsCtx.activeMeetings.length === undefined ||
-                meetingsCtx.activeMeetings.length < 1
-            ) {
-                //save meetings to redux
-                dispatch(saveActiveMeetings(data.body.Items));
-                meetingsCtx.activeMeetings = data.body.Items;
-                return (
-                    <View style={styles.rootContainer}>
-                        <NextMeetingCard nextMeeting={data.body.Items[0]} />
-                        <Text style={styles.title}>Welcome!</Text>
-
-                        <MeetingsOutput meetings={data.body.Items} />
-                        {/* <MeetingsOutput meetings={activeMeetings} /> */}
-                    </View>
-                );
-            }
-        }
+        console.log('status: ', status);
+        return (
+            <View>
+                <Text>else....</Text>
+            </View>
+        );
     }
 }
 

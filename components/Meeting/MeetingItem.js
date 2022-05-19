@@ -1,11 +1,12 @@
 import React, { useContext } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import { useSelector, useDispatch } from 'react-redux';
 import { Colors } from '../../constants/styles';
 import { Ionicons } from '@expo/vector-icons';
 import { MeetingsContext } from '../../store/meeting-context';
-
+import { deleteActiveMeeting } from '../../features/meetings/meetingsSlice';
+import { deleteMeeting } from '../../providers/meetings';
 function MeetingItem({
     meetingId,
     meetingDate,
@@ -14,6 +15,7 @@ function MeetingItem({
     supportContact,
 }) {
     const navigation = useNavigation();
+    const dispatch = useDispatch();
     const meetingsCtx = useContext(MeetingsContext);
     function meetingPressHandler() {
         navigation.navigate('Meeting', {
@@ -22,7 +24,15 @@ function MeetingItem({
         });
     }
     function deleteHandler() {
-        meetingsCtx.deleteMeeting(meetingId);
+        const deleteMtgFromDB = async (meetingId) => {
+            // deleteActiveMeeting(meetingId);
+            deleteMeeting(meetingId);
+        };
+        deleteMtgFromDB(meetingId)
+            .then(() => {
+                dispatch(deleteActiveMeeting(meetingId));
+            })
+            .catch(console.error);
     }
     return (
         <Pressable
