@@ -40,8 +40,10 @@ export async function getUniqueId() {
 }
 export function getToday() {
     var d = new Date();
-    d.setDate(d.getDate() - 1); // date - one
+    //- this was in the function originally, but it does not give today
+    // d.setDate(d.getDate() - 1); // date - one
     const dminusone = d.toLocaleString(); //  M/DD/YYYY, H:MM:SS PM
+
     let datetime = dminusone.split(', '); // M/DD/YYYY
     const dateparts = datetime[0].split('/');
     const yr = dateparts[2];
