@@ -85,17 +85,15 @@ export const meetingsSlice = createSlice({
         addActiveMeeting: (state, action) => {
             const bigger = [...state.activeMeetings, action.payload];
 
-            // sort
-            function custom_sort(a, b) {
+            // ascending sort
+            function asc_sort(a, b) {
                 return (
-                    // new Date(a.meetingDate).getTime() -
-                    // new Date(b.meetingDate).getTime()
-                    a.mtgCompKey - b.mtgCompKey
+                    new Date(a.meetingDate).getTime() -
+                    new Date(b.meetingDate).getTime()
                 );
             }
-            let biggerSorted = bigger.sort(custom_sort);
-            printObject('bigger', biggerSorted);
-            state.activeMeetings = biggerSorted;
+            let newBigger = bigger.sort(asc_sort);
+            state.activeMeetings = newBigger;
             // return
             return state;
         },
