@@ -45,16 +45,16 @@ function MeetingForm({ meetingId }) {
     useEffect(() => {
         LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
         if (meetingId === '0') {
-            console.log('new Meeting');
+            // getToday, only once, use twice
+            let today = getToday();
             setMeeting({
-                meetingDate: new Date().toISOString().slice(0, 10),
+                meetingDate: today,
                 meetingType: 'lesson',
                 title: '',
                 attendanceCount: 0,
                 meal: '',
                 mealCount: 0,
             });
-            const today = getToday();
             setMMeetingId('0');
             setMDate(today);
             setMType('lesson');
