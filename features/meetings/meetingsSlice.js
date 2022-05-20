@@ -76,22 +76,20 @@ export const meetingsSlice = createSlice({
             state.count += action.payload;
         },
         deleteActiveMeeting: (state, action) => {
-            // console.log('meetingSlice:deleteActiveMeeting');
-            // console.log('meetingId:', action.payload);
-            // printObject('state.activeMeetings', state.activeMeetings);
             const smaller = state.activeMeetings.filter(
                 (mtg) => mtg.meetingId !== action.payload
             );
-            // printObject('smaller', smaller);
-            // console.log(
-            //     'before filter\nstate.activeMeetings:',
-            //     state.activeMeetings
-            // );
-            // const reducedList = state.activeMeetings.filter((mtg) => {
-            //     mtg.meetingId === action.payload;
-            // });
-            // console.log('reducedList:\n', reducedList);
             state.activeMeetings = smaller;
+            return state;
+        },
+        addActiveMeeting: (state, action) => {
+            // get meetings
+            // add payload meeting
+            const bigger = [...state.activeMeetings, action.payload];
+            printObject('bigger', bigger);
+
+            // sort
+            // return
             return state;
         },
     },
@@ -129,6 +127,7 @@ export const {
     reset,
     incrementByAmount,
     deleteActiveMeeting,
+    addActiveMeeting,
 } = meetingsSlice.actions;
 
 export default meetingsSlice.reducer;

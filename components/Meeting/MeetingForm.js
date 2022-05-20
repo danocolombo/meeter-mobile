@@ -24,6 +24,7 @@ import { isMeetingDateBeforeToday } from '../../util/date';
 import { Colors } from '../../constants/colors';
 import { getToday, getUniqueId, printObject } from '../../util/helpers';
 import { addMeeting } from '../../providers/meetings';
+import { addActiveMeeting } from '../../features/meetings/meetingsSlice';
 // import { GroupsContext } from '../../store/groups-context';
 // import { or } from 'react-native-reanimated';
 
@@ -170,9 +171,9 @@ function MeetingForm({ meetingId }) {
                         '#' +
                         mDate.substring(0, 4) +
                         '#' +
-                        mDate.substring(6, 7) +
+                        mDate.substring(5, 7) +
                         '#' +
-                        mDate.substring(9, 10);
+                        mDate.substring(8, 10);
                     let newMeeting = {
                         clientId: 'wbc',
                         mtgCompkey: mtgCompKey,
@@ -192,6 +193,7 @@ function MeetingForm({ meetingId }) {
                     dbUpdateResults().then((results) => {
                         console.log('addMeeting response:\n', results);
                         console.log('okay now save locally');
+                        addActiveMeeting(newMeeting);
                     });
                 })
                 .catch((err) => console.log('new meeting save error\n', err));
