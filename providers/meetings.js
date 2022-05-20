@@ -144,7 +144,6 @@ export const fetchHistoricMeetings = async () => {
     return historicMeetings;
 };
 export const deleteMeeting = async (meetingId) => {
-    console.log('do API call deleteMeeting(', meetingId, ')');
     let obj = {
         operation: 'deleteMeeting',
         payload: {
@@ -166,6 +165,4 @@ export const deleteMeeting = async (meetingId) => {
         console.log('we got no meetings');
         return null;
     }
-    // const dispatch = useDispatch();
-    // dispatch(deleteActiveMeeting(meetingId));
 };
