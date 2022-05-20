@@ -10,6 +10,7 @@ import {
     KeyboardAvoidingView,
     LogBox,
 } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { useQuery } from 'react-query';
 import { TextInput } from 'react-native-paper';
 import MeetingTypeButtons from './MeetingTypeButtons';
@@ -30,6 +31,7 @@ import { addActiveMeeting } from '../../features/meetings/meetingsSlice';
 
 function MeetingForm({ meetingId }) {
     const navHook = useNavigation();
+    const dispatch = useDispatch();
     const [meeting, setMeeting] = useState('');
     const [meetingCopy, setMeetingCopy] = useState('');
     const [groups, setGroups] = useState('');
@@ -176,7 +178,7 @@ function MeetingForm({ meetingId }) {
                         mDate.substring(8, 10);
                     let newMeeting = {
                         clientId: 'wbc',
-                        mtgCompkey: mtgCompKey,
+                        mtgCompKey: mtgCompKey,
                         meetingId: result,
                         meetingDate: mDate,
                         meetingType: mType,
@@ -191,9 +193,9 @@ function MeetingForm({ meetingId }) {
                         addMeeting(newMeeting);
                     };
                     dbUpdateResults().then((results) => {
-                        console.log('addMeeting response:\n', results);
                         console.log('okay now save locally');
-                        addActiveMeeting(newMeeting);
+                        dispatch(addActiveMeeting(newMeeting));
+                        navHook.goBack();
                     });
                 })
                 .catch((err) => console.log('new meeting save error\n', err));
