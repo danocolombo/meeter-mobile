@@ -5,19 +5,24 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import MeetingsOutput from '../components/Meeting/MeetingsOutput';
 import NextMeetingCard from '../components/Meeting/NextMeetingCard';
+import { getActiveMeetings } from '../features/meetings/meetingsSlice';
 import { fetchActiveMeetings } from '../providers/meetings';
 import { saveActiveMeetings } from '../features/meetings/meetingsSlice';
 import { DatePickerAndroid, StyleSheet, Text, View } from 'react-native';
-import { GOOGLE_AUTH } from '@env';
 import { printObject } from '../util/helpers';
 
 function ActiveScreen() {
+    const dispatch = useDispatch();
     const [isLoading1, setIsLoading] = useState(false);
     const isLoading = useSelector((state) => state.meetings.isLoading);
     const authToken = useSelector((state) => state.user.authToken);
-
     let activeMeetings = useSelector((state) => state.meetings.activeMeetings);
-
+    useEffect(() => {
+        // if (authToken.length === null && activeMeetings.length === 0) {
+        // dispatch(loadUser({ token: token, userName: email }));
+        dispatch(getActiveMeetings(), null);
+        // }
+    }, []);
     // printObject('activeMeetings', activeMeetings);
     if (activeMeetings.length < 1) {
         return (

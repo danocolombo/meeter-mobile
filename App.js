@@ -268,8 +268,7 @@ function Navigation() {
     const authCtx = useContext(AuthContext);
     return (
         <NavigationContainer>
-            {!authCtx.isAuthenticated && <AuthStack />}
-            {authCtx.isAuthenticated && <AuthenticatedStack />}
+            <AuthenticatedStack />
         </NavigationContainer>
     );
 }
@@ -279,17 +278,16 @@ export default function App() {
         <>
             <Provider store={store}>
                 <StatusBar style='light' />
-                <AuthContextProvider>
-                    <QueryClientProvider client={queryClient}>
-                        <MeeterContextProvider>
-                            <MeetingsContextProvider>
-                                <GroupsContextProvider>
-                                    <Navigation />
-                                </GroupsContextProvider>
-                            </MeetingsContextProvider>
-                        </MeeterContextProvider>
-                    </QueryClientProvider>
-                </AuthContextProvider>
+
+                <QueryClientProvider client={queryClient}>
+                    <MeeterContextProvider>
+                        <MeetingsContextProvider>
+                            <GroupsContextProvider>
+                                <Navigation />
+                            </GroupsContextProvider>
+                        </MeetingsContextProvider>
+                    </MeeterContextProvider>
+                </QueryClientProvider>
             </Provider>
         </>
     );
