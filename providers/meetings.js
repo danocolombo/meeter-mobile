@@ -2,6 +2,7 @@ import axios from 'axios';
 import { MEETER_API } from '@env';
 import { subtractMonths, getToday } from '../util/date';
 import { useDispatch } from 'react-redux';
+import { printObject } from '../util/helpers';
 const config = {
     headers: {
         'Access-Control-Allow-Headers':
@@ -158,6 +159,28 @@ export const deleteMeeting = async (meetingId) => {
 
     let res = await axios.post(api2use, body, config);
 
+    var returnValue = res.data.body;
+    if (res.status === 200) {
+        return returnValue;
+    } else {
+        console.log('we got no meetings');
+        return null;
+    }
+};
+export const addMeeting = async (newMeeting) => {
+    console.log('new meeting being added:\n', newMeeting);
+    let obj = {
+        operation: 'putMeeting',
+        payload: {
+            Item: newMeeting,
+        },
+    };
+
+    let body = JSON.stringify(obj);
+    let api2use = MEETER_API + '/meetings';
+
+    let res = await axios.post(api2use, body, config);
+    printObject('our db response', res);
     var returnValue = res.data.body;
     if (res.status === 200) {
         return returnValue;

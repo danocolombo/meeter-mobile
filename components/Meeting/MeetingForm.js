@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     StyleSheet,
     View,
@@ -8,92 +8,108 @@ import {
     Pressable,
     ScrollView,
     KeyboardAvoidingView,
+    LogBox,
 } from 'react-native';
 import { useQuery } from 'react-query';
 import { TextInput } from 'react-native-paper';
 import MeetingTypeButtons from './MeetingTypeButtons';
 import NumberInput from '../ui/NumberInput/NumberInput';
 import { useNavigation } from '@react-navigation/native';
-import { MeetingsContext } from '../../store/meeting-context';
+// import { MeetingsContext } from '../../store/meeting-context';
 import * as Crypto from 'expo-crypto';
 import Button from '../ui/Button';
 import GroupsForMeetingForm from '../Group/GroupsForMeetingForm';
 import GroupListItem from '../Group/GroupListItem';
 import { isMeetingDateBeforeToday } from '../../util/date';
 import { Colors } from '../../constants/colors';
-import { GroupsContext } from '../../store/groups-context';
-import { or } from 'react-native-reanimated';
+import { getToday, getUniqueId, printObject } from '../../util/helpers';
+import { addMeeting } from '../../providers/meetings';
+// import { GroupsContext } from '../../store/groups-context';
+// import { or } from 'react-native-reanimated';
 
-function onDateChange() {}
 function MeetingForm({ meetingId }) {
     const navHook = useNavigation();
+    const [meeting, setMeeting] = useState('');
+    const [meetingCopy, setMeetingCopy] = useState('');
+    const [groups, setGroups] = useState('');
+    const [mMeetingId, setMMeetingId] = useState('');
+    const [mDate, setMDate] = useState('');
+    const [mType, setMType] = useState('');
+    const [mSpotlight, setMSpotlight] = useState('');
+    const [mSupportContact, setMSupportContact] = useState('');
 
-    const meetingsCtx = useContext(MeetingsContext);
+    const [mAttendance, setMAttendance] = useState(0);
+    const [mMealCount, setMMealCount] = useState(0);
+    const [mMeal, setMMeal] = useState('');
 
-    const groupsCtx = useContext(GroupsContext);
-
-    const groups = groupsCtx.groups;
-    //---------------------------------------
-    // we don't want to show groups if it
-    // is new meeting
-    //---------------------------------------
-    //get groups....
-
-    let theMeeting = {
-        meetingDate: new Date().toISOString().slice(0, 10),
-        meetingType: 'lesson',
-        title: '',
-        attendanceCount: 0,
-        meal: '',
-        mealCount: 0,
-    };
-    let foundMeeting;
-    if (meetingId !== '0') {
-        foundMeeting = meetingsCtx.activeMeetings.find(
-            (mtg) => mtg.meetingId === meetingId
-        );
-        if (!foundMeeting) {
-            foundMeeting = meetingsCtx.historicMeetings.find(
+    useEffect(() => {
+        LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
+        if (meetingId === '0') {
+            console.log('new Meeting');
+            setMeeting({
+                meetingDate: new Date().toISOString().slice(0, 10),
+                meetingType: 'lesson',
+                title: '',
+                attendanceCount: 0,
+                meal: '',
+                mealCount: 0,
+            });
+            const today = getToday();
+            setMMeetingId('0');
+            setMDate(today);
+            setMType('lesson');
+            setMSpotlight('');
+            setMSupportContact('');
+            setMAttendance(0);
+            setMMealCount(0);
+            setMMeal('');
+        } else {
+            console.log('existing meeting');
+            //   --------------------------------------
+            //todo need to get the meeting from redux
+            //   --------------------------------------
+            foundMeeting = meetingsCtx.activeMeetings.find(
                 (mtg) => mtg.meetingId === meetingId
             );
-        }
-        theMeeting = foundMeeting;
-    }
-    //=========================================
-    // save a copy of original, in case they
-    // change the date between active/historic
-    //=========================================
-    let originalMeeting = theMeeting;
-    let theGroups = groups.filter((grp) => {
-        if (grp.meetingId === meetingId) {
-            return grp;
-        }
-    });
-    function custom_sort(a, b) {
-        return (
-            // new Date(a.meetingDate).getTime() -
-            // new Date(b.meetingDate).getTime()
-            a.meetingType - b.meetingType
-        );
-    }
-    let groupsFound = theGroups.sort(custom_sort);
-    const [mMeetingId, setMMeetingId] = useState(meetingId);
-    const [mDate, setMDate] = useState(theMeeting.meetingDate);
-    const [mType, setMType] = useState(theMeeting.meetingType);
-    const [mSpotlight, setMSpotlight] = useState(theMeeting.title);
-    const [mSupportContact, setMSupportContact] = useState(
-        theMeeting.supportContact
-    );
+            if (!foundMeeting) {
+                foundMeeting = meetingsCtx.historicMeetings.find(
+                    (mtg) => mtg.meetingId === meetingId
+                );
+            }
+            setMeeting(foundMeeting);
+            setMeetingCopy(foundMeeting); // in case they change date
+            // load field values
+            setMMeetingId(foundMeeting.meetingId);
+            setMDate(foundMeeting.meetingDate);
+            setMType(foundMeeting.meetingType);
+            setMSpotlight(foundMeeting.title);
+            setMSupportContact(foundMeeting.supporContact);
+            setMAttendance(foundMeeting.attendanceCount);
+            setMMealCount(foundMeeting.mealCount);
+            setMMeal(foundMeeting.meal);
 
-    const [mAttendance, setMAttendance] = useState(theMeeting.attendanceCount);
-    const [mMealCount, setMMealCount] = useState(theMeeting.mealCount);
-    const [mMeal, setMMeal] = useState(theMeeting.meal);
+            let theGroups = groups.filter((grp) => {
+                if (grp.meetingId === meetingId) {
+                    return grp;
+                }
+            });
+            function custom_sort(a, b) {
+                return (
+                    // new Date(a.meetingDate).getTime() -
+                    // new Date(b.meetingDate).getTime()
+                    a.meetingType - b.meetingType
+                );
+            }
+            setGroups(theGroups.sort(custom_sort));
+        }
+    }, []);
 
     //   --------METHODS  ------------
     //   =============================
     function changeDate(val) {
         setMDate(val);
     }
+
     function changeType(val) {
         setMType(val);
     }
@@ -115,6 +131,7 @@ function MeetingForm({ meetingId }) {
     function changeMealCount(itemValue) {
         setMMealCount(itemValue);
     }
+    function onDateChange() {}
     function confirmMeetingHandler(navigation) {
         if (
             isNaN(Date.parse(mDate)) ||
@@ -128,6 +145,7 @@ function MeetingForm({ meetingId }) {
             ]);
             return;
         }
+        console.log('check it');
 
         if (mMeetingId === '0') {
             async function getUni() {
@@ -137,57 +155,107 @@ function MeetingForm({ meetingId }) {
                 );
                 return digest;
             }
-            let uni = getUni()
+            let uni = getUniqueId()
                 .then((result) => {
-                    setMMeetingId(uni);
-                    //todo ----- active or historic
-                    activeCtx.addMeeting({
-                        meetingId: mMeetingId,
+                    //it = result;
+                    // console.log('meetingId', result);
+                    // console.log('meetingDate', mDate);
+                    // console.log('meetingType', mType);
+                    // console.log('title', mSpotlight);
+                    // console.log('attendanceCount', mAttendance);
+                    // console.log('meal', mMeal);
+                    // console.log('mealCount', mMealCount);
+                    let mtgCompKey =
+                        'wbc' +
+                        '#' +
+                        mDate.substring(0, 4) +
+                        '#' +
+                        mDate.substring(6, 7) +
+                        '#' +
+                        mDate.substring(9, 10);
+                    let newMeeting = {
+                        clientId: 'wbc',
+                        mtgCompkey: mtgCompKey,
+                        meetingId: result,
                         meetingDate: mDate,
                         meetingType: mType,
                         title: mSpotlight,
                         attendanceCount: mAttendance,
                         meal: mMeal,
                         mealCount: mMealCount,
+                    };
+
+                    let dbUpdateResults = async () => {
+                        // deleteActiveMeeting(meetingId);
+                        addMeeting(newMeeting);
+                    };
+                    dbUpdateResults().then((results) => {
+                        console.log('addMeeting response:\n', results);
+                        console.log('okay now save locally');
                     });
-                    navHook.goBack();
                 })
-                .catch(() => console.log('error'));
-        } else {
-            if (isMeetingDateBeforeToday(originalMeeting.meetingDate)) {
-                console.log('HISTORIC MEETING');
-                meetingsCtx.updateHistoricMeeting(meetingId, {
-                    meetingDate: mDate,
-                    meetingType: mType,
-                    title: mSpotlight,
-                    attendanceCount: mAttendance,
-                    meal: mMeal,
-                    mealCount: mMealCount,
-                });
-            } else {
-                meetingsCtx.updateActiveMeeting(meetingId, {
-                    meetingDate: mDate,
-                    meetingType: mType,
-                    title: mSpotlight,
-                    attendanceCount: mAttendance,
-                    meal: mMeal,
-                    mealCount: mMealCount,
-                });
-            }
-            return;
-            //updates need to made using the date.
-
-            // activeCtx.updateMeeting(meetingId, {
-            //     meetingDate: mDate,
-            //     meetingType: mType,
-            //     title: mSpotlight,
-            //     attendanceCount: mAttendance,
-            //     meal: mMeal,
-            //     mealCount: mMealCount,
-            // });
-
-            navHook.goBack();
+                .catch((err) => console.log('new meeting save error\n', err));
         }
+        // getUniqueId().then((newId) => console.log('what?:', newId));
+        // setMMeetingId(getUniqueId());
+        // console.log('meetingId(it)', it);
+        // console.log('meetingId', result);
+        // console.log('meetingDate', mDate);
+        // console.log('meetingType', mType);
+        // console.log('title', mSpotlight);
+        // console.log('attendanceCount', mAttendance);
+        // console.log('meal', mMeal);
+        // console.log('mealCount', mMealCount);
+
+        //             setMMeetingId(uni);
+        //             //todo ----- active or historic
+        //             activeCtx.addMeeting({
+        //                 meetingId: mMeetingId,
+        //                 meetingDate: mDate,
+        //                 meetingType: mType,
+        //                 title: mSpotlight,
+        //                 attendanceCount: mAttendance,
+        //                 meal: mMeal,
+        //                 mealCount: mMealCount,
+        //             });
+        //             navHook.goBack();
+        //         })
+        //         .catch(() => console.log('error'));
+        // } else {
+        //     if (isMeetingDateBeforeToday(originalMeeting.meetingDate)) {
+        //         console.log('HISTORIC MEETING');
+        //         meetingsCtx.updateHistoricMeeting(meetingId, {
+        //             meetingDate: mDate,
+        //             meetingType: mType,
+        //             title: mSpotlight,
+        //             attendanceCount: mAttendance,
+        //             meal: mMeal,
+        //             mealCount: mMealCount,
+        //         });
+        //     } else {
+        //         meetingsCtx.updateActiveMeeting(meetingId, {
+        //             meetingDate: mDate,
+        //             meetingType: mType,
+        //             title: mSpotlight,
+        //             attendanceCount: mAttendance,
+        //             meal: mMeal,
+        //             mealCount: mMealCount,
+        //         });
+        //     }
+        //     return;
+        //     //updates need to made using the date.
+
+        //     // activeCtx.updateMeeting(meetingId, {
+        //     //     meetingDate: mDate,
+        //     //     meetingType: mType,
+        //     //     title: mSpotlight,
+        //     //     attendanceCount: mAttendance,
+        //     //     meal: mMeal,
+        //     //     mealCount: mMealCount,
+        //     // });
+
+        //     navHook.goBack();
+        // }
     }
     function addGroupHandler() {
         navHook.navigate('Group', {
@@ -260,7 +328,7 @@ function MeetingForm({ meetingId }) {
                                 <Text style={{ fontSize: 16 }}>Attendance</Text>
                             </View>
                             <NumberInput
-                                value={mAttendance}
+                                value={parseInt(mAttendance)}
                                 onAction={setMAttendance}
                             />
                         </View>
@@ -290,7 +358,7 @@ function MeetingForm({ meetingId }) {
                                 </Text>
                             </View>
                             <NumberInput
-                                value={mMealCount}
+                                value={parseInt(mMealCount)}
                                 onAction={setMMealCount}
                             />
                         </View>
@@ -304,39 +372,34 @@ function MeetingForm({ meetingId }) {
                                 </Button>
                             </View>
                         </View>
-
-                        {meetingId !== '0' && (
-                            <>
-                                <View style={styles.groupDividerRow}>
-                                    <Text style={styles.groupHeader}>
-                                        Groups
+                        {/* <View style={styles.groupDividerRow}>
+                            <Text style={styles.groupHeader}>Groups</Text>
+                            <Pressable
+                                onPress={addGroupHandler}
+                                style={({ pressed }) => [
+                                    {
+                                        backgroundColor: pressed
+                                            ? 'rgb(210, 230, 255)'
+                                            : Colors.gray20,
+                                    },
+                                    styles.wrapperCustom,
+                                ]}
+                            >
+                                {({ pressed }) => (
+                                    <Text style={styles.text}>
+                                        {pressed ? '+' : '+'}
                                     </Text>
-                                    <Pressable
-                                        onPress={addGroupHandler}
-                                        style={({ pressed }) => [
-                                            {
-                                                backgroundColor: pressed
-                                                    ? 'rgb(210, 230, 255)'
-                                                    : Colors.gray20,
-                                            },
-                                            styles.wrapperCustom,
-                                        ]}
-                                    >
-                                        {({ pressed }) => (
-                                            <Text style={styles.text}>
-                                                {pressed ? '+' : '+'}
-                                            </Text>
-                                        )}
-                                    </Pressable>
-                                </View>
-                                <View>
-                                    <GroupsForMeetingForm
-                                        meetingId={meetingId}
-                                        groupsFound={groupsFound}
-                                    />
-                                </View>
-                            </>
-                        )}
+                                )}
+                            </Pressable>
+                        </View>
+
+                        <View style={styles.groupContainer}>
+                            <FlatList
+                                data={groupsFound}
+                                renderItem={renderGroupItem}
+                                keyExtractor={(group) => group.groupId}
+                            />
+                        </View> */}
                     </View>
                 </View>
             </KeyboardAvoidingView>
