@@ -376,7 +376,7 @@ function MeetingForm({ meetingId }) {
                                 </Button>
                             </View>
                         </View>
-                        {/* <View style={styles.groupDividerRow}>
+                        <View style={styles.groupDividerRow}>
                             <Text style={styles.groupHeader}>Groups</Text>
                             <Pressable
                                 onPress={addGroupHandler}
@@ -396,8 +396,8 @@ function MeetingForm({ meetingId }) {
                                 )}
                             </Pressable>
                         </View>
-
-                        <View style={styles.groupContainer}>
+                        <GroupsForMeetingForm meetingId={meetingId} />
+                        {/* <View style={styles.groupContainer}>
                             <FlatList
                                 data={groupsFound}
                                 renderItem={renderGroupItem}
