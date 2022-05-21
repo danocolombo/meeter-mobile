@@ -75,6 +75,15 @@ export const meetingsSlice = createSlice({
         incrementByAmount: (state, action) => {
             state.count += action.payload;
         },
+        getActiveMeeting: (state, action) => {
+            const all = state.activeMeetings;
+            printObject('all', all);
+            const found = all.find((mtg) => {
+                return mtg.meetingId === action.payload;
+            });
+            printObject('found', found);
+            return found;
+        },
         deleteActiveMeeting: (state, action) => {
             const smaller = state.activeMeetings.filter(
                 (mtg) => mtg.meetingId !== action.payload
@@ -133,6 +142,7 @@ export const {
     incrementByAmount,
     deleteActiveMeeting,
     addActiveMeeting,
+    getActiveMeeting,
 } = meetingsSlice.actions;
 
 export default meetingsSlice.reducer;
