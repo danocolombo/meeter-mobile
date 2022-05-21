@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { loadUser } from '../features/meetings/userSlice';
+import { loadUser } from '../features/users/userSlice';
 import {
     saveActiveMeetings,
     getActiveMeetings,

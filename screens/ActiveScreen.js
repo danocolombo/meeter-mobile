@@ -11,7 +11,7 @@ import { saveActiveMeetings } from '../features/meetings/meetingsSlice';
 import { DatePickerAndroid, StyleSheet, Text, View } from 'react-native';
 import { printObject } from '../util/helpers';
 import { Auth } from 'aws-amplify';
-import { loadUser } from '../features/meetings/userSlice';
+import { loadUser } from '../features/users/userSlice';
 function ActiveScreen() {
     const dispatch = useDispatch();
     const [isLoading1, setIsLoading] = useState(false);
