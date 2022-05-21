@@ -12,6 +12,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // - - - - - redux toolkit - -  - - - - -
 import { store } from './store/redux/store';
 import { Provider } from 'react-redux';
+// - - - - - amplify auth - - - - - - - -
+import Amplify, { Auth } from 'aws-amplify';
+import awsconfig from './src/aws-exports';
+import { withAuthenticator } from 'aws-amplify-react-native';
 
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
@@ -30,11 +34,12 @@ import { AuthContext } from './store/auth-context';
 import MeetingsContextProvider from './store/meeting-context';
 import GroupsContextProvider from './store/groups-context';
 import MeeterContextProvider from './store/meeter-context';
+import AmplifySignOut from './screens/AmplifySignOut';
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
-
+Amplify.configure(awsconfig);
 function AuthStack() {
     return (
         <Stack.Navigator
@@ -126,6 +131,7 @@ function AuthenticatedDrawer() {
                     ),
                 })}
             />
+            <Stack.Screen name='Logout' component={AmplifySignOut} />
         </Drawer.Navigator>
     );
 }
@@ -273,7 +279,7 @@ function Navigation() {
     );
 }
 const queryClient = new QueryClient();
-export default function App() {
+function App() {
     return (
         <>
             <Provider store={store}>
@@ -292,3 +298,4 @@ export default function App() {
         </>
     );
 }
+export default withAuthenticator(App);

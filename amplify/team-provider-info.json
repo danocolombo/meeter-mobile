@@ -1,0 +1,15 @@
+{
+  "oneone": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-meetermobile-oneone-82333-authRole",
+      "UnauthRoleArn": "arn:aws:iam::226036691416:role/amplify-meetermobile-oneone-82333-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::226036691416:role/amplify-meetermobile-oneone-82333-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-meetermobile-oneone-82333-deployment",
+      "UnauthRoleName": "amplify-meetermobile-oneone-82333-unauthRole",
+      "StackName": "amplify-meetermobile-oneone-82333",
+      "StackId": "arn:aws:cloudformation:us-east-1:226036691416:stack/amplify-meetermobile-oneone-82333/4df7e100-d8df-11ec-96e3-12d4a75b2ed7",
+      "AmplifyAppId": "dvi1vx6ocm6rv"
+    }
+  }
+}
