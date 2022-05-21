@@ -10,7 +10,7 @@ import {
     KeyboardAvoidingView,
     LogBox,
 } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useQuery } from 'react-query';
 import { TextInput } from 'react-native-paper';
 import MeetingTypeButtons from './MeetingTypeButtons';
@@ -25,13 +25,19 @@ import { isMeetingDateBeforeToday } from '../../util/date';
 import { Colors } from '../../constants/colors';
 import { getToday, getUniqueId, printObject } from '../../util/helpers';
 import { addMeeting } from '../../providers/meetings';
-import { addActiveMeeting } from '../../features/meetings/meetingsSlice';
+import {
+    addActiveMeeting,
+    getActiveMeeting,
+} from '../../features/meetings/meetingsSlice';
 // import { GroupsContext } from '../../store/groups-context';
 // import { or } from 'react-native-reanimated';
 
 function MeetingForm({ meetingId }) {
     const navHook = useNavigation();
     const dispatch = useDispatch();
+    const activeMeetings = useSelector(
+        (state) => state.meetings.activeMeetings
+    );
     const [meeting, setMeeting] = useState('');
     const [meetingCopy, setMeetingCopy] = useState('');
     const [groups, setGroups] = useState('');
@@ -46,7 +52,7 @@ function MeetingForm({ meetingId }) {
     const [mMeal, setMMeal] = useState('');
 
     useEffect(() => {
-        LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
+        // LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
         if (meetingId === '0') {
             // getToday, only once, use twice
             let today = getToday();
@@ -67,18 +73,12 @@ function MeetingForm({ meetingId }) {
             setMMealCount(0);
             setMMeal('');
         } else {
-            console.log('existing meeting');
             //   --------------------------------------
             //todo need to get the meeting from redux
             //   --------------------------------------
-            foundMeeting = meetingsCtx.activeMeetings.find(
+            const foundMeeting = activeMeetings.find(
                 (mtg) => mtg.meetingId === meetingId
             );
-            if (!foundMeeting) {
-                foundMeeting = meetingsCtx.historicMeetings.find(
-                    (mtg) => mtg.meetingId === meetingId
-                );
-            }
             setMeeting(foundMeeting);
             setMeetingCopy(foundMeeting); // in case they change date
             // load field values
@@ -91,19 +91,19 @@ function MeetingForm({ meetingId }) {
             setMMealCount(foundMeeting.mealCount);
             setMMeal(foundMeeting.meal);
 
-            let theGroups = groups.filter((grp) => {
-                if (grp.meetingId === meetingId) {
-                    return grp;
-                }
-            });
-            function custom_sort(a, b) {
-                return (
-                    // new Date(a.meetingDate).getTime() -
-                    // new Date(b.meetingDate).getTime()
-                    a.meetingType - b.meetingType
-                );
-            }
-            setGroups(theGroups.sort(custom_sort));
+            // let theGroups = groups.filter((grp) => {
+            //     if (grp.meetingId === meetingId) {
+            //         return grp;
+            //     }
+            // });
+            // function custom_sort(a, b) {
+            //     return (
+            //         // new Date(a.meetingDate).getTime() -
+            //         // new Date(b.meetingDate).getTime()
+            //         a.meetingType - b.meetingType
+            //     );
+            // }
+            // setGroups(theGroups.sort(custom_sort));
         }
     }, []);
 
@@ -376,7 +376,7 @@ function MeetingForm({ meetingId }) {
                                 </Button>
                             </View>
                         </View>
-                        {/* <View style={styles.groupDividerRow}>
+                        <View style={styles.groupDividerRow}>
                             <Text style={styles.groupHeader}>Groups</Text>
                             <Pressable
                                 onPress={addGroupHandler}
@@ -396,8 +396,8 @@ function MeetingForm({ meetingId }) {
                                 )}
                             </Pressable>
                         </View>
-
-                        <View style={styles.groupContainer}>
+                        <GroupsForMeetingForm meetingId={meetingId} />
+                        {/* <View style={styles.groupContainer}>
                             <FlatList
                                 data={groupsFound}
                                 renderItem={renderGroupItem}
