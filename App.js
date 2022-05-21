@@ -39,7 +39,7 @@ import AmplifySignOut from './screens/AmplifySignOut';
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
-Amplify.configure(awsconfig);
+Amplify.configure({ ...awsconfig, Analytics: { disabled: true } });
 function AuthStack() {
     return (
         <Stack.Navigator
