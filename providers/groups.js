@@ -78,3 +78,24 @@ export const fetchGroupsForMeeting = async (meetingId) => {
     let res = await axios.post(api2use, body, config);
     return res.data;
 };
+export const addGroup = async (newGroup) => {
+    let obj = {
+        operation: 'addGroup',
+        payload: {
+            Item: newMeeting,
+        },
+    };
+
+    let body = JSON.stringify(obj);
+    let api2use = MEETER_API + '/groups';
+
+    let res = await axios.post(api2use, body, config);
+
+    var returnValue = res.data.body;
+    if (res.status === 200) {
+        return returnValue;
+    } else {
+        console.log('we got no groups');
+        return null;
+    }
+};

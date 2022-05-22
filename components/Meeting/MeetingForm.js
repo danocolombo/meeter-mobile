@@ -25,10 +25,12 @@ import { isMeetingDateBeforeToday } from '../../util/date';
 import { Colors } from '../../constants/colors';
 import { getToday, getUniqueId, printObject } from '../../util/helpers';
 import { addMeeting } from '../../providers/meetings';
+import { fetchGroupsForMeeting } from '../../providers/groups';
 import {
     addActiveMeeting,
     getActiveMeeting,
 } from '../../features/meetings/meetingsSlice';
+import { loadGroups } from '../../features/groups/groupsSlice';
 // import { GroupsContext } from '../../store/groups-context';
 // import { or } from 'react-native-reanimated';
 
@@ -38,9 +40,10 @@ function MeetingForm({ meetingId }) {
     const activeMeetings = useSelector(
         (state) => state.meetings.activeMeetings
     );
+    const groups = useSelector((state) => state.groups.meetingGroups);
+
     const [meeting, setMeeting] = useState('');
     const [meetingCopy, setMeetingCopy] = useState('');
-    const [groups, setGroups] = useState('');
     const [mMeetingId, setMMeetingId] = useState('');
     const [mDate, setMDate] = useState('');
     const [mType, setMType] = useState('');
@@ -90,6 +93,18 @@ function MeetingForm({ meetingId }) {
             setMAttendance(foundMeeting.attendanceCount);
             setMMealCount(foundMeeting.mealCount);
             setMMeal(foundMeeting.meal);
+
+            //-----------------------------
+            // need to get groups from db
+            // for this meeting
+            //-----------------------------
+            let dbGroupsForMeeting = async () => {
+                fetchGroupsForMeeting(meetingId);
+            };
+            dbGroupsForMeeting().then((results) => {
+                console.log('okay now save locally');
+                dispatch(loadGroups(results));
+            });
 
             // let theGroups = groups.filter((grp) => {
             //     if (grp.meetingId === meetingId) {
@@ -199,6 +214,13 @@ function MeetingForm({ meetingId }) {
                     });
                 })
                 .catch((err) => console.log('new meeting save error\n', err));
+        } else {
+            Alert.alert(
+                'Meeting Update Error',
+                'We have not implemented updating [MF0522]',
+                [{ text: 'OK', style: 'destruction' }]
+            );
+            return;
         }
         // getUniqueId().then((newId) => console.log('what?:', newId));
         // setMMeetingId(getUniqueId());
@@ -263,8 +285,9 @@ function MeetingForm({ meetingId }) {
     }
     function addGroupHandler() {
         navHook.navigate('Group', {
+            groupId: '0',
             meetingId: meetingId,
-            group: '0',
+            meetingDate: mDate,
         });
     }
     function renderGroupItem(itemData) {
@@ -396,7 +419,7 @@ function MeetingForm({ meetingId }) {
                                 )}
                             </Pressable>
                         </View>
-                        <GroupsForMeetingForm meetingId={meetingId} />
+                        {/* <GroupsForMeetingForm meetingId={meetingId} /> */}
                         {/* <View style={styles.groupContainer}>
                             <FlatList
                                 data={groupsFound}

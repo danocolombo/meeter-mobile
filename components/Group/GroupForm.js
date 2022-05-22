@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     View,
@@ -8,55 +8,49 @@ import {
     // Pressable,
     // ScrollView,
     KeyboardAvoidingView,
+    LogBox,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 import { TextInput } from 'react-native-paper';
 import NumberInput from '../ui/NumberInput/NumberInput';
 import GenderButtons from './GenderButtons';
 // import MeetingTypeButtons from '../Meeting/MeetingTypeButtons';
 import { useNavigation } from '@react-navigation/native';
 // import * as Crypto from 'expo-crypto';
-
+import { addGroup } from '../../providers/groups';
 import Button from '../ui/Button';
 // import GroupListItem from '../Group/GroupListItem';
 import { Colors } from '../../constants/colors';
 import { getUniqueId } from '../../util/helpers';
-import { GroupsContext } from '../../store/groups-context';
+import { saveActiveMeetings } from '../../features/meetings/meetingsSlice';
 
 // function onDateChange() {}
-function GroupForm({ meetingId, groupId }) {
+function GroupForm({ groupId, meetingId, meetingDate }) {
     const navHook = useNavigation();
-    const groupsCtx = useContext(GroupsContext);
-    // console.log('groupId:', groupId, '<====');
-    const groups = groupsCtx.groups;
-    // console.log('######## groups##########\n', groups, '\n###############');
-    const foundGroup = groups.find((grp) => grp.groupId === groupId);
-    // console.log('#### FOUND ####\n', foundGroup, '\n');
-    let theGroup = {
-        meetingId: meetingId,
-        groupId: '0',
-        gender: '',
-        title: '',
-        attendance: '0',
-        location: '',
-        facilitator: '',
-        cofacilitator: '',
-        notes: '',
-    };
-    if (foundGroup) {
-        // console.log('foundGroup YES');
-        theGroup = foundGroup;
-        // console.log('theGroup:\n', theGroup);
-    }
+    const client = useSelector((state) => state.user.activeClient);
 
-    const [gGender, setGGender] = useState(theGroup.gender);
-    const [gAttendance, setGAttendance] = useState(theGroup.attendance);
-    const [gTitle, setGTitle] = useState(theGroup.title);
-    const [gLocation, setGLocation] = useState(theGroup.location);
-    const [gFacilitator, setGFacilitator] = useState(theGroup.facilitator);
-    const [gCofacilitator, setGCofacilitator] = useState(
-        theGroup.cofacilitator
-    );
-    const [gNotes, setGNotes] = useState(theGroup.notes);
+    const [gGender, setGGender] = useState('');
+    const [gAttendance, setGAttendance] = useState(0);
+    const [gTitle, setGTitle] = useState('');
+    const [gLocation, setGLocation] = useState('');
+    const [gFacilitator, setGFacilitator] = useState('');
+    const [gCofacilitator, setGCofacilitator] = useState('');
+    const [gNotes, setGNotes] = useState('');
+    useEffect(() => {
+        LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
+        if (groupId === '0') {
+            // new group
+            setGGender('f');
+            setGAttendance(0);
+            setGTitle('');
+            setGLocation('');
+            setGFacilitator('');
+            setGCofacilitator('');
+            setGNotes('');
+        } else {
+            // we need to get the group
+        }
+    }, []);
 
     function confirmGroupHandler(navigation) {
         if (
@@ -70,51 +64,54 @@ function GroupForm({ meetingId, groupId }) {
             ]);
             return;
         }
-        if (groupId) {
-            //save the group
-            const updatedGroup = {
-                meetingId: theGroup.meetingId,
-                groupId: theGroup.groupId,
-                gender: gGender,
-                title: gTitle,
-                location: gLocation,
-                facilitator: gFacilitator,
-                cofacilitator: gCofacilitator,
-                attendance: gAttendance,
-                notes: gNotes,
-            };
-            groupsCtx.updateGroup(groupId, updatedGroup);
-            // console.log('\n=================\n');
-            // console.log(updatedGroup);
-            // console.log('\n=================');
-            Alert.alert('Group Updated', 'Your changes were saved', [
-                { text: 'OK', style: 'destruction' },
-            ]);
-            navHook.goBack();
-        } else {
-            getUniqueId()
-                .then((newId) => {
-                    const newGroup = {
-                        meetingId: theGroup.meetingId,
-                        groupId: newId,
+        //---- define groupCompKey ---------
+        let grpCompKey =
+            client +
+            '#' +
+            meetingDate.substring(0, 4) +
+            '#' +
+            meetingDate.substring(5, 7) +
+            '#' +
+            meetingDate.substring(8, 10);
+
+        if (groupId === '0') {
+            async function getUni() {
+                let digest = getUniqueId();
+                return digest;
+            }
+            let uni = getUniqueId()
+                .then((result) => {
+                    let newGroup = {
+                        groupId: result,
+                        meetingId: meetingId,
+                        clientId: client,
+                        grpCompKey: grpCompKey,
                         gender: gGender,
+                        attendance: gAttendance,
                         title: gTitle,
                         location: gLocation,
                         facilitator: gFacilitator,
                         cofacilitator: gCofacilitator,
-                        attendance: gAttendance,
                         notes: gNotes,
                     };
-                    groupsCtx.addGroup(newGroup);
-                    navHook.goBack();
+
+                    let dbUpdateResults = async () => {
+                        addGroup(newGroup);
+                    };
+                    dbUpdateResults().then((results) => {
+                        dispatch(addGroup(newGroup));
+                        navHook.goBack();
+                    });
                 })
-                .catch((error) => {
-                    // console.log('error getting unique Id\n', error);
-                    Alert.alert('Error', 'Error adding your group', [
-                        { text: 'OK', style: 'destruction' },
-                    ]);
-                    return;
-                });
+                .catch((err) => console.log('new group save error\n', err));
+            navHook.goBack();
+        } else {
+            Alert.alert(
+                'Group Update Error',
+                'We have not implemented updating Groups [GF0522]',
+                [{ text: 'OK', style: 'destruction' }]
+            );
+            return;
         }
 
         return;
@@ -122,14 +119,13 @@ function GroupForm({ meetingId, groupId }) {
     return (
         <View style={styles.rootContainer}>
             <KeyboardAvoidingView>
-                <View style={{ flexDirection: 'column', minWidth: '95%' }}>
-                    <View style={styles.groupFrame}>
-                        <View>
-                            <GenderButtons
-                                currentType={gGender}
-                                onChange={setGGender}
-                            />
-                        </View>
+                <View>
+                    <View style={styles.groupFrame1}>
+                        <GenderButtons
+                            currentType={gGender}
+                            onChange={setGGender}
+                        />
+
                         <View>
                             <TextInput
                                 mode='outlined'
@@ -162,23 +158,12 @@ function GroupForm({ meetingId, groupId }) {
                                 onChangeText={setGCofacilitator}
                             />
                         </View>
-                        <View
-                            style={{
-                                // flexDirection: 'row',
-                                alignItems: 'center',
-                                // marginVertical: 10,
-                            }}
-                        >
-                            <View
-                                style={{
-                                    justifyContent: 'center',
-                                    marginRight: 10,
-                                }}
-                            >
-                                <Text style={{ fontSize: 16 }}>Attendance</Text>
+                        <View style={styles.attendanceSection}>
+                            <View style={styles.attendanceWrapper}>
+                                <Text style={styles.label}>Attendance</Text>
                             </View>
                             <NumberInput
-                                value={gAttendance}
+                                value={parseInt(gAttendance)}
                                 onAction={setGAttendance}
                             />
                         </View>
@@ -192,7 +177,7 @@ function GroupForm({ meetingId, groupId }) {
                                 onChangeText={setGNotes}
                             />
                         </View>
-                        <View style={{ marginHorizontal: 10 }}>
+                        <View style={styles.saveWrapper}>
                             <View style={styles.buttonContainer}>
                                 <Button
                                     onPress={confirmGroupHandler}
@@ -214,10 +199,16 @@ export default GroupForm;
 const styles = StyleSheet.create({
     rootContainer: {
         // flex: 1,
+        minWidth: '98%',
         alignItems: 'center',
+        marginTop: 5,
+        borderWidth: 2,
+        borderRadius: 5,
+        borderColor: Colors.gray75,
+        // padding: 5,
     },
     groupFrame: {
-        // flex: 0.9,
+        minWidth: '100%',
         borderColor: Colors.primary800,
         marginTop: 5,
         borderWidth: 2,
@@ -225,7 +216,6 @@ const styles = StyleSheet.create({
         borderColor: Colors.primary800,
         justifyContent: 'center',
         padding: 5,
-        width: '100%',
     },
     row: {
         flexDirection: 'row',
@@ -312,8 +302,20 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         justifyContent: 'center',
     },
+    attendanceSection: {
+        marginVertical: 5,
+    },
+    attendanceWrapper: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginBottom: 10,
+    },
+    saveWrapper: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
     buttonContainer: {
-        width: '100%',
+        width: '80%',
         marginVertical: 10,
         justifyContent: 'center',
         backgroundColor: 'green',

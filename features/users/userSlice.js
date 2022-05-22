@@ -12,6 +12,9 @@ export const userSlice = createSlice({
         lastName: '',
         gender: '',
         email: '',
+        activeClient: 'wbc',
+        activeRole: 'superuser',
+        activeStatus: 'approved',
     },
     reducers: {
         loadUser: (state, action) => {

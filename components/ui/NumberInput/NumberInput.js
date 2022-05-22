@@ -19,14 +19,7 @@ function NumberInput({ value, onAction }) {
 
     return (
         <View>
-            <View
-                style={{
-                    flexDirection: 'row',
-                    alightItems: 'flexStart',
-                    backgroundColor: 'white',
-                    justifyContent: 'center',
-                }}
-            >
+            <View style={styles.rootContainer}>
                 <RoundedButton
                     title='-'
                     size={25}
@@ -57,17 +50,16 @@ function NumberInput({ value, onAction }) {
 export default NumberInput;
 
 const styles = StyleSheet.create({
-    root: {
-        alignItems: 'center',
+    rootContainer: {
+        flexDirection: 'row',
         justifyContent: 'center',
-        padding: 24,
     },
     numberBox: {
         paddingHorizontal: 10,
         borderWidth: 1,
         marginLeft: 10,
         marginRight: 10,
-        backgroundColor: Colors.gray10,
+        // backgroundColor: Colors.gray75,
         alignItems: 'center',
         justifyContent: 'center',
     },
