@@ -21,11 +21,11 @@ import { addGroup } from '../../providers/groups';
 import Button from '../ui/Button';
 // import GroupListItem from '../Group/GroupListItem';
 import { Colors } from '../../constants/colors';
-import { getUniqueId } from '../../util/helpers';
+import { getUniqueId, printObject } from '../../util/helpers';
 import { saveActiveMeetings } from '../../features/meetings/meetingsSlice';
 
 // function onDateChange() {}
-function GroupForm({ groupId, meetingId, meetingDate }) {
+function GroupForm({ groupId, meetingInfo }) {
     const navHook = useNavigation();
     const client = useSelector((state) => state.user.activeClient);
 
@@ -36,6 +36,11 @@ function GroupForm({ groupId, meetingId, meetingDate }) {
     const [gFacilitator, setGFacilitator] = useState('');
     const [gCofacilitator, setGCofacilitator] = useState('');
     const [gNotes, setGNotes] = useState('');
+    console.log('TEST_groupId:', groupId);
+    console.log('TEST_meetingId:', meetingInfo.meetingId);
+    console.log('TEST_meetingDate:', meetingInfo.meetingDate);
+    console.log('TEST_mtgCompKey:', meetingInfo.mtgCompKey);
+
     useEffect(() => {
         LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
         if (groupId === '0') {

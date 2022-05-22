@@ -13,9 +13,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { store } from './store/redux/store';
 import { Provider } from 'react-redux';
 // - - - - - amplify auth - - - - - - - -
-import Amplify, { Auth } from 'aws-amplify';
+import { Amplify } from 'aws-amplify';
+import { withAuthenticator } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';
 import awsconfig from './src/aws-exports';
-import { withAuthenticator } from 'aws-amplify-react-native';
 
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
@@ -39,7 +40,10 @@ import AmplifySignOut from './screens/AmplifySignOut';
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
+// make sure you have Analytics disabled or you get error
+//Amplify.configure({ ...awsconfig, Analytics: { disabled: true } });
 Amplify.configure({ ...awsconfig, Analytics: { disabled: true } });
+
 function AuthStack() {
     return (
         <Stack.Navigator
@@ -284,7 +288,6 @@ function App() {
         <>
             <Provider store={store}>
                 <StatusBar style='light' />
-
                 <QueryClientProvider client={queryClient}>
                     <MeeterContextProvider>
                         <MeetingsContextProvider>
