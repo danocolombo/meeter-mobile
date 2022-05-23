@@ -26,7 +26,10 @@ import { getUniqueId, printObject } from '../../util/helpers';
 import { saveActiveMeetings } from '../../features/meetings/meetingsSlice';
 
 // function onDateChange() {}
-function GroupForm({ groupId, grpCompKey, meetingId, meetingInfo }) {
+// groupId = { groupId };
+// grpCompKey = { grpCompKey };
+// meetingInfo = { meetingInfo };
+function GroupForm({ groupId, grpCompKey, meetingInfo }) {
     const navHook = useNavigation();
     const dispatch = useDispatch();
     const client = useSelector((state) => state.user.activeClient);
@@ -48,7 +51,6 @@ function GroupForm({ groupId, grpCompKey, meetingId, meetingInfo }) {
     // console.log('INSIDE GroupForm (meetingInfo):', meetingInfo);
     // console.log('groupId:', groupId);
     // console.log('grpCompkey:', grpCompKey);
-    // console.log('meetingId:', meetingId);
     // printObject('meetingInfo', meetingInfo);
     useEffect(() => {
         LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
@@ -90,35 +92,39 @@ function GroupForm({ groupId, grpCompKey, meetingId, meetingInfo }) {
             ]);
             return;
         }
-        console.log('INSIDE confirmGroupHandler (groupId):', groupId);
         if (groupId === '0') {
-            async function getUni() {
-                let digest = getUniqueId();
-                return digest;
-            }
+            // async function getUni() {
+            //     let digest = getUniqueId();
+            //     return digest;
+            // }
+            let grpCompKey = client + '#' + meetingInfo.meetingId;
             let uni = getUniqueId()
                 .then((result) => {
                     let newGroup = {
                         groupId: result,
-                        meetingId: meetingId,
-                        clientId: client,
+                        meetingId: meetingInfo.meetingId,
                         grpCompKey: grpCompKey,
+                        clientId: client,
+
                         gender: gGender,
-                        attendance: gAttendance,
                         title: gTitle,
                         location: gLocation,
                         facilitator: gFacilitator,
                         cofacilitator: gCofacilitator,
+                        attendance: gAttendance,
                         notes: gNotes,
                     };
 
                     async function dbUpdateResults() {
+                        printObject('newGrooup before', newGroup);
                         let confirmedGroup = addGroup(newGroup);
+                        printObject('confirmedGroup', confirmedGroup);
                         return confirmedGroup;
                     }
                     dbUpdateResults()
                         .then((results) => {
-                            dispatch(addMeetingGroup(results));
+                            printObject('results', results);
+                            dispatch(addMeetingGroup(newGroup));
                             navHook.goBack();
                         })
                         .catch((err) => {
@@ -148,7 +154,7 @@ function GroupForm({ groupId, grpCompKey, meetingId, meetingInfo }) {
             dbUpdateResults()
                 .then((results) => {
                     dispatch(addMeetingGroup(results));
-                    navHook.goBack();
+                    // navHook.goBack();
                 })
                 .catch((err) => {
                     console.log('error writing to db(05231003)\n', err);

@@ -29,7 +29,7 @@ export const groupsSlice = createSlice({
     reducers: {
         clearGroups: (state, action) => {
             console.log('CLEAR_GROUPS');
-            state.meetingGroups = null;
+            // state.meetingGroups = [];
         },
         loadGroups: (state, action) => {
             state.meetingGroups = action.payload;
@@ -53,7 +53,9 @@ export const groupsSlice = createSlice({
         },
         [addMeetingGroup.fulfilled]: (state, action) => {
             state.isLoading = false;
-            state.meetingGroups = action.payload;
+            const bigger = [...state.meetingGroups, action.payload];
+            state.activeMeetings = bigger;
+            return state;
         },
         [addMeetingGroup.rejected]: (state, action) => {
             printObject('action', action);

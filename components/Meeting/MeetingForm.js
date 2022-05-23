@@ -58,7 +58,7 @@ function MeetingForm({ meetingId }) {
 
     useEffect(() => {
         // LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
-        dispatch(clearGroups, null);
+        // /dispatch(clearGroups, null);
         if (meetingId === '0') {
             // getToday, only once, use twice
             let today = getToday();
@@ -190,14 +190,14 @@ function MeetingForm({ meetingId }) {
                     // console.log('attendanceCount', mAttendance);
                     // console.log('meal', mMeal);
                     // console.log('mealCount', mMealCount);
-                    // let mtgCompKey =
-                    //     'wbc' +
-                    //     '#' +
-                    //     mDate.substring(0, 4) +
-                    //     '#' +
-                    //     mDate.substring(5, 7) +
-                    //     '#' +
-                    //     mDate.substring(8, 10);
+                    let mtgCompKey =
+                        client +
+                        '#' +
+                        mDate.substring(0, 4) +
+                        '#' +
+                        mDate.substring(5, 7) +
+                        '#' +
+                        mDate.substring(8, 10);
                     let newMeeting = {
                         clientId: 'wbc',
                         mtgCompKey: mtgCompKey,
@@ -316,8 +316,8 @@ function MeetingForm({ meetingId }) {
                                 onChangeText={changeDate}
                             />
                         </View>
-                        <View>
-                            <Text style={styles.label}>Meeting Type</Text>
+                        <View style={styles.titleContainer}>
+                            <Text style={styles.title}>Meeting Type</Text>
                         </View>
 
                         <MeetingTypeButtons
@@ -350,19 +350,14 @@ function MeetingForm({ meetingId }) {
                             ) : null}
                         </View>
                         <View
-                            style={{
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                marginVertical: 10,
-                            }}
+                        // style={{
+                        //     flexDirection: 'row',
+                        //     justifyContent: 'center',
+                        //     marginVertical: 10,
+                        // }}
                         >
-                            <View
-                                style={{
-                                    justifyContent: 'center',
-                                    marginRight: 10,
-                                }}
-                            >
-                                <Text style={{ fontSize: 16 }}>Attendance</Text>
+                            <View style={styles.titleContainer}>
+                                <Text style={styles.title}>Attendance</Text>
                             </View>
                             <NumberInput
                                 value={parseInt(mAttendance)}
@@ -378,21 +373,14 @@ function MeetingForm({ meetingId }) {
                             />
                         </View>
                         <View
-                            style={{
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                marginVertical: 10,
-                            }}
+                        // style={{
+                        //     flexDirection: 'row',
+                        //     justifyContent: 'center',
+                        //     marginVertical: 10,
+                        // }}
                         >
-                            <View
-                                style={{
-                                    justifyContent: 'center',
-                                    marginRight: 10,
-                                }}
-                            >
-                                <Text style={{ fontSize: 16 }}>
-                                    Meals Served
-                                </Text>
+                            <View style={styles.titleContainer}>
+                                <Text style={styles.title}>Meals Served</Text>
                             </View>
                             <NumberInput
                                 value={parseInt(mMealCount)}
@@ -409,34 +397,40 @@ function MeetingForm({ meetingId }) {
                                 </Button>
                             </View>
                         </View>
-                        <View style={styles.groupDividerRow}>
-                            <Text style={styles.groupHeader}>Groups</Text>
-                            <Pressable
-                                onPress={addGroupHandler}
-                                style={({ pressed }) => [
-                                    {
-                                        backgroundColor: pressed
-                                            ? 'rgb(210, 230, 255)'
-                                            : Colors.gray20,
-                                    },
-                                    styles.wrapperCustom,
-                                ]}
-                            >
-                                {({ pressed }) => (
-                                    <Text style={styles.text}>
-                                        {pressed ? '+' : '+'}
+                        {mMeetingId !== '0' && (
+                            <>
+                                <View style={styles.groupDividerRow}>
+                                    <Text style={styles.groupHeader}>
+                                        Groups
                                     </Text>
-                                )}
-                            </Pressable>
-                        </View>
-                        {/* <GroupsForMeetingForm meetingId={meetingId} /> */}
-                        <View style={styles.groupContainer}>
-                            <FlatList
-                                data={groups}
-                                renderItem={renderGroupItem}
-                                keyExtractor={(group) => group.groupId}
-                            />
-                        </View>
+                                    <Pressable
+                                        onPress={addGroupHandler}
+                                        style={({ pressed }) => [
+                                            {
+                                                backgroundColor: pressed
+                                                    ? 'rgb(210, 230, 255)'
+                                                    : Colors.gray20,
+                                            },
+                                            styles.wrapperCustom,
+                                        ]}
+                                    >
+                                        {({ pressed }) => (
+                                            <Text style={styles.text}>
+                                                {pressed ? '+' : '+'}
+                                            </Text>
+                                        )}
+                                    </Pressable>
+                                </View>
+
+                                <View style={styles.groupContainer}>
+                                    <FlatList
+                                        data={groups}
+                                        renderItem={renderGroupItem}
+                                        keyExtractor={(group) => group.groupId}
+                                    />
+                                </View>
+                            </>
+                        )}
                     </View>
                 </View>
             </KeyboardAvoidingView>
@@ -449,7 +443,7 @@ export default MeetingForm;
 const styles = StyleSheet.create({
     rootContainer: {
         flex: 1,
-        alignItems: 'center',
+        // alignItems: 'center',
     },
     meetingFrame: {
         minWidth: '95%',
@@ -474,6 +468,10 @@ const styles = StyleSheet.create({
     },
     input: {
         minWidth: '60%',
+    },
+    titleContainer: {
+        alignItems: 'center',
+        marginVertical: 5,
     },
     title: {
         fontSize: 24,

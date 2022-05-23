@@ -27,7 +27,7 @@ function ActiveScreen() {
         // if (authToken.length === null && activeMeetings.length === 0) {
         // dispatch(loadUser({ token: token, userName: email }));
         dispatch(getActiveMeetings(), null);
-        dispatch(clearGroups(), null);
+        //dispatch(clearGroups(), null);
         // }
         Auth.currentSession()
             .then((data) => {
@@ -55,9 +55,9 @@ function ActiveScreen() {
 
         // return willFocusSubscription;
     }, []);
-    useEffect(() => {
-        dispatch(clearGroups, null);
-    }, [isFocused]);
+    // useEffect(() => {
+    //     dispatch(clearGroups, null);
+    // }, [isFocused]);
     // printObject('activeMeetings', activeMeetings);
 
     if (activeMeetings.length < 1) {
