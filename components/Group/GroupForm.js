@@ -26,7 +26,7 @@ import { getUniqueId, printObject } from '../../util/helpers';
 import { saveActiveMeetings } from '../../features/meetings/meetingsSlice';
 
 // function onDateChange() {}
-function GroupForm({ groupId, grpCompKey }) {
+function GroupForm({ groupId, grpCompKey, meetingId, meetingInfo }) {
     const navHook = useNavigation();
     const dispatch = useDispatch();
     const client = useSelector((state) => state.user.activeClient);
@@ -45,7 +45,11 @@ function GroupForm({ groupId, grpCompKey }) {
     // console.log('TEST_meetingId:', meetingInfo.meetingId);
     // console.log('TEST_meetingDate:', meetingInfo.meetingDate);
     // console.log('TEST_mtgCompKey:', meetingInfo.mtgCompKey);
-
+    // console.log('INSIDE GroupForm (meetingInfo):', meetingInfo);
+    // console.log('groupId:', groupId);
+    // console.log('grpCompkey:', grpCompKey);
+    // console.log('meetingId:', meetingId);
+    // printObject('meetingInfo', meetingInfo);
     useEffect(() => {
         LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
         if (groupId === '0') {
@@ -60,7 +64,7 @@ function GroupForm({ groupId, grpCompKey }) {
         } else {
             // we need to get the group
             const theGroup = groups.find((grp) => grp.groupId === groupId);
-            printObject('theGroup', theGroup);
+
             setGGender(theGroup.gender);
             setGTitle(theGroup.title);
             setGLocation(theGroup.location);
@@ -86,7 +90,7 @@ function GroupForm({ groupId, grpCompKey }) {
             ]);
             return;
         }
-        let grpCompKey = client + '#' + meetingInfo.meetingId;
+        console.log('INSIDE confirmGroupHandler (groupId):', groupId);
         if (groupId === '0') {
             async function getUni() {
                 let digest = getUniqueId();
@@ -96,7 +100,7 @@ function GroupForm({ groupId, grpCompKey }) {
                 .then((result) => {
                     let newGroup = {
                         groupId: result,
-                        meetingId: meetingInfo.meetingId,
+                        meetingId: meetingId,
                         clientId: client,
                         grpCompKey: grpCompKey,
                         gender: gGender,
@@ -124,11 +128,31 @@ function GroupForm({ groupId, grpCompKey }) {
                 .catch((err) => console.log('new group save error\n', err));
             navHook.goBack();
         } else {
-            Alert.alert(
-                'Group Update Error',
-                'We have not implemented updating Groups [GF0522]',
-                [{ text: 'OK', style: 'destruction' }]
-            );
+            const updatedGroup = {
+                groupId: gGroupId,
+                meetingId: gMeetingId,
+                grpCompKey: gGrpCompKey,
+                clientId: client,
+                gender: gGender,
+                title: gTitle,
+                location: gLocation,
+                facilitator: gFacilitator,
+                cofacilitator: gCofacilitator,
+                attendance: gAttendance,
+                notes: gNotes,
+            };
+            async function dbUpdateResults() {
+                let confirmedGroup = addGroup(updatedGroup);
+                return confirmedGroup;
+            }
+            dbUpdateResults()
+                .then((results) => {
+                    dispatch(addMeetingGroup(results));
+                    navHook.goBack();
+                })
+                .catch((err) => {
+                    console.log('error writing to db(05231003)\n', err);
+                });
             return;
         }
 

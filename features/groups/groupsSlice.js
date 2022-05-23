@@ -27,6 +27,10 @@ export const groupsSlice = createSlice({
         isLoading: null,
     },
     reducers: {
+        clearGroups: (state, action) => {
+            console.log('CLEAR_GROUPS');
+            state.meetingGroups = null;
+        },
         loadGroups: (state, action) => {
             state.meetingGroups = action.payload;
         },
@@ -59,6 +63,6 @@ export const groupsSlice = createSlice({
     },
 });
 
-export const { loadGroups, shortAddUser } = groupsSlice.actions;
+export const { loadGroups, shortAddUser, clearGroups } = groupsSlice.actions;
 
 export default groupsSlice.reducer;

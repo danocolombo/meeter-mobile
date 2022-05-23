@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState, useContext } from 'react';
+import { useIsFocused } from '@react-navigation/native';
 import { useQuery } from 'react-query';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
@@ -9,12 +10,14 @@ import NoMeeting from '../components/Meeting/NoMeeting';
 import { getActiveMeetings } from '../features/meetings/meetingsSlice';
 import { fetchActiveMeetings } from '../providers/meetings';
 import { saveActiveMeetings } from '../features/meetings/meetingsSlice';
+import { clearGroups } from '../features/groups/groupsSlice';
 import { DatePickerAndroid, StyleSheet, Text, View } from 'react-native';
 import { printObject } from '../util/helpers';
 import { Auth } from 'aws-amplify';
 import { loadUser } from '../features/users/userSlice';
 function ActiveScreen() {
     const dispatch = useDispatch();
+    const isFocused = useIsFocused();
     const [isLoading1, setIsLoading] = useState(false);
     const isLoading = useSelector((state) => state.meetings.isLoading);
     const authToken = useSelector((state) => state.user.authToken);
@@ -24,6 +27,7 @@ function ActiveScreen() {
         // if (authToken.length === null && activeMeetings.length === 0) {
         // dispatch(loadUser({ token: token, userName: email }));
         dispatch(getActiveMeetings(), null);
+        dispatch(clearGroups(), null);
         // }
         Auth.currentSession()
             .then((data) => {
@@ -42,7 +46,18 @@ function ActiveScreen() {
                 // console.log('target:', data.idToken.payload.family_name);
             })
             .catch((err) => console.log(err));
+        // const willFocusSubscription = props.navigation.addListener(
+        //     'focus',
+        //     () => {
+        //         dispatch(clearGroups, null);
+        //     }
+        // );
+
+        // return willFocusSubscription;
     }, []);
+    useEffect(() => {
+        dispatch(clearGroups, null);
+    }, [isFocused]);
     // printObject('activeMeetings', activeMeetings);
 
     if (activeMeetings.length < 1) {

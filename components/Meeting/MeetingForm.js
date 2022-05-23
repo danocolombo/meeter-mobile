@@ -30,7 +30,7 @@ import {
     addActiveMeeting,
     getActiveMeeting,
 } from '../../features/meetings/meetingsSlice';
-import { loadGroups } from '../../features/groups/groupsSlice';
+import { clearGroups, loadGroups } from '../../features/groups/groupsSlice';
 // import { GroupsContext } from '../../store/groups-context';
 // import { or } from 'react-native-reanimated';
 
@@ -58,6 +58,7 @@ function MeetingForm({ meetingId }) {
 
     useEffect(() => {
         // LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
+        dispatch(clearGroups, null);
         if (meetingId === '0') {
             // getToday, only once, use twice
             let today = getToday();
@@ -170,7 +171,6 @@ function MeetingForm({ meetingId }) {
             ]);
             return;
         }
-        console.log('check it');
 
         if (mMeetingId === '0') {
             async function getUni() {
@@ -295,8 +295,8 @@ function MeetingForm({ meetingId }) {
             groupId: '0',
             meetingInfo: {
                 meetingDate: mDate,
-                meetingId: mMeetingId,
                 mtgCompKey: mtgCompKey,
+                meetingId: mMeetingId,
             },
         });
     }
