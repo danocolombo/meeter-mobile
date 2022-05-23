@@ -286,8 +286,11 @@ function MeetingForm({ meetingId }) {
     function addGroupHandler() {
         navHook.navigate('Group', {
             groupId: '0',
-            meetingId: meetingId,
-            meetingDate: mDate,
+            meetingInfo: {
+                meetingDate: mDate,
+                meetingId: meetingId,
+                mtgCompKey: 'WBC#2022#05#22',
+            },
         });
     }
     function renderGroupItem(itemData) {
