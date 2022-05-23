@@ -5,6 +5,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import MeetingsOutput from '../components/Meeting/MeetingsOutput';
 import NextMeetingCard from '../components/Meeting/NextMeetingCard';
+import NoMeeting from '../components/Meeting/NoMeeting';
 import { getActiveMeetings } from '../features/meetings/meetingsSlice';
 import { fetchActiveMeetings } from '../providers/meetings';
 import { saveActiveMeetings } from '../features/meetings/meetingsSlice';
@@ -43,23 +44,14 @@ function ActiveScreen() {
             .catch((err) => console.log(err));
     }, []);
     // printObject('activeMeetings', activeMeetings);
+
     if (activeMeetings.length < 1) {
         return (
-            <View>
-                <Text>No Meetings</Text>
+            <View style={styles.noMeetingContainer}>
+                <NoMeeting />
             </View>
         );
     }
-    // console.log('activeMeetings.length', activeMeetings.length);
-    // return isLoading ? (
-    //     <LoadingOverlay />
-    // ) : (
-    //     <View style={styles.rootContainer}>
-    //         <NextMeetingCard nextMeeting={activeMeetings[0]} />
-    //         <Text style={styles.title}>Welcome!</Text>
-    //         <MeetingsOutput meetings={activeMeetings} />
-    //     </View>
-    // );
     return (
         <View style={styles.rootContainer}>
             <NextMeetingCard nextMeeting={activeMeetings[0]} />
@@ -74,7 +66,6 @@ export default ActiveScreen;
 const styles = StyleSheet.create({
     rootContainer: {
         flex: 1,
-        // justifyContent: 'center',
         alignItems: 'center',
         padding: 32,
     },
@@ -82,5 +73,10 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 8,
+    },
+    noMeetingContainer: {
+        flexDirection: 'column',
+        flex: 1,
+        justifyContent: 'center',
     },
 });

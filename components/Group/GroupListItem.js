@@ -7,6 +7,7 @@ import { GroupsContext } from '../../store/groups-context';
 function GroupListItem({
     groupId,
     meetingId,
+    grpCompKey,
     gender,
     attendance,
     title,
@@ -21,6 +22,7 @@ function GroupListItem({
         groupId: groupId,
         meetingId: meetingId,
         gender: gender,
+        grpCompKey: grpCompKey,
         attendance: attendance,
         title: title,
         location: location,
@@ -43,8 +45,8 @@ function GroupListItem({
     }
     function groupPressHandler() {
         navigation.navigate('Group', {
-            meetingId: meetingId,
             groupId: group.groupId,
+            grpCompKey: grpCompKey,
         });
     }
     function deleteHandler() {

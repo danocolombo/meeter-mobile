@@ -37,11 +37,13 @@ import { loadGroups } from '../../features/groups/groupsSlice';
 function MeetingForm({ meetingId }) {
     const navHook = useNavigation();
     const dispatch = useDispatch();
+    const client = useSelector((state) => state.user.activeClient);
     const activeMeetings = useSelector(
         (state) => state.meetings.activeMeetings
     );
     const groups = useSelector((state) => state.groups.meetingGroups);
-
+    const [mtgCompKey, setMtgCompKey] = useState('');
+    const [grpCompKey, setGrpCompKey] = useState('');
     const [meeting, setMeeting] = useState('');
     const [meetingCopy, setMeetingCopy] = useState('');
     const [mMeetingId, setMMeetingId] = useState('');
@@ -94,15 +96,20 @@ function MeetingForm({ meetingId }) {
             setMMealCount(foundMeeting.mealCount);
             setMMeal(foundMeeting.meal);
 
-            //-----------------------------
+            //----------------------------------
             // need to get groups from db
-            // for this meeting
-            //-----------------------------
-            let dbGroupsForMeeting = async () => {
-                fetchGroupsForMeeting(meetingId);
-            };
-            dbGroupsForMeeting().then((results) => {
-                console.log('okay now save locally');
+            // for this meeting by grpCompKey
+            //----------------------------------
+            setMtgCompKey(client + '#' + foundMeeting.meetingId);
+            //setGrpCompKey(client + )
+            let grpCompKey = client + '#' + foundMeeting.meetingId;
+            setGrpCompKey(grpCompKey);
+            async function fetchdbGroupsForMeeting(grpCompKey) {
+                return fetchGroupsForMeeting(grpCompKey);
+            }
+            fetchdbGroupsForMeeting(grpCompKey).then((results) => {
+                // console.log('okay now save locally');
+                // printObject('results', results);
                 dispatch(loadGroups(results));
             });
 
@@ -183,14 +190,14 @@ function MeetingForm({ meetingId }) {
                     // console.log('attendanceCount', mAttendance);
                     // console.log('meal', mMeal);
                     // console.log('mealCount', mMealCount);
-                    let mtgCompKey =
-                        'wbc' +
-                        '#' +
-                        mDate.substring(0, 4) +
-                        '#' +
-                        mDate.substring(5, 7) +
-                        '#' +
-                        mDate.substring(8, 10);
+                    // let mtgCompKey =
+                    //     'wbc' +
+                    //     '#' +
+                    //     mDate.substring(0, 4) +
+                    //     '#' +
+                    //     mDate.substring(5, 7) +
+                    //     '#' +
+                    //     mDate.substring(8, 10);
                     let newMeeting = {
                         clientId: 'wbc',
                         mtgCompKey: mtgCompKey,
@@ -208,7 +215,7 @@ function MeetingForm({ meetingId }) {
                         addMeeting(newMeeting);
                     };
                     dbUpdateResults().then((results) => {
-                        console.log('okay now save locally');
+                        // console.log('okay now save locally');
                         dispatch(addActiveMeeting(newMeeting));
                         navHook.goBack();
                     });
@@ -288,8 +295,8 @@ function MeetingForm({ meetingId }) {
             groupId: '0',
             meetingInfo: {
                 meetingDate: mDate,
-                meetingId: meetingId,
-                mtgCompKey: 'WBC#2022#05#22',
+                meetingId: mMeetingId,
+                mtgCompKey: mtgCompKey,
             },
         });
     }
@@ -423,13 +430,13 @@ function MeetingForm({ meetingId }) {
                             </Pressable>
                         </View>
                         {/* <GroupsForMeetingForm meetingId={meetingId} /> */}
-                        {/* <View style={styles.groupContainer}>
+                        <View style={styles.groupContainer}>
                             <FlatList
-                                data={groupsFound}
+                                data={groups}
                                 renderItem={renderGroupItem}
                                 keyExtractor={(group) => group.groupId}
                             />
-                        </View> */}
+                        </View>
                     </View>
                 </View>
             </KeyboardAvoidingView>
