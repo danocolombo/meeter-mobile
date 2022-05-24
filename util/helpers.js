@@ -64,3 +64,18 @@ export function printObject(label, target) {
             })
     );
 }
+export function createMtgCompKey(client, meetingDate) {
+    let mtgCompKey =
+        client +
+        '#' +
+        meetingDate.substring(0, 4) +
+        '#' +
+        meetingDate.substring(5, 7) +
+        '#' +
+        meetingDate.substring(8, 10);
+    return mtgCompKey;
+}
+export function createGrpCompKey(client, meetingId) {
+    let grpCompKey = client + '#' + meetingId;
+    return grpCompKey;
+}

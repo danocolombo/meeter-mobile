@@ -23,18 +23,26 @@ import GroupsForMeetingForm from '../Group/GroupsForMeetingForm';
 import GroupListItem from '../Group/GroupListItem';
 import { isMeetingDateBeforeToday } from '../../util/date';
 import { Colors } from '../../constants/colors';
-import { getToday, getUniqueId, printObject } from '../../util/helpers';
+import {
+    createMtgCompKey,
+    getToday,
+    getUniqueId,
+    printObject,
+} from '../../util/helpers';
 import { addMeeting } from '../../providers/meetings';
 import { fetchGroupsForMeeting, deleteGroup } from '../../providers/groups';
 import {
     addActiveMeeting,
     getActiveMeeting,
+    updateActiveMeeting,
+    moveActiveToHistoric,
 } from '../../features/meetings/meetingsSlice';
 import {
     clearGroups,
     loadGroups,
     removeGroup,
 } from '../../features/groups/groupsSlice';
+import { update } from 'lodash';
 // import { GroupsContext } from '../../store/groups-context';
 // import { or } from 'react-native-reanimated';
 
@@ -104,7 +112,8 @@ function MeetingForm({ meetingId }) {
             // need to get groups from db
             // for this meeting by grpCompKey
             //----------------------------------
-            setMtgCompKey(client + '#' + foundMeeting.meetingId);
+            let mck = createMtgCompKey(client, mDate);
+            setMtgCompKey(mck);
             //setGrpCompKey(client + )
             let grpCompKey = client + '#' + foundMeeting.meetingId;
             setGrpCompKey(grpCompKey);
@@ -181,14 +190,7 @@ function MeetingForm({ meetingId }) {
                     // console.log('attendanceCount', mAttendance);
                     // console.log('meal', mMeal);
                     // console.log('mealCount', mMealCount);
-                    let mtgCompKey =
-                        client +
-                        '#' +
-                        mDate.substring(0, 4) +
-                        '#' +
-                        mDate.substring(5, 7) +
-                        '#' +
-                        mDate.substring(8, 10);
+                    let mtgCompKey = createMtgCompKey(client, meetingDate);
                     let newMeeting = {
                         clientId: 'wbc',
                         mtgCompKey: mtgCompKey,
@@ -213,73 +215,60 @@ function MeetingForm({ meetingId }) {
                 })
                 .catch((err) => console.log('new meeting save error\n', err));
         } else {
-            Alert.alert(
-                'Meeting Update Error',
-                'We have not implemented updating [MF0522]',
-                [{ text: 'OK', style: 'destruction' }]
+            //activeMeetings is reference to redux. Get the values
+            //previously defined for this meeting.
+            const originalArray = activeMeetings.filter(
+                (mtg) => mtg.meetingId === meetingId
             );
-            return;
+            let theOriginal = originalArray[0];
+
+            let updatedMeeting = {
+                attendanceCount: mAttendance,
+                meetingId: meetingId,
+                mealCount: mMealCount,
+                meal: mMeal,
+                mtgCompKey: createMtgCompKey(client, mDate),
+                meetingDate: mDate,
+                clientId: client,
+                meetingType: mType,
+                title: mSpotlight,
+            };
+            // printObject('updatedMeeting', updatedMeeting);
+            //   any changes from original?
+            if (_.isEqual(theOriginal, updatedMeeting)) {
+                navHook.goBack();
+            }
+            // ====================================
+            //   meeting values have changed, process
+            // ====================================
+            //   1. check if date is changed
+            if (theOriginal.meetingDate !== mDate) {
+                updatedMeeting.mtgCompKey = createMtgCompKey(client, mDate);
+            }
+            let dbUpdateResults = async () => {
+                //update dynamo
+                addMeeting(updatedMeeting);
+            };
+            dbUpdateResults().then((results) => {
+                // printObject('theOriginal', theOriginal);
+                // console.log('theOriginal.mtgCompKey', theOriginal.mtgCompKey);
+                // console.log(
+                //     'updatedMeeting.mtgCompKey',
+                //     updatedMeeting.mtgCompKey
+                // );
+                if (theOriginal.mtgCompKey === updatedMeeting.mtgCompKey) {
+                    dispatch(updateActiveMeeting(updatedMeeting));
+                } else {
+                    if (isMeetingDateBeforeToday(updatedMeeting.meetingDate)) {
+                        dispatch(moveActiveToHistoric(updatedMeeting));
+                    } else {
+                        dispatch(updateActiveMeeting(updatedMeeting));
+                    }
+                }
+
+                navHook.goBack();
+            });
         }
-        // getUniqueId().then((newId) => console.log('what?:', newId));
-        // setMMeetingId(getUniqueId());
-        // console.log('meetingId(it)', it);
-        // console.log('meetingId', result);
-        // console.log('meetingDate', mDate);
-        // console.log('meetingType', mType);
-        // console.log('title', mSpotlight);
-        // console.log('attendanceCount', mAttendance);
-        // console.log('meal', mMeal);
-        // console.log('mealCount', mMealCount);
-
-        //             setMMeetingId(uni);
-        //             //todo ----- active or historic
-        //             activeCtx.addMeeting({
-        //                 meetingId: mMeetingId,
-        //                 meetingDate: mDate,
-        //                 meetingType: mType,
-        //                 title: mSpotlight,
-        //                 attendanceCount: mAttendance,
-        //                 meal: mMeal,
-        //                 mealCount: mMealCount,
-        //             });
-        //             navHook.goBack();
-        //         })
-        //         .catch(() => console.log('error'));
-        // } else {
-        //     if (isMeetingDateBeforeToday(originalMeeting.meetingDate)) {
-        //         console.log('HISTORIC MEETING');
-        //         meetingsCtx.updateHistoricMeeting(meetingId, {
-        //             meetingDate: mDate,
-        //             meetingType: mType,
-        //             title: mSpotlight,
-        //             attendanceCount: mAttendance,
-        //             meal: mMeal,
-        //             mealCount: mMealCount,
-        //         });
-        //     } else {
-        //         meetingsCtx.updateActiveMeeting(meetingId, {
-        //             meetingDate: mDate,
-        //             meetingType: mType,
-        //             title: mSpotlight,
-        //             attendanceCount: mAttendance,
-        //             meal: mMeal,
-        //             mealCount: mMealCount,
-        //         });
-        //     }
-        //     return;
-        //     //updates need to made using the date.
-
-        //     // activeCtx.updateMeeting(meetingId, {
-        //     //     meetingDate: mDate,
-        //     //     meetingType: mType,
-        //     //     title: mSpotlight,
-        //     //     attendanceCount: mAttendance,
-        //     //     meal: mMeal,
-        //     //     mealCount: mMealCount,
-        //     // });
-
-        //     navHook.goBack();
-        // }
     }
     function addGroupHandler() {
         navHook.navigate('Group', {

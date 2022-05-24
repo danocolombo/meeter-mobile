@@ -106,6 +106,28 @@ export const meetingsSlice = createSlice({
             // return
             return state;
         },
+        updateActiveMeeting: (state, action) => {
+            const newMeetings = state.activeMeetings.map((mtg) => {
+                if (mtg.meetingId === action.payload.meetingId) {
+                    return action.payload;
+                } else {
+                    return mtg;
+                }
+            });
+            // ascending sort
+            function asc_sort(a, b) {
+                return (
+                    new Date(a.meetingDate).getTime() -
+                    new Date(b.meetingDate).getTime()
+                );
+            }
+            let newBigger = newMeetings.sort(asc_sort);
+            state.activeMeetings = newBigger;
+            return state;
+        },
+        moveActiveToHistoric: (state, action) => {
+            console.log('WHAT A TEST');
+        },
     },
     extraReducers: {
         [saveActiveMeetings.pending]: (state) => {
@@ -143,6 +165,8 @@ export const {
     deleteActiveMeeting,
     addActiveMeeting,
     getActiveMeeting,
+    updateActiveMeeting,
+    moveActiveToHistoric,
 } = meetingsSlice.actions;
 
 export default meetingsSlice.reducer;
