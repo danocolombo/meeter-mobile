@@ -11,7 +11,7 @@ export const addMeetingGroup = createAsyncThunk(
     async (groups, thunkAPI) => {
         console.log('INSIDE slice 05230503');
         try {
-            return groups;
+            // return groups;
         } catch (error) {
             return thunkAPI.rejectWithValue('something went wrong');
         }
@@ -33,6 +33,13 @@ export const groupsSlice = createSlice({
         },
         loadGroups: (state, action) => {
             state.meetingGroups = action.payload;
+        },
+        removeGroup: (state, action) => {
+            let smaller = state.meetingGroups.filter(
+                (grp) => grp.groupId !== action.payload
+            );
+            state.meetingGroups = smaller;
+            return state;
         },
         shortAddUser: (state, action) => {
             printObject('features action', action);
@@ -65,6 +72,7 @@ export const groupsSlice = createSlice({
     },
 });
 
-export const { loadGroups, shortAddUser, clearGroups } = groupsSlice.actions;
+export const { loadGroups, shortAddUser, clearGroups, removeGroup } =
+    groupsSlice.actions;
 
 export default groupsSlice.reducer;

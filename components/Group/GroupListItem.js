@@ -1,56 +1,36 @@
-import React, { useContext } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/styles';
-import { GroupsContext } from '../../store/groups-context';
-function GroupListItem({
-    groupId,
-    meetingId,
-    grpCompKey,
-    gender,
-    attendance,
-    title,
-    location,
-    facilitator,
-    cofacilitator,
-    notes,
-}) {
+import { printObject } from '../../util/helpers';
+function GroupListItem(item) {
     const navigation = useNavigation();
-    const groupsCtx = useContext(GroupsContext);
-    const group = {
-        groupId: groupId,
-        meetingId: meetingId,
-        gender: gender,
-        grpCompKey: grpCompKey,
-        attendance: attendance,
-        title: title,
-        location: location,
-        facilitator: facilitator,
-        cofacilitator: cofacilitator,
-        notes: notes,
-    };
+
+    let group = item.group;
+
     // translate gender value to display
+    let theGender = null;
     switch (group.gender) {
         case 'm':
-            group.gender = 'Men';
+            theGender = 'Men';
             break;
         case 'f':
-            group.gender = 'Women';
+            theGender = 'Women';
             break;
         case 'x':
-            group.gender = '';
+            theGender = '';
         default:
             break;
     }
     function groupPressHandler() {
         navigation.navigate('Group', {
             groupId: group.groupId,
-            grpCompKey: grpCompKey,
+            grpCompKey: group.grpCompKey,
         });
     }
     function deleteHandler() {
-        groupsCtx.deleteGroup(group.groupId);
+        item.deleteHandler(group.groupId);
     }
     return (
         <Pressable
@@ -74,9 +54,9 @@ function GroupListItem({
                                             styles.description,
                                         ]}
                                     >
-                                        {group.gender}
-                                        {group.gender === 'Men' ||
-                                        group.gender === 'Women'
+                                        {theGender}
+                                        {theGender === 'Men' ||
+                                        theGender === 'Women'
                                             ? "'s"
                                             : null}{' '}
                                         {group.title} - {group.location}
@@ -91,7 +71,7 @@ function GroupListItem({
                                         alignItems: 'flex-end',
                                     }}
                                 >
-                                    <Pressable onPress={deleteHandler}>
+                                    <Pressable onPress={() => deleteHandler()}>
                                         <Ionicons
                                             name='trash-outline'
                                             color='white'

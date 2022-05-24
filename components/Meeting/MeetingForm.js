@@ -25,12 +25,16 @@ import { isMeetingDateBeforeToday } from '../../util/date';
 import { Colors } from '../../constants/colors';
 import { getToday, getUniqueId, printObject } from '../../util/helpers';
 import { addMeeting } from '../../providers/meetings';
-import { fetchGroupsForMeeting } from '../../providers/groups';
+import { fetchGroupsForMeeting, deleteGroup } from '../../providers/groups';
 import {
     addActiveMeeting,
     getActiveMeeting,
 } from '../../features/meetings/meetingsSlice';
-import { clearGroups, loadGroups } from '../../features/groups/groupsSlice';
+import {
+    clearGroups,
+    loadGroups,
+    removeGroup,
+} from '../../features/groups/groupsSlice';
 // import { GroupsContext } from '../../store/groups-context';
 // import { or } from 'react-native-reanimated';
 
@@ -113,20 +117,6 @@ function MeetingForm({ meetingId }) {
                 // printObject('results', results);
                 dispatch(loadGroups(results));
             });
-
-            // let theGroups = groups.filter((grp) => {
-            //     if (grp.meetingId === meetingId) {
-            //         return grp;
-            //     }
-            // });
-            // function custom_sort(a, b) {
-            //     return (
-            //         // new Date(a.meetingDate).getTime() -
-            //         // new Date(b.meetingDate).getTime()
-            //         a.meetingType - b.meetingType
-            //     );
-            // }
-            // setGroups(theGroups.sort(custom_sort));
         }
     }, []);
 
@@ -300,9 +290,28 @@ function MeetingForm({ meetingId }) {
             },
         });
     }
-    function renderGroupItem(itemData) {
-        return <GroupListItem {...itemData.item} />;
+    function handleGroupDelete(groupId) {
+        console.log('DELETE ME', groupId);
+        // first try to delete from DDB, if
+        // successful, delete from redux
+        async function removeGroupFromDB(groupId) {
+            deleteGroup(groupId);
+        }
+        removeGroupFromDB(groupId).then(() => {
+            // now remove the group from redux
+            dispatch(removeGroup(groupId));
+            return;
+        });
     }
+    function renderGroupItem(itemData, onClick) {
+        return (
+            <GroupListItem
+                {...itemData.item}
+                deleteHandler={handleGroupDelete}
+            />
+        );
+    }
+
     return (
         <View style={styles.rootContainer}>
             <KeyboardAvoidingView>
@@ -425,7 +434,14 @@ function MeetingForm({ meetingId }) {
                                 <View style={styles.groupContainer}>
                                     <FlatList
                                         data={groups}
-                                        renderItem={renderGroupItem}
+                                        renderItem={({ item }) => (
+                                            <GroupListItem
+                                                group={item}
+                                                deleteHandler={(gid) =>
+                                                    handleGroupDelete(gid)
+                                                }
+                                            />
+                                        )}
                                         keyExtractor={(group) => group.groupId}
                                     />
                                 </View>

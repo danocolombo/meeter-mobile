@@ -125,7 +125,7 @@ function GroupForm({ groupId, grpCompKey, meetingInfo }) {
                         .then((results) => {
                             printObject('results', results);
                             dispatch(addMeetingGroup(newGroup));
-                            navHook.goBack();
+                            // navHook.goBack();
                         })
                         .catch((err) => {
                             console.log('error writing to db(05230437)\n', err);

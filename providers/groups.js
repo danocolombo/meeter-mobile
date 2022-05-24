@@ -103,3 +103,25 @@ export const addGroup = async (newGroup) => {
         return null;
     }
 };
+export const deleteGroup = async (groupId) => {
+    let obj = {
+        operation: 'deleteGroup',
+        payload: {
+            Key: {
+                groupId: groupId,
+            },
+        },
+    };
+
+    let body = JSON.stringify(obj);
+    let api2use = MEETER_API + '/groups';
+
+    let res = await axios.post(api2use, body, config);
+    var returnValue = res.data.Item;
+    if (res.status === 200) {
+        return returnValue;
+    } else {
+        console.log('we got no groups');
+        return null;
+    }
+};
