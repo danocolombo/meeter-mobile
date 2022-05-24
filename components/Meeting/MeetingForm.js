@@ -59,7 +59,6 @@ function MeetingForm({ meetingId }) {
     const [mAttendance, setMAttendance] = useState(0);
     const [mMealCount, setMMealCount] = useState(0);
     const [mMeal, setMMeal] = useState('');
-
     useEffect(() => {
         // LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
         // /dispatch(clearGroups, null);
@@ -114,8 +113,10 @@ function MeetingForm({ meetingId }) {
             }
             fetchdbGroupsForMeeting(grpCompKey).then((results) => {
                 // console.log('okay now save locally');
-                // printObject('results', results);
-                dispatch(loadGroups(results));
+                if (results) {
+                    //printObject('results', results);
+                    dispatch(loadGroups(results));
+                }
             });
         }
     }, []);

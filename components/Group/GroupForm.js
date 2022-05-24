@@ -18,7 +18,10 @@ import GenderButtons from './GenderButtons';
 import { useNavigation } from '@react-navigation/native';
 // import * as Crypto from 'expo-crypto';
 import { addGroup } from '../../providers/groups';
-import { addMeetingGroup } from '../../features/groups/groupsSlice';
+import {
+    addMeetingGroup,
+    updateMeetingGroup,
+} from '../../features/groups/groupsSlice';
 import Button from '../ui/Button';
 // import GroupListItem from '../Group/GroupListItem';
 import { Colors } from '../../constants/colors';
@@ -153,13 +156,13 @@ function GroupForm({ groupId, grpCompKey, meetingInfo }) {
             }
             dbUpdateResults()
                 .then((results) => {
-                    dispatch(addMeetingGroup(results));
+                    dispatch(updateMeetingGroup(results));
                     // navHook.goBack();
                 })
                 .catch((err) => {
                     console.log('error writing to db(05231003)\n', err);
                 });
-            return;
+            navHook.goBack();
         }
 
         return;

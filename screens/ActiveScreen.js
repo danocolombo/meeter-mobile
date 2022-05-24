@@ -8,6 +8,7 @@ import MeetingsOutput from '../components/Meeting/MeetingsOutput';
 import NextMeetingCard from '../components/Meeting/NextMeetingCard';
 import NoMeeting from '../components/Meeting/NoMeeting';
 import { getActiveMeetings } from '../features/meetings/meetingsSlice';
+import { resetGroups } from '../features/groups/groupsSlice';
 import { fetchActiveMeetings } from '../providers/meetings';
 import { saveActiveMeetings } from '../features/meetings/meetingsSlice';
 import { clearGroups } from '../features/groups/groupsSlice';
@@ -22,7 +23,7 @@ function ActiveScreen() {
     const isLoading = useSelector((state) => state.meetings.isLoading);
     const authToken = useSelector((state) => state.user.authToken);
     let activeMeetings = useSelector((state) => state.meetings.activeMeetings);
-
+    let savedGroups = useSelector((state) => state.groups.meetingGroups);
     useEffect(() => {
         // if (authToken.length === null && activeMeetings.length === 0) {
         // dispatch(loadUser({ token: token, userName: email }));
@@ -46,19 +47,17 @@ function ActiveScreen() {
                 // console.log('target:', data.idToken.payload.family_name);
             })
             .catch((err) => console.log(err));
-        // const willFocusSubscription = props.navigation.addListener(
-        //     'focus',
-        //     () => {
-        //         dispatch(clearGroups, null);
-        //     }
-        // );
-
-        // return willFocusSubscription;
     }, []);
-    // useEffect(() => {
-    //     dispatch(clearGroups, null);
-    // }, [isFocused]);
-    // printObject('activeMeetings', activeMeetings);
+
+    if (isFocused) {
+        //======================================
+        // when re-displaying screen, make sure
+        // that meetingGrous in redux is empty
+        //======================================
+        if (savedGroups.length > 0) {
+            dispatch(resetGroups(), null);
+        }
+    }
 
     if (activeMeetings.length < 1) {
         return (
