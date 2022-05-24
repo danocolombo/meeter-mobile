@@ -25,23 +25,29 @@ import { isMeetingDateBeforeToday } from '../../util/date';
 import { Colors } from '../../constants/colors';
 import { getToday, getUniqueId, printObject } from '../../util/helpers';
 import { addMeeting } from '../../providers/meetings';
-import { fetchGroupsForMeeting } from '../../providers/groups';
+import { fetchGroupsForMeeting, deleteGroup } from '../../providers/groups';
 import {
     addActiveMeeting,
     getActiveMeeting,
 } from '../../features/meetings/meetingsSlice';
-import { loadGroups } from '../../features/groups/groupsSlice';
+import {
+    clearGroups,
+    loadGroups,
+    removeGroup,
+} from '../../features/groups/groupsSlice';
 // import { GroupsContext } from '../../store/groups-context';
 // import { or } from 'react-native-reanimated';
 
 function MeetingForm({ meetingId }) {
     const navHook = useNavigation();
     const dispatch = useDispatch();
+    const client = useSelector((state) => state.user.activeClient);
     const activeMeetings = useSelector(
         (state) => state.meetings.activeMeetings
     );
     const groups = useSelector((state) => state.groups.meetingGroups);
-
+    const [mtgCompKey, setMtgCompKey] = useState('');
+    const [grpCompKey, setGrpCompKey] = useState('');
     const [meeting, setMeeting] = useState('');
     const [meetingCopy, setMeetingCopy] = useState('');
     const [mMeetingId, setMMeetingId] = useState('');
@@ -53,9 +59,9 @@ function MeetingForm({ meetingId }) {
     const [mAttendance, setMAttendance] = useState(0);
     const [mMealCount, setMMealCount] = useState(0);
     const [mMeal, setMMeal] = useState('');
-
     useEffect(() => {
         // LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
+        // /dispatch(clearGroups, null);
         if (meetingId === '0') {
             // getToday, only once, use twice
             let today = getToday();
@@ -94,31 +100,24 @@ function MeetingForm({ meetingId }) {
             setMMealCount(foundMeeting.mealCount);
             setMMeal(foundMeeting.meal);
 
-            //-----------------------------
+            //----------------------------------
             // need to get groups from db
-            // for this meeting
-            //-----------------------------
-            let dbGroupsForMeeting = async () => {
-                fetchGroupsForMeeting(meetingId);
-            };
-            dbGroupsForMeeting().then((results) => {
-                console.log('okay now save locally');
-                dispatch(loadGroups(results));
+            // for this meeting by grpCompKey
+            //----------------------------------
+            setMtgCompKey(client + '#' + foundMeeting.meetingId);
+            //setGrpCompKey(client + )
+            let grpCompKey = client + '#' + foundMeeting.meetingId;
+            setGrpCompKey(grpCompKey);
+            async function fetchdbGroupsForMeeting(grpCompKey) {
+                return fetchGroupsForMeeting(grpCompKey);
+            }
+            fetchdbGroupsForMeeting(grpCompKey).then((results) => {
+                // console.log('okay now save locally');
+                if (results) {
+                    //printObject('results', results);
+                    dispatch(loadGroups(results));
+                }
             });
-
-            // let theGroups = groups.filter((grp) => {
-            //     if (grp.meetingId === meetingId) {
-            //         return grp;
-            //     }
-            // });
-            // function custom_sort(a, b) {
-            //     return (
-            //         // new Date(a.meetingDate).getTime() -
-            //         // new Date(b.meetingDate).getTime()
-            //         a.meetingType - b.meetingType
-            //     );
-            // }
-            // setGroups(theGroups.sort(custom_sort));
         }
     }, []);
 
@@ -163,7 +162,6 @@ function MeetingForm({ meetingId }) {
             ]);
             return;
         }
-        console.log('check it');
 
         if (mMeetingId === '0') {
             async function getUni() {
@@ -184,7 +182,7 @@ function MeetingForm({ meetingId }) {
                     // console.log('meal', mMeal);
                     // console.log('mealCount', mMealCount);
                     let mtgCompKey =
-                        'wbc' +
+                        client +
                         '#' +
                         mDate.substring(0, 4) +
                         '#' +
@@ -208,7 +206,7 @@ function MeetingForm({ meetingId }) {
                         addMeeting(newMeeting);
                     };
                     dbUpdateResults().then((results) => {
-                        console.log('okay now save locally');
+                        // console.log('okay now save locally');
                         dispatch(addActiveMeeting(newMeeting));
                         navHook.goBack();
                     });
@@ -286,13 +284,35 @@ function MeetingForm({ meetingId }) {
     function addGroupHandler() {
         navHook.navigate('Group', {
             groupId: '0',
-            meetingId: meetingId,
-            meetingDate: mDate,
+            meetingInfo: {
+                meetingDate: mDate,
+                mtgCompKey: mtgCompKey,
+                meetingId: mMeetingId,
+            },
         });
     }
-    function renderGroupItem(itemData) {
-        return <GroupListItem {...itemData.item} />;
+    function handleGroupDelete(groupId) {
+        console.log('DELETE ME', groupId);
+        // first try to delete from DDB, if
+        // successful, delete from redux
+        async function removeGroupFromDB(groupId) {
+            deleteGroup(groupId);
+        }
+        removeGroupFromDB(groupId).then(() => {
+            // now remove the group from redux
+            dispatch(removeGroup(groupId));
+            return;
+        });
     }
+    function renderGroupItem(itemData, onClick) {
+        return (
+            <GroupListItem
+                {...itemData.item}
+                deleteHandler={handleGroupDelete}
+            />
+        );
+    }
+
     return (
         <View style={styles.rootContainer}>
             <KeyboardAvoidingView>
@@ -306,8 +326,8 @@ function MeetingForm({ meetingId }) {
                                 onChangeText={changeDate}
                             />
                         </View>
-                        <View>
-                            <Text style={styles.label}>Meeting Type</Text>
+                        <View style={styles.titleContainer}>
+                            <Text style={styles.title}>Meeting Type</Text>
                         </View>
 
                         <MeetingTypeButtons
@@ -340,19 +360,14 @@ function MeetingForm({ meetingId }) {
                             ) : null}
                         </View>
                         <View
-                            style={{
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                marginVertical: 10,
-                            }}
+                        // style={{
+                        //     flexDirection: 'row',
+                        //     justifyContent: 'center',
+                        //     marginVertical: 10,
+                        // }}
                         >
-                            <View
-                                style={{
-                                    justifyContent: 'center',
-                                    marginRight: 10,
-                                }}
-                            >
-                                <Text style={{ fontSize: 16 }}>Attendance</Text>
+                            <View style={styles.titleContainer}>
+                                <Text style={styles.title}>Attendance</Text>
                             </View>
                             <NumberInput
                                 value={parseInt(mAttendance)}
@@ -368,21 +383,14 @@ function MeetingForm({ meetingId }) {
                             />
                         </View>
                         <View
-                            style={{
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                marginVertical: 10,
-                            }}
+                        // style={{
+                        //     flexDirection: 'row',
+                        //     justifyContent: 'center',
+                        //     marginVertical: 10,
+                        // }}
                         >
-                            <View
-                                style={{
-                                    justifyContent: 'center',
-                                    marginRight: 10,
-                                }}
-                            >
-                                <Text style={{ fontSize: 16 }}>
-                                    Meals Served
-                                </Text>
+                            <View style={styles.titleContainer}>
+                                <Text style={styles.title}>Meals Served</Text>
                             </View>
                             <NumberInput
                                 value={parseInt(mMealCount)}
@@ -399,34 +407,47 @@ function MeetingForm({ meetingId }) {
                                 </Button>
                             </View>
                         </View>
-                        <View style={styles.groupDividerRow}>
-                            <Text style={styles.groupHeader}>Groups</Text>
-                            <Pressable
-                                onPress={addGroupHandler}
-                                style={({ pressed }) => [
-                                    {
-                                        backgroundColor: pressed
-                                            ? 'rgb(210, 230, 255)'
-                                            : Colors.gray20,
-                                    },
-                                    styles.wrapperCustom,
-                                ]}
-                            >
-                                {({ pressed }) => (
-                                    <Text style={styles.text}>
-                                        {pressed ? '+' : '+'}
+                        {mMeetingId !== '0' && (
+                            <>
+                                <View style={styles.groupDividerRow}>
+                                    <Text style={styles.groupHeader}>
+                                        Groups
                                     </Text>
-                                )}
-                            </Pressable>
-                        </View>
-                        {/* <GroupsForMeetingForm meetingId={meetingId} /> */}
-                        {/* <View style={styles.groupContainer}>
-                            <FlatList
-                                data={groupsFound}
-                                renderItem={renderGroupItem}
-                                keyExtractor={(group) => group.groupId}
-                            />
-                        </View> */}
+                                    <Pressable
+                                        onPress={addGroupHandler}
+                                        style={({ pressed }) => [
+                                            {
+                                                backgroundColor: pressed
+                                                    ? 'rgb(210, 230, 255)'
+                                                    : Colors.gray20,
+                                            },
+                                            styles.wrapperCustom,
+                                        ]}
+                                    >
+                                        {({ pressed }) => (
+                                            <Text style={styles.text}>
+                                                {pressed ? '+' : '+'}
+                                            </Text>
+                                        )}
+                                    </Pressable>
+                                </View>
+
+                                <View style={styles.groupContainer}>
+                                    <FlatList
+                                        data={groups}
+                                        renderItem={({ item }) => (
+                                            <GroupListItem
+                                                group={item}
+                                                deleteHandler={(gid) =>
+                                                    handleGroupDelete(gid)
+                                                }
+                                            />
+                                        )}
+                                        keyExtractor={(group) => group.groupId}
+                                    />
+                                </View>
+                            </>
+                        )}
                     </View>
                 </View>
             </KeyboardAvoidingView>
@@ -439,7 +460,7 @@ export default MeetingForm;
 const styles = StyleSheet.create({
     rootContainer: {
         flex: 1,
-        alignItems: 'center',
+        // alignItems: 'center',
     },
     meetingFrame: {
         minWidth: '95%',
@@ -464,6 +485,10 @@ const styles = StyleSheet.create({
     },
     input: {
         minWidth: '60%',
+    },
+    titleContainer: {
+        alignItems: 'center',
+        marginVertical: 5,
     },
     title: {
         fontSize: 24,

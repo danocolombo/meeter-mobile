@@ -10,7 +10,7 @@ import {
     KeyboardAvoidingView,
     LogBox,
 } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { TextInput } from 'react-native-paper';
 import NumberInput from '../ui/NumberInput/NumberInput';
 import GenderButtons from './GenderButtons';
@@ -18,24 +18,43 @@ import GenderButtons from './GenderButtons';
 import { useNavigation } from '@react-navigation/native';
 // import * as Crypto from 'expo-crypto';
 import { addGroup } from '../../providers/groups';
+import {
+    addMeetingGroup,
+    updateMeetingGroup,
+} from '../../features/groups/groupsSlice';
 import Button from '../ui/Button';
 // import GroupListItem from '../Group/GroupListItem';
 import { Colors } from '../../constants/colors';
-import { getUniqueId } from '../../util/helpers';
+import { getUniqueId, printObject } from '../../util/helpers';
 import { saveActiveMeetings } from '../../features/meetings/meetingsSlice';
 
 // function onDateChange() {}
-function GroupForm({ groupId, meetingId, meetingDate }) {
+// groupId = { groupId };
+// grpCompKey = { grpCompKey };
+// meetingInfo = { meetingInfo };
+function GroupForm({ groupId, grpCompKey, meetingInfo }) {
     const navHook = useNavigation();
+    const dispatch = useDispatch();
     const client = useSelector((state) => state.user.activeClient);
-
+    const groups = useSelector((state) => state.groups.meetingGroups);
     const [gGender, setGGender] = useState('');
+    const [gGroupId, setGGroupId] = useState('');
+    const [gGrpCompKey, setGGrpCompKey] = useState('');
     const [gAttendance, setGAttendance] = useState(0);
+    const [gMeetingId, setGMeetingId] = useState('');
     const [gTitle, setGTitle] = useState('');
     const [gLocation, setGLocation] = useState('');
     const [gFacilitator, setGFacilitator] = useState('');
     const [gCofacilitator, setGCofacilitator] = useState('');
     const [gNotes, setGNotes] = useState('');
+    // console.log('TEST_groupId:', groupId);
+    // console.log('TEST_meetingId:', meetingInfo.meetingId);
+    // console.log('TEST_meetingDate:', meetingInfo.meetingDate);
+    // console.log('TEST_mtgCompKey:', meetingInfo.mtgCompKey);
+    // console.log('INSIDE GroupForm (meetingInfo):', meetingInfo);
+    // console.log('groupId:', groupId);
+    // console.log('grpCompkey:', grpCompKey);
+    // printObject('meetingInfo', meetingInfo);
     useEffect(() => {
         LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
         if (groupId === '0') {
@@ -49,6 +68,18 @@ function GroupForm({ groupId, meetingId, meetingDate }) {
             setGNotes('');
         } else {
             // we need to get the group
+            const theGroup = groups.find((grp) => grp.groupId === groupId);
+
+            setGGender(theGroup.gender);
+            setGTitle(theGroup.title);
+            setGLocation(theGroup.location);
+            setGGrpCompKey(theGroup.grpCompKey);
+            setGGroupId(theGroup.groupId);
+            setGMeetingId(theGroup.meetingId);
+            setGAttendance(theGroup.attendance);
+            setGNotes(theGroup.notes);
+            setGCofacilitator(theGroup.cofacilitator);
+            setGFacilitator(theGroup.facilitator);
         }
     }, []);
 
@@ -64,54 +95,74 @@ function GroupForm({ groupId, meetingId, meetingDate }) {
             ]);
             return;
         }
-        //---- define groupCompKey ---------
-        let grpCompKey =
-            client +
-            '#' +
-            meetingDate.substring(0, 4) +
-            '#' +
-            meetingDate.substring(5, 7) +
-            '#' +
-            meetingDate.substring(8, 10);
-
         if (groupId === '0') {
-            async function getUni() {
-                let digest = getUniqueId();
-                return digest;
-            }
+            // async function getUni() {
+            //     let digest = getUniqueId();
+            //     return digest;
+            // }
+            let grpCompKey = client + '#' + meetingInfo.meetingId;
             let uni = getUniqueId()
                 .then((result) => {
                     let newGroup = {
                         groupId: result,
-                        meetingId: meetingId,
-                        clientId: client,
+                        meetingId: meetingInfo.meetingId,
                         grpCompKey: grpCompKey,
+                        clientId: client,
+
                         gender: gGender,
-                        attendance: gAttendance,
                         title: gTitle,
                         location: gLocation,
                         facilitator: gFacilitator,
                         cofacilitator: gCofacilitator,
+                        attendance: gAttendance,
                         notes: gNotes,
                     };
 
-                    let dbUpdateResults = async () => {
-                        addGroup(newGroup);
-                    };
-                    dbUpdateResults().then((results) => {
-                        dispatch(addGroup(newGroup));
-                        navHook.goBack();
-                    });
+                    async function dbUpdateResults() {
+                        printObject('newGrooup before', newGroup);
+                        let confirmedGroup = addGroup(newGroup);
+                        printObject('confirmedGroup', confirmedGroup);
+                        return confirmedGroup;
+                    }
+                    dbUpdateResults()
+                        .then((results) => {
+                            printObject('results', results);
+                            dispatch(addMeetingGroup(newGroup));
+                            // navHook.goBack();
+                        })
+                        .catch((err) => {
+                            console.log('error writing to db(05230437)\n', err);
+                        });
                 })
                 .catch((err) => console.log('new group save error\n', err));
             navHook.goBack();
         } else {
-            Alert.alert(
-                'Group Update Error',
-                'We have not implemented updating Groups [GF0522]',
-                [{ text: 'OK', style: 'destruction' }]
-            );
-            return;
+            const updatedGroup = {
+                groupId: gGroupId,
+                meetingId: gMeetingId,
+                grpCompKey: gGrpCompKey,
+                clientId: client,
+                gender: gGender,
+                title: gTitle,
+                location: gLocation,
+                facilitator: gFacilitator,
+                cofacilitator: gCofacilitator,
+                attendance: gAttendance,
+                notes: gNotes,
+            };
+            async function dbUpdateResults() {
+                let confirmedGroup = addGroup(updatedGroup);
+                return confirmedGroup;
+            }
+            dbUpdateResults()
+                .then((results) => {
+                    dispatch(updateMeetingGroup(results));
+                    // navHook.goBack();
+                })
+                .catch((err) => {
+                    console.log('error writing to db(05231003)\n', err);
+                });
+            navHook.goBack();
         }
 
         return;

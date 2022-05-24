@@ -4,12 +4,17 @@ import GroupForm from '../components/Group/GroupForm';
 
 function GroupScreen({ route }) {
     const groupId = route.params.groupId;
-    const meetingId = route.params.meetingId;
+    const grpCompKey = route.params.grpCompKey;
+    const meetingInfo = route.params.meetingInfo;
     useEffect(() => {}, []);
     return (
         <>
             <View style={styles.rootContainer}>
-                <GroupForm meetingId={meetingId} groupId={groupId} />
+                <GroupForm
+                    groupId={groupId}
+                    grpCompKey={grpCompKey}
+                    meetingInfo={meetingInfo}
+                />
             </View>
         </>
     );

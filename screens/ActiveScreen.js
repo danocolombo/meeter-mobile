@@ -1,28 +1,34 @@
 import axios from 'axios';
 import { useEffect, useState, useContext } from 'react';
+import { useIsFocused } from '@react-navigation/native';
 import { useQuery } from 'react-query';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import MeetingsOutput from '../components/Meeting/MeetingsOutput';
 import NextMeetingCard from '../components/Meeting/NextMeetingCard';
+import NoMeeting from '../components/Meeting/NoMeeting';
 import { getActiveMeetings } from '../features/meetings/meetingsSlice';
+import { resetGroups } from '../features/groups/groupsSlice';
 import { fetchActiveMeetings } from '../providers/meetings';
 import { saveActiveMeetings } from '../features/meetings/meetingsSlice';
+import { clearGroups } from '../features/groups/groupsSlice';
 import { DatePickerAndroid, StyleSheet, Text, View } from 'react-native';
 import { printObject } from '../util/helpers';
 import { Auth } from 'aws-amplify';
 import { loadUser } from '../features/users/userSlice';
 function ActiveScreen() {
     const dispatch = useDispatch();
+    const isFocused = useIsFocused();
     const [isLoading1, setIsLoading] = useState(false);
     const isLoading = useSelector((state) => state.meetings.isLoading);
     const authToken = useSelector((state) => state.user.authToken);
     let activeMeetings = useSelector((state) => state.meetings.activeMeetings);
-
+    let savedGroups = useSelector((state) => state.groups.meetingGroups);
     useEffect(() => {
         // if (authToken.length === null && activeMeetings.length === 0) {
         // dispatch(loadUser({ token: token, userName: email }));
         dispatch(getActiveMeetings(), null);
+        //dispatch(clearGroups(), null);
         // }
         Auth.currentSession()
             .then((data) => {
@@ -42,24 +48,24 @@ function ActiveScreen() {
             })
             .catch((err) => console.log(err));
     }, []);
-    // printObject('activeMeetings', activeMeetings);
+
+    if (isFocused) {
+        //======================================
+        // when re-displaying screen, make sure
+        // that meetingGrous in redux is empty
+        //======================================
+        if (savedGroups.length > 0) {
+            dispatch(resetGroups(), null);
+        }
+    }
+
     if (activeMeetings.length < 1) {
         return (
-            <View>
-                <Text>No Meetings</Text>
+            <View style={styles.noMeetingContainer}>
+                <NoMeeting />
             </View>
         );
     }
-    // console.log('activeMeetings.length', activeMeetings.length);
-    // return isLoading ? (
-    //     <LoadingOverlay />
-    // ) : (
-    //     <View style={styles.rootContainer}>
-    //         <NextMeetingCard nextMeeting={activeMeetings[0]} />
-    //         <Text style={styles.title}>Welcome!</Text>
-    //         <MeetingsOutput meetings={activeMeetings} />
-    //     </View>
-    // );
     return (
         <View style={styles.rootContainer}>
             <NextMeetingCard nextMeeting={activeMeetings[0]} />
@@ -74,7 +80,6 @@ export default ActiveScreen;
 const styles = StyleSheet.create({
     rootContainer: {
         flex: 1,
-        // justifyContent: 'center',
         alignItems: 'center',
         padding: 32,
     },
@@ -82,5 +87,10 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 8,
+    },
+    noMeetingContainer: {
+        flexDirection: 'column',
+        flex: 1,
+        justifyContent: 'center',
     },
 });

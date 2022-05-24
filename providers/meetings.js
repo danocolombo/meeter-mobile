@@ -179,7 +179,6 @@ export const addMeeting = async (newMeeting) => {
     let api2use = MEETER_API + '/meetings';
 
     let res = await axios.post(api2use, body, config);
-
     var returnValue = res.data.body;
     if (res.status === 200) {
         return returnValue;
