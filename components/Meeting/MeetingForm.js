@@ -33,8 +33,9 @@ import { addMeeting } from '../../providers/meetings';
 import { fetchGroupsForMeeting, deleteGroup } from '../../providers/groups';
 import {
     addActiveMeeting,
-    getActiveMeeting,
+    addHistoricMeeting,
     updateActiveMeeting,
+    updateHistoricMeeting,
     moveActiveToHistoric,
 } from '../../features/meetings/meetingsSlice';
 import {
@@ -43,6 +44,8 @@ import {
     removeGroup,
 } from '../../features/groups/groupsSlice';
 import { update } from 'lodash';
+import { original } from '@reduxjs/toolkit';
+import { or } from 'react-native-reanimated';
 // import { GroupsContext } from '../../store/groups-context';
 // import { or } from 'react-native-reanimated';
 
@@ -52,6 +55,9 @@ function MeetingForm({ meetingId }) {
     const client = useSelector((state) => state.user.activeClient);
     const activeMeetings = useSelector(
         (state) => state.meetings.activeMeetings
+    );
+    const historicMeetings = useSelector(
+        (state) => state.meetings.historicMeetings
     );
     const groups = useSelector((state) => state.groups.meetingGroups);
     const [mtgCompKey, setMtgCompKey] = useState('');
@@ -93,9 +99,14 @@ function MeetingForm({ meetingId }) {
             //   --------------------------------------
             //todo need to get the meeting from redux
             //   --------------------------------------
-            const foundMeeting = activeMeetings.find(
+            let foundMeeting = activeMeetings.find(
                 (mtg) => mtg.meetingId === meetingId
             );
+            if (!foundMeeting) {
+                foundMeeting = historicMeetings.find(
+                    (mtg) => mtg.meetingId === meetingId
+                );
+            }
             setMeeting(foundMeeting);
             setMeetingCopy(foundMeeting); // in case they change date
             // load field values
@@ -173,13 +184,6 @@ function MeetingForm({ meetingId }) {
         }
 
         if (mMeetingId === '0') {
-            async function getUni() {
-                const digest = await Crypto.digestStringAsync(
-                    Crypto.CryptoDigestAlgorithm.SHA256,
-                    new Date().toString() + Math.random().toString()
-                );
-                return digest;
-            }
             let uni = getUniqueId()
                 .then((result) => {
                     //it = result;
@@ -190,7 +194,7 @@ function MeetingForm({ meetingId }) {
                     // console.log('attendanceCount', mAttendance);
                     // console.log('meal', mMeal);
                     // console.log('mealCount', mMealCount);
-                    let mtgCompKey = createMtgCompKey(client, meetingDate);
+                    let mtgCompKey = createMtgCompKey(client, mDate);
                     let newMeeting = {
                         clientId: 'wbc',
                         mtgCompKey: mtgCompKey,
@@ -204,22 +208,33 @@ function MeetingForm({ meetingId }) {
                     };
 
                     let dbUpdateResults = async () => {
-                        // deleteActiveMeeting(meetingId);
+                        // database update regardless of
+                        // active or historic
                         addMeeting(newMeeting);
                     };
                     dbUpdateResults().then((results) => {
-                        // console.log('okay now save locally');
-                        dispatch(addActiveMeeting(newMeeting));
+                        // update redux slice based on the
+                        if (isMeetingDateBeforeToday(newMeeting.meetingDate)) {
+                            dispatch(addHistoricMeeting(newMeeting));
+                        } else {
+                            dispatch(addActiveMeeting(newMeeting));
+                        }
                         navHook.goBack();
                     });
                 })
                 .catch((err) => console.log('new meeting save error\n', err));
         } else {
-            //activeMeetings is reference to redux. Get the values
-            //previously defined for this meeting.
-            const originalArray = activeMeetings.filter(
+            //the meeting is reference to redux. Get the values
+            //previously defined for this meeting. If not in
+            //activeMeetings then get it from historicMeetings
+            let originalArray = activeMeetings.filter(
                 (mtg) => mtg.meetingId === meetingId
             );
+            if (!originalArray) {
+                originalArray = historicMeetings.filter(
+                    (mtg) => mtg.meetingId === meetingId
+                );
+            }
             let theOriginal = originalArray[0];
 
             let updatedMeeting = {
@@ -240,13 +255,16 @@ function MeetingForm({ meetingId }) {
             }
             // ====================================
             //   meeting values have changed, process
-            // ====================================
-            //   1. check if date is changed
+            // =======================================
+            //   1. check if date is changed, fix
+            //      mtgCompKey and determine if
+            //      changing history / active
+            // =======================================
+            let makeActive = false;
             if (theOriginal.meetingDate !== mDate) {
-                updatedMeeting.mtgCompKey = createMtgCompKey(client, mDate);
             }
             let dbUpdateResults = async () => {
-                //update dynamo
+                //update dynamo by meetingId
                 addMeeting(updatedMeeting);
             };
             dbUpdateResults().then((results) => {
@@ -257,12 +275,40 @@ function MeetingForm({ meetingId }) {
                 //     updatedMeeting.mtgCompKey
                 // );
                 if (theOriginal.mtgCompKey === updatedMeeting.mtgCompKey) {
-                    dispatch(updateActiveMeeting(updatedMeeting));
-                } else {
                     if (isMeetingDateBeforeToday(updatedMeeting.meetingDate)) {
-                        dispatch(moveActiveToHistoric(updatedMeeting));
+                        dispatch(updateHistoricMeeting(updatedMeeting));
                     } else {
                         dispatch(updateActiveMeeting(updatedMeeting));
+                    }
+                } else {
+                    updatedMeeting.mtgCompKey = createMtgCompKey(client, mDate);
+                    //===============================================
+                    // possibilities
+                    // --------------------------
+                    // was active, is active
+                    // was active, now historic
+                    // was historic, is historic
+                    // was historic, now active
+                    let before = null;
+                    let after = null;
+                    if (isMeetingDateBeforeToday(theOriginal.meetingDate)) {
+                        before = 'HISTORIC';
+                    } else {
+                        before = 'ACTIVE';
+                    }
+                    if (isMeetingDateBeforeToday(updatedMeeting.meetingDate)) {
+                        after = 'HISTORIC';
+                    } else {
+                        after = 'ACTIVE';
+                    }
+                    if (before === 'ACTIVE' && after === 'ACTIVE') {
+                        dispatch(updateActiveMeeting(updatedMeeting));
+                    } else if (before === 'ACTIVE' && after === 'HISTORIC') {
+                        dispatch(moveActiveToHistoric(updatedMeeting));
+                    } else if (before == 'HISTORIC' && after == 'HISTORIC') {
+                        dispatch(updateHistoricMeeting(updatedMeeting));
+                    } else {
+                        dispatch(moveHistoricToActive(updatedMeeting));
                     }
                 }
 

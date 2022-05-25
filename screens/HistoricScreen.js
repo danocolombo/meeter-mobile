@@ -1,32 +1,19 @@
 import axios from 'axios';
 import { useEffect, useState, useContext } from 'react';
 import { useQuery } from 'react-query';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import LoadingOverlay from '../components/ui/LoadingOverlay';
 import { AuthContext } from '../store/auth-context';
 import { MeetingsContext } from '../store/meeting-context';
 import { StyleSheet, Text, View } from 'react-native';
 import MeetingsOutput from '../components/Meeting/MeetingsOutput';
 import { fetchHistoricMeetings } from '../providers/meetings';
+import { loadHistoricMeetings } from '../features/meetings/meetingsSlice';
+import { printObject } from '../util/helpers';
 function HistoricScreen() {
     const [fetchedMessage, setFetchedMessage] = useState();
     const [historicMeetings, setHistoricMeetings] = useState();
-    const authCtx = useContext(AuthContext);
-    const meetingsCtx = useContext(MeetingsContext);
-    const token = authCtx.token;
-
-    useEffect(() => {
-        axios
-            .get(
-                'https://meeter7-app-default-rtdb.firebaseio.com/message.json?auth=' +
-                    token
-            )
-            .then((response) => {
-                setFetchedMessage(response.data);
-            });
-    }, [token]);
-    //   ---------------------------------------------
-    //   fetch the historic meetings
-    //   ---------------------------------------------
+    const dispatch = useDispatch();
     const { data, status } = useQuery(
         ['historic', status],
         fetchHistoricMeetings
@@ -36,11 +23,10 @@ function HistoricScreen() {
     } else if (status === 'error') {
         console.log('ERROR getting historic meetings');
     } else {
-        meetingsCtx.historicMeetings = data;
-
+        dispatch(loadHistoricMeetings(data));
         return (
             <View style={styles.rootContainer}>
-                <Text style={styles.title}>Welcome!</Text>
+                <Text style={styles.title}>Welcome???</Text>
                 <MeetingsOutput meetings={data} />
             </View>
         );

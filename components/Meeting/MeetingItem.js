@@ -4,7 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
 import { Colors } from '../../constants/styles';
 import { Ionicons } from '@expo/vector-icons';
-import { MeetingsContext } from '../../store/meeting-context';
 import { deleteActiveMeeting } from '../../features/meetings/meetingsSlice';
 import { deleteMeeting } from '../../providers/meetings';
 function MeetingItem({
@@ -16,7 +15,6 @@ function MeetingItem({
 }) {
     const navigation = useNavigation();
     const dispatch = useDispatch();
-    const meetingsCtx = useContext(MeetingsContext);
     function meetingPressHandler() {
         navigation.navigate('Meeting', {
             meetingId: meetingId,
