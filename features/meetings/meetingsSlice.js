@@ -201,11 +201,11 @@ export const meetingsSlice = createSlice({
         moveActiveToHistoric: (state, action) => {
             //   remove from activeMeetings
             const smaller = state.activeMeetings.filter(
-                (mtg) => mtg.meetingId !== action.payload
+                (mtg) => mtg.meetingId !== action.payload.meetingId
             );
             state.activeMeetings = smaller;
             //   add to historicMeetings
-            const bigger = [...state.activeMeetings, action.payload];
+            const bigger = [...state.historicMeetings, action.payload];
             // ascending sort
             function asc_sort(a, b) {
                 return (
@@ -220,7 +220,7 @@ export const meetingsSlice = createSlice({
         moveHistoricToActive: (state, action) => {
             //   remove from historicMeetings
             const smaller = state.historicMeetings.filter(
-                (mtg) => mtg.meetingId !== action.payload
+                (mtg) => mtg.meetingId !== action.payload.meetingId
             );
             state.historicMeetings = smaller;
             //   add to activeMeetings

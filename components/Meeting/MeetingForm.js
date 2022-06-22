@@ -37,6 +37,7 @@ import {
     updateActiveMeeting,
     updateHistoricMeeting,
     moveActiveToHistoric,
+    moveHistoricToActive,
 } from '../../features/meetings/meetingsSlice';
 import {
     clearGroups,
@@ -49,8 +50,9 @@ import { or } from 'react-native-reanimated';
 // import { GroupsContext } from '../../store/groups-context';
 // import { or } from 'react-native-reanimated';
 
-function MeetingForm({ meetingId }) {
+function MeetingForm({ meetingId, navigation }) {
     const navHook = useNavigation();
+
     const dispatch = useDispatch();
     const client = useSelector((state) => state.user.activeClient);
     const activeMeetings = useSelector(
@@ -230,11 +232,16 @@ function MeetingForm({ meetingId }) {
             let originalArray = activeMeetings.filter(
                 (mtg) => mtg.meetingId === meetingId
             );
-            if (!originalArray) {
+
+            if (!originalArray || originalArray.length === 0) {
                 originalArray = historicMeetings.filter(
                     (mtg) => mtg.meetingId === meetingId
                 );
             }
+            // console.log('originalArray:', originalArray);
+            // console.log('what is ...', typeof originalArray);
+            // console.log('originalArray', originalArray);
+            // console.log('length', originalArray.length);
             let theOriginal = originalArray[0];
 
             let updatedMeeting = {
@@ -260,9 +267,9 @@ function MeetingForm({ meetingId }) {
             //      mtgCompKey and determine if
             //      changing history / active
             // =======================================
-            let makeActive = false;
-            if (theOriginal.meetingDate !== mDate) {
-            }
+            // let makeActive = false;
+            // if (theOriginal.meetingDate !== mDate) {
+            // }
             let dbUpdateResults = async () => {
                 //update dynamo by meetingId
                 addMeeting(updatedMeeting);
@@ -281,7 +288,7 @@ function MeetingForm({ meetingId }) {
                         dispatch(updateActiveMeeting(updatedMeeting));
                     }
                 } else {
-                    updatedMeeting.mtgCompKey = createMtgCompKey(client, mDate);
+                    // updatedMeeting.mtgCompKey = createMtgCompKey(client, mDate);
                     //===============================================
                     // possibilities
                     // --------------------------
@@ -303,12 +310,16 @@ function MeetingForm({ meetingId }) {
                     }
                     if (before === 'ACTIVE' && after === 'ACTIVE') {
                         dispatch(updateActiveMeeting(updatedMeeting));
+                        navHook.goBack();
                     } else if (before === 'ACTIVE' && after === 'HISTORIC') {
                         dispatch(moveActiveToHistoric(updatedMeeting));
                     } else if (before == 'HISTORIC' && after == 'HISTORIC') {
                         dispatch(updateHistoricMeeting(updatedMeeting));
+                        navHook.goBack();
                     } else {
                         dispatch(moveHistoricToActive(updatedMeeting));
+                        navHook.goBack();
+                        // navHook.navigate('ActiveMeetings');
                     }
                 }
 
