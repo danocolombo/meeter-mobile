@@ -1,40 +1,21 @@
-import { useContext, useEffect } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { StatusBar } from 'expo-status-bar';
-import { Ionicons } from '@expo/vector-icons';
-import IconButton from './src/components/ui/IconButton';
-import Constants from 'expo-constants';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-// - - - - - redux toolkit - -  - - - - -
-import { store } from './src/store/redux/store';
-import { Provider } from 'react-redux';
-// - - - - - amplify auth - - - - - - - -
-import Amplify, { Auth } from 'aws-amplify';
-import awsconfig from './src/aws-exports';
-import { withAuthenticator } from 'aws-amplify-react-native';
-
-import LoginScreen from './src/screens/LoginScreen';
-import SignupScreen from './src/screens/SignupScreen';
-import ActiveScreen from './src/screens/ActiveScreen';
-import HistoricScreen from './src/screens/HistoricScreen';
-import ProfileScreen from './src/screens/ProfileScreen';
-import ConfigScreen from './src/screens/ConfigScreen';
-import ConfigUsersScreen from './src/screens/ConfigUsersScreen';
-import ConfigGroupsScreen from './src/screens/ConfigGroupsScreen';
-import ConfigMeetingsScreen from './src/screens/ConfigMeetingsScreen';
-import MeetingScreen from './src/screens/MeetingScreen';
-import GroupScreen from './src/screens/GroupScreen';
-import { Colors } from './src/constants/colors';
+import LoginScreen from '../screens/LoginScreen';
+import SignupScreen from '../screens/SignupScreen';
+import ActiveScreen from '../screens/ActiveScreen';
+import HistoricScreen from '../screens/HistoricScreen';
+import ProfileScreen from '../screens/ProfileScreen';
+import ConfigScreen from '../screens/ConfigScreen';
+import ConfigUsersScreen from '../screens/ConfigUsersScreen';
+import ConfigGroupsScreen from '../screens/ConfigGroupsScreen';
+import ConfigMeetingsScreen from '../screens/ConfigMeetingsScreen';
+import MeetingScreen from '../screens/MeetingScreen';
+import GroupScreen from '../screens/GroupScreen';
+import { Colors } from '../constants/colors';
 import AuthContextProvider from './store/auth-context';
-import { AuthContext } from './src/store/auth-context';
-import MeetingsContextProvider from './src/store/meeting-context';
-import GroupsContextProvider from './src/store/groups-context';
-import MeeterContextProvider from './src/store/meeter-context';
-import AmplifySignOut from './src/screens/AmplifySignOut';
+import { AuthContext } from './store/auth-context';
+import MeetingsContextProvider from './store/meeting-context';
+import GroupsContextProvider from './store/groups-context';
+import MeeterContextProvider from './store/meeter-context';
+import AmplifySignOut from './screens/AmplifySignOut';
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -278,24 +259,3 @@ function Navigation() {
         </NavigationContainer>
     );
 }
-const queryClient = new QueryClient();
-function App() {
-    return (
-        <>
-            <Provider store={store}>
-                <StatusBar style='light' />
-
-                <QueryClientProvider client={queryClient}>
-                    <MeeterContextProvider>
-                        <MeetingsContextProvider>
-                            <GroupsContextProvider>
-                                <Navigation />
-                            </GroupsContextProvider>
-                        </MeetingsContextProvider>
-                    </MeeterContextProvider>
-                </QueryClientProvider>
-            </Provider>
-        </>
-    );
-}
-export default withAuthenticator(App);
